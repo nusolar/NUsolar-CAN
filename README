@@ -1,0 +1,11 @@
+#################################################
+  NUsolar MCP2515-based CAN library for Arduino
+  Latest Version: 	v0.1
+  Updated: 			12-16-2014 by Alexander Martin
+  www.nusolar.org
+  projectmanager@nusolar.org
+#################################################
+
+This repository contains a CAN_IO class and a SPI-based library written by DaveAK on the Arduino forums. The library can be used in conjunction with an MCP2515 CAN Controller and an MCP2551 or SN65HVD233 CAN Tranceiver. The CAN_IO class is specific to solar car applications, and implementes all of the CAN packet types used in our SC6 and SC7 solar cars. The DaveAK MCP2515 library is generic, and can be used for all types of CAN communication through the MCP2515.
+
+This repository is organized into subfolders representing the latest working version of the code. Only the latest version is to be edited: all previous versions are locked and should not be modified.

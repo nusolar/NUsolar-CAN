@@ -77,7 +77,7 @@ public:
 	/*
 	 * Returns a frame from the back of the queue.
 	 */
-	Frame dequeue() {
+	Frame dequeue_copy() {
 		if (!is_empty()) {
 			//Update tail location
 			uint8_t readloc = tail++;
@@ -94,6 +94,27 @@ public:
 			return buf[readloc];
 		}
 		return Frame();
+	}
+	/*
+	 * Returns a frame reference from the back of the queue.
+	 */
+	Frame& dequeue() {
+		if (!is_empty()) {
+			//Update tail location
+			uint8_t readloc = tail++;
+
+			//Wrap tail
+			if (tail >= RX_QUEUE_SIZE) {
+				tail = 0;
+			}
+
+			//Check whether queue has been emptied
+			if (tail == head) {
+				isFull = false;
+			}
+			return buf[readloc];
+		}
+		return buf[head]; //Return last element if it fails.
 	}
 
 private:

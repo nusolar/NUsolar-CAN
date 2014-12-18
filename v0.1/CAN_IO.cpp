@@ -98,20 +98,20 @@ void CAN_IO::receiveCAN() {
 	}
 
 	if (interrupt & RX1IF) { // receive buffer 1 full
-		buffer.enqueue(controller.ReadBuffer(RXB1));
+		RXbuffer.enqueue(controller.ReadBuffer(RXB1));
 	}
 
 	if (interrupt & RX0IF) { // receive buffer 0 full
-		buffer.enqueue(controller.ReadBuffer(RXB0));
+		RXbuffer.enqueue(controller.ReadBuffer(RXB0));
 	}
 
 	// clear interrupt
 	controller.ResetInterrupt(INTALL); // reset all interrupts
 }
 
-void CAN_IO::sendCAN(Layout& layout) {
-	controller.LoadBuffer(TXB0, layout.generate_frame());
-	controller.SendBuffer(TXB0);
+void CAN_IO::sendCAN(Layout& layout, uint8_t buffer) {
+	controller.LoadBuffer(buffer, layout.generate_frame());
+	controller.SendBuffer(buffer);
 
         // Errors????
 }

@@ -68,7 +68,7 @@ struct FilterInfo {
  */
 class CAN_IO {
 public:
-	RX_Queue<8> buffer;
+	RX_Queue<8> RXbuffer;
 
 	/*
 	 * Constructor. Creates a MCP2515 object using
@@ -92,7 +92,7 @@ public:
 	/*
 	 * Sends messages to the CAN bus via the controller.
 	 */
-	void sendCAN(Layout& layout);
+	void sendCAN(Layout& layout, uint8_t buffer);
         
         // Will be used to set up receive filters in a cleaner way.
         /*void set_RB1_filters(uint16_t mask,uint16_t filter,uint16_t filter);
@@ -103,7 +103,7 @@ public:
 	 */
 	bool messageExists()
 	{
-		return !buffer.is_empty();
+		return !RXbuffer.is_empty();
 	}
         
     MCP2515 controller;

@@ -10,6 +10,13 @@ This repository contains a CAN_IO class and a SPI-based library written by DaveA
 
 This repository is organized into subfolders representing the latest working version of the code. Only the latest version is to be edited: all previous versions are locked and should not be modified.
 
+INCLUDING FILES
+---------------
+
+In order to use this library in your project, copy the sc7-can-libinclude.cpp and sc7-can-libinclude.h files from the appropriate version folder into your project folder. #inclue the sc7-can-libinclude.h file at the head of any translation unit (code file) in your project which needs to use library functions. 
+
+---------------
+
 !!!!! IMPORTANT !!!!!
 Due to the limited library-handling abilities of the Arduino IDE, this repository must be placed in the following directory in order to be accessable to all other NUsolar libraries:
 

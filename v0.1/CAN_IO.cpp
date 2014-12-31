@@ -6,7 +6,7 @@
 #include "CAN_IO.h"
 #include <SPI.h>
 
-CAN_IO::CAN_IO(byte CS_pin, byte INT_p) :
+CAN_IO::CAN_IO(byte CS_pin, byte INT_p, int CAN_bus_speed, byte Freq) :
 errptr(0), INT_pin(INT_p), controller(CS_pin, INT_p)  {}
 
 /*
@@ -41,7 +41,7 @@ void CAN_IO::setup(const FilterInfo& filters, uint16_t* errorflags, bool isMainC
         errptr = errorflags;
 
 	// init the controller
-	int baudRate = controller.Init(1000, 20);
+	int baudRate = controller.Init(CAN_bus_speed, Freq);
 	if (baudRate <= 0) { // error
 		*errptr |= CANERR_SETUP_BAUDFAIL;
 	}

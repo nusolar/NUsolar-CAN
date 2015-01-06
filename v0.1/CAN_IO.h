@@ -74,7 +74,7 @@ public:
 	 * Constructor. Creates a MCP2515 object using
 	 * the given pins.
 	 */
-	CAN_IO(byte CS_pin, byte INT_p, int CAN_bus_speed, byte Freq);
+	CAN_IO(byte CS_pin, byte INT_pin, int baud, byte freq);
 
 	/*
 	 * Initializes the CAN controller to desired settings,
@@ -110,7 +110,8 @@ public:
 private:
         uint16_t* errptr;
         byte      INT_pin;
-
+	int 	  bus_speed;
+	byte	  bus_freq;
 	/*
 	 * Helper function for configuring the RX masks/filters.
 	 * If first is true, sets the mask/filter for the first buffer;

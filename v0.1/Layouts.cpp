@@ -10,6 +10,8 @@ Frame Layout::generate_frame() {
 	return f;
 }
 
+
+// Helper function. We should really use a Macro or __inline__ function here.
 void Layout::set_header(Frame& f) {
 	f.id = id;
 	f.dlc = 8; // send 8 bytes
@@ -28,16 +30,16 @@ Frame BMS_Heartbeat::generate_frame() {
 
 Frame BMS_SOC::generate_frame() {
 	Frame f;
-	f.low = power_consumed;
-	f.high = percent_SOC;
+	f.lowf = power_consumed;
+	f.highf = percent_SOC;
 	set_header(f);
 	return f;
 }
 
 Frame BMS_BalanceSOC::generate_frame() {
 	Frame f;
-	f.low = power_supplied;
-	f.high = SOC_mismatch;
+	f.lowf = power_supplied;
+	f.highf = SOC_mismatch;
 	set_header(f);
 	return f;
 }
@@ -105,8 +107,8 @@ Frame MC_Status::generate_frame() {
 
 Frame MC_BusStatus::generate_frame() {
 	Frame f;
-	f.low = bus_current;
-	f.high = bus_voltage;
+	f.lowf = bus_current;
+	f.highf = bus_voltage;
 	set_header(f);
 	return f;
 }
@@ -121,8 +123,16 @@ Frame MC_Velocity::generate_frame() {
 
 Frame MC_PhaseCurrent::generate_frame() {
 	Frame f;
-	f.low = phase_a;
-	f.high = phase_b;
+	f.lowf = phase_a;
+	f.highf = phase_b;
+	set_header(f);
+	return f;
+}
+
+Frame MC_FanSpeed::generate_frame() {
+	Frame f;
+	f.lowf = speed;
+	f.highf = drive;
 	set_header(f);
 	return f;
 }

@@ -30,6 +30,7 @@
 #define MC_BUS_STATUS_ID	0x402
 #define MC_VELOCITY_ID		0x403
 #define MC_PHASE_ID			0x404
+#define MC_FANSPEED_ID		0x410
 
 // driver controls TX
 #define DC_HEARTBEAT_ID		0x500
@@ -46,6 +47,11 @@
 #define MASK_EID			0x7FFFF
 
 
+/*
+ * Some macros for conversion
+ */
+#define asfloat(X) 		reinterpret_cast<const float&>(X)
+#define asuint32_t(X) 	reinterpret_cast<uint32_t>(X)
 /*
  * Abstract base packet.
  */
@@ -84,12 +90,12 @@ public:
 class BMS_SOC : public Layout {
 public:
 	BMS_SOC(uint32_t pow_cons, uint32_t per_SOC) : power_consumed(pow_cons), percent_SOC(per_SOC) { id = BMS_SOC_ID; }
-	BMS_SOC(const Frame& frame) : power_consumed(frame.low), percent_SOC(frame.high) { id = frame.id; }
+	BMS_SOC(const Frame& frame) : power_consumed(frame.lowf), percent_SOC(frame.highf) { id = frame.id; }
 
 	Frame generate_frame();
 
-	uint32_t power_consumed;
-	uint32_t percent_SOC;
+	float power_consumed;
+	float percent_SOC;
 };
 
 /*
@@ -104,8 +110,8 @@ public:
 
 	Frame generate_frame();
 
-	uint32_t power_supplied;
-	uint32_t SOC_mismatch;
+	float power_supplied;
+	float SOC_mismatch;
 };
 
 /*
@@ -205,7 +211,7 @@ public:
 
 	Frame generate_frame();
 
-	uint32_t trituim_id;
+	uint32_t trituim_id; // is actually a char[8]
 	uint32_t serial_no;
 };
 
@@ -232,13 +238,13 @@ public:
  */
 class MC_BusStatus : public Layout {
 public:
-	MC_BusStatus(uint32_t bc, uint32_t bv) : bus_current(bc), bus_voltage(bv) { id = MC_BUS_STATUS_ID; }
-	MC_BusStatus(const Frame& frame) : bus_current(frame.low), bus_voltage(frame.high) { id = frame.id; }
+	MC_BusStatus(float bc, float bv) : bus_current(bc), bus_voltage(bv) { id = MC_BUS_STATUS_ID; }
+	MC_BusStatus(const Frame& frame) : bus_current(frame.lowf), bus_voltage(frame.highf) { id = frame.id; }
 
 	Frame generate_frame();
 
-	uint32_t bus_current;
-	uint32_t bus_voltage;
+	float bus_current;
+	float bus_voltage;
 };
 
 /*
@@ -246,13 +252,13 @@ public:
  */
 class MC_Velocity : public Layout {
 public:
-	MC_Velocity(uint32_t car_v, uint32_t motor_v) : car_velocity(car_v), motor_velocity(motor_v) { id = MC_VELOCITY_ID; }
-	MC_Velocity(const Frame& frame) : car_velocity(frame.low), motor_velocity(frame.high) { id = frame.id; }
+	MC_Velocity(float car_v, float motor_v) : car_velocity(car_v), motor_velocity(motor_v) { id = MC_VELOCITY_ID; }
+	MC_Velocity(const Frame& frame) : car_velocity(frame.lowf), motor_velocity(frame.highf) { id = frame.id; }
 
 	Frame generate_frame();
 
-	uint32_t car_velocity;
-	uint32_t motor_velocity;
+	float car_velocity;
+	float motor_velocity;
 };
 
 /*
@@ -260,13 +266,24 @@ public:
  */
 class MC_PhaseCurrent : public Layout {
 public:
-	MC_PhaseCurrent(uint32_t a, uint32_t b) : phase_a(a), phase_b(b) { id = MC_PHASE_ID; }
-	MC_PhaseCurrent(const Frame& frame) : phase_a(frame.low), phase_b(frame.high) { id = frame.id; }
+	MC_PhaseCurrent(float a, float b) : phase_a(a), phase_b(b) { id = MC_PHASE_ID; }
+	MC_PhaseCurrent(const Frame& frame) : phase_a(frame.lowf), phase_b(frame.highf) { id = frame.id; }
 
 	Frame generate_frame();
 
-	uint32_t phase_a;
-	uint32_t phase_b;
+	float phase_a;
+	float phase_b;
+};
+
+class MC_FanSpeed : public Layout {
+public:
+	MC_FanSpeed(float rpm, float v) : speed(rpm), drive(v) {id = MC_FANSPEED_ID; }
+	MC_FanSpeed(const Frame& frame) : speed(frame.lowf), drive(frame.highf) { id = frame.id; }
+
+	Frame generate_frame();
+
+	float speed;
+	float drive;
 };
 
 /*

@@ -116,15 +116,14 @@ void CAN_IO::sendCAN(Layout& layout, uint8_t buffer) {
         // Errors????
 }
 
+// Define two macros for the following function, to improve readability.
+#define first_byte(value) uint8_t((value >> 3) & 0x00FF)
+#define second_byte(value) uint8_t((value << 5) & 0x00E0)
+
 void CAN_IO::write_rx_filter(uint8_t address, uint16_t data) {
 	uint8_t bytes[2] = { first_byte(data), second_byte(data) };
 	controller.Write(address, bytes, 2);
 }
 
-uint8_t CAN_IO::first_byte(uint16_t value) {
-	return (value >> 3) & 0x00FF;
-}
-
-uint8_t CAN_IO::second_byte(uint16_t value) {
-	return (value << 5) & 0x00E0;
-}
+#undef first_byte
+#undef second_byte

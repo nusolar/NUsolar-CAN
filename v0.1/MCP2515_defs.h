@@ -27,7 +27,12 @@ typedef struct
       union {
         // 8 bytes
         uint64_t value;
-        // 4 bytes
+        // 4 bytes (float)
+        struct {
+          float lowf;
+          float highf;
+        };
+        // 4 bytes (int)
         struct {
           uint32_t low;
           uint32_t high;

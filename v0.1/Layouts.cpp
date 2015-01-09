@@ -113,8 +113,8 @@ Frame MC_BusStatus::generate_frame() {
 
 Frame MC_Velocity::generate_frame() {
 	Frame f;
-	f.low = car_velocity;
-	f.high = motor_velocity;
+	f.lowf = car_velocity;
+	f.highf = motor_velocity;
 	set_header(f);
 	return f;
 }
@@ -137,16 +137,16 @@ Frame DC_Heartbeat::generate_frame() {
 
 Frame DC_Drive::generate_frame() {
 	Frame f;
-	f.low = velocity;
-	f.high = current;
+	f.lowf = velocity;
+	f.highf = current;
 	set_header(f);
 	return f;
 }
 
 Frame DC_Power::generate_frame() {
 	Frame f;
-	f.low = bus_current;
-	f.high = 0;
+	f.lowf = bus_current;
+	f.highf = 0;
 	set_header(f);
 	return f;
 }

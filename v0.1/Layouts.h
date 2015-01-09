@@ -288,13 +288,13 @@ public:
  */
 class DC_Drive : public Layout {
 public:
-	DC_Drive(uint32_t v, uint32_t c) : velocity(v), current(c) { id = DC_DRIVE_ID; }
-	DC_Drive(const Frame& frame) : velocity(frame.low), current(frame.high) { id = frame.id; }
+	DC_Drive(float v, float c) : velocity(v), current(c) { id = DC_DRIVE_ID; }
+	DC_Drive(const Frame& frame) : velocity(frame.lowf), current(frame.highf) { id = frame.id; }
 
 	Frame generate_frame();
 
-	uint32_t velocity;
-	uint32_t current;
+	float velocity;
+	float current;
 };
 
 /*
@@ -302,12 +302,12 @@ public:
  */
 class DC_Power : public Layout {
 public:
-	DC_Power(uint32_t bc) : bus_current(bc) { id = DC_POWER_ID; }
-	DC_Power(const Frame& frame) : bus_current(frame.low) { id = frame.id; }
+	DC_Power(float bc) : bus_current(bc) { id = DC_POWER_ID; }
+	DC_Power(const Frame& frame) : bus_current(frame.lowf) { id = frame.id; }
 
 	Frame generate_frame();
 
-	uint32_t bus_current;
+	float bus_current;
 };
 
 /*

@@ -38,13 +38,7 @@
 #define DC_POWER_ID			0x502
 #define DC_RESET_ID			0x503
 #define DC_SWITCHPOS_ID		0x505
-
-// Mask ID that specifically work with our SIDs
-#define MASK_NONE			0x000
-#define MASK_Sx00			0x700
-#define MASK_Sxx0			0x7F0
-#define MASK_Sxxx			0x7FF
-#define MASK_EID			0x7FFFF
+#define DC_STEERING_ID		0x510
 
 /*
  * Some macros for conversion
@@ -350,4 +344,17 @@ public:
         Frame generate_frame();
 };
 
+/*
+ * Driver controls steering wheel display data packet
+ */
+class DC_Steering : public Layout {
+public:
+	DC_Steering(byte vel) : velocity(vel) { id = DC_STEERING_ID; }
+	DC_Steering(const Frame& frame) : velocity(frame.data[0]) { id = frame.id; }
+
+	byte velocity; 
+	// Placeholder for steering wheel packet. Will be filled out later.
+
+        Frame generate_frame();
+};
 #endif

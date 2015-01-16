@@ -22,7 +22,7 @@ CAN_IO* mainCAN = 0;
 /*
  * Setup function for CAN_IO. Arguments are a FilterInfo struct and a pointer to a place to raise error flags.
  */
-void CAN_IO::setup(const CANFilterOpt& filters, uint16_t* errorflags, bool isMainCan) {
+void CAN_IO::setup(const CANFilterOpt& filters, uint16_t* errorflags) {
 	// SPI setup
 	SPI.setClockDivider(10);
 	SPI.setDataMode(SPI_MODE0);
@@ -30,10 +30,7 @@ void CAN_IO::setup(const CANFilterOpt& filters, uint16_t* errorflags, bool isMai
 	SPI.begin();
 
         // Set as main can
-        if (isMainCan){  
-            mainCAN = this;
-            Serial.println((int)mainCAN,HEX);
-        }
+        mainCAN = this;
         
         attachInterrupt(INT_pin,CAN_ISR,LOW);
         
@@ -74,27 +71,37 @@ void CAN_IO::receiveCAN() {
 	byte interrupt = controller.GetInterrupt();
 
 	if (interrupt & MERRF) { // message error
-		*errptr |= 0x01; // this needs to be a real value!
+		*errptr |= CANERR_MESSAGE_ERROR;
 	}
 
 	if (interrupt & WAKIF) { // wake-up interrupt
-
+		// No Error implemented
 	}
 
 	if (interrupt & ERRIF) { // error interrupt
-		*errptr |= 0x02; // this needs to be a real value!
+		byte errors = controller.Read(EFLG);
+		/* Extract Errors from the extended error flag */
+		if (errors & 0xC0 == true)
+		{
+			*errptr |= CANERR_MCPBUF_FULL;
+		}
+
+		if (errors & 0x40 == true)
+		{
+			*errptr |= CANERR_BUSOFF_MODE;
+		}
 	}
 
 	if (interrupt & TX2IF) { // transmit buffer 2 empty
-
+		// No Error implemented
 	}
 
 	if (interrupt & TX1IF) { // transmit buffer 1 empty
-
+		// No Error implemented
 	}
 
 	if (interrupt & TX0IF) { // transmit buffer 0 empty
-
+		// No Error implemented
 	}
 
 	if (interrupt & RX1IF) { // receive buffer 1 full
@@ -108,12 +115,9 @@ void CAN_IO::receiveCAN() {
 	// clear interrupt
 	controller.ResetInterrupt(INTALL); // reset all interrupts
 }
-
 void CAN_IO::sendCAN(Layout& layout, uint8_t buffer) {
 	controller.LoadBuffer(buffer, layout.generate_frame());
 	controller.SendBuffer(buffer);
-
-        // Errors????
 }
 
 // Define two macros for the following function, to improve readability.

@@ -175,3 +175,10 @@ Frame DC_SwitchPos::generate_frame() {
 	set_header(f);
 	return f;
 }
+
+Frame DC_Steering::generate_frame() {
+	Frame f;
+	f.data[0] = velocity;
+	set_header(f);
+	return f;
+}

@@ -45,6 +45,18 @@ struct CANFilterOpt {
 	  RXF5 = f5;
 	}
 };
+
+/*
+ * Mask ID that specifically work with our SIDs
+ * (packet ID's for f0-f5 can be found in Layouts.h)
+ */
+#define MASK_NONE			0x000
+#define MASK_Sx00			0x700
+#define MASK_Sxx0			0x7F0
+#define MASK_Sxxx			0x7FF
+#define MASK_EID			0x7FFFF
+
+
 /*
  * Define Extra can errors besides those defined in MCP2515_defs.
   #define RX0IF                  0x01
@@ -60,6 +72,8 @@ struct CANFilterOpt {
   #define CANERR_SETUP_MODEFAIL   0x0200 // Failed to switch modes
   #define CANERR_BUFFER_FULL      0x0400 // Local buffer is full
   #define CANERR_MCPBUF_FULL      0x0800 // MCP2515 is reporting buffer overflow errors
+  #define CANERR_MESSAGE_ERROR	  0x1000 // Message transmission error 
+  #define CANERR_BUSOFF_MODE	  0x2000 // MCP2515 has entered Bus Off mode
 
 /*
  * Class for handling CAN I/O operations using the
@@ -80,7 +94,7 @@ public:
 	 * including read masks/filters. All types of interrupt
 	 * are enabled.
 	 */
-	void setup(const CANFilterOpt& filters, uint16_t* errorflags, bool isMainCan);
+	void setup(const CANFilterOpt& filters, uint16_t* errorflags);
 
 	/*
 	 * Invoked when the interrupt pin is pulled low. Handles
@@ -92,42 +106,42 @@ public:
 	 * Sends messages to the CAN bus via the controller.
 	 */
 	void sendCAN(Layout& layout, uint8_t buffer);
-        
-    // Will be used to set up receive filters in a cleaner way.
       
 	/*
 	 * Returns true if the RX buffer is not empty.
 	 */
-	bool messageExists()
+	inline bool messageExists()
 	{
 		return !RXbuffer.is_empty();
 	}
+
+	/*
+	 * Returns a reference to the next available frame on the buffer
+	 */
+	inline Frame& messageDequeue()
+	{
+		return RXbuffer.dequeue();
+	}
+
         
     MCP2515 controller; // The MCP2515 object
 	
 private:
-        uint16_t* errptr;
-        byte      INT_pin;
+    byte      INT_pin;
 	int 	  bus_speed;
 	byte	  bus_freq;
+
+	/*
+	 * Pointer to a memory space in which we will store errors
+	 */
+	uint16_t* errptr;
+
 	/*
 	 * Helper function for configuring the RX masks/filters.
 	 * If first is true, sets the mask/filter for the first buffer;
 	 * otherwise sets the second.
 	 */
 	void write_rx_filter(uint8_t address, uint16_t);
-
-	/*
-	 * Given a 12-bit mask/filter with bits 0 1 2 ... 11,
-	 * extracts bits 1-8.
-	 */
-	uint8_t first_byte(uint16_t value);
-
-	/*
-	 * Given a 12-bit mask/filter with bits 0 1 2 ... 11,
-	 * extracts bits 9-11 and appends zeros to complete a byte.
-	 */
-	uint8_t second_byte(uint16_t value);
 };
 
 /*

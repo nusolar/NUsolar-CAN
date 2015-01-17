@@ -94,34 +94,37 @@ public:
 	 * including read masks/filters. All types of interrupt
 	 * are enabled.
 	 */
-	void setup(const CANFilterOpt& filters, uint16_t* errorflags);
+	void Setup(const CANFilterOpt& filters, uint16_t* errorflags);
 
 	/*
 	 * Invoked when the interrupt pin is pulled low. Handles
 	 * errors or reads messages, determined by the type of interrupt.
 	 */
-	void receiveCAN();
+	void Fetch();
 
 	/*
 	 * Sends messages to the CAN bus via the controller.
 	 */
-	void sendCAN(Layout& layout, uint8_t buffer);
+	void Send(const Layout& layout, uint8_t buffer);
+	void Send(const Frame& frame, uint8_t buffer);
+	
+	/*
+	 * Returns a reference to the next available frame on the buffer
+	 */
+	inline Frame& Read()
+	{
+		return RXbuffer.dequeue();
+	}
       
 	/*
 	 * Returns true if the RX buffer is not empty.
 	 */
-	inline bool messageExists()
+	inline bool Available()
 	{
 		return !RXbuffer.is_empty();
 	}
 
-	/*
-	 * Returns a reference to the next available frame on the buffer
-	 */
-	inline Frame& messageDequeue()
-	{
-		return RXbuffer.dequeue();
-	}
+	
 
         
     MCP2515 controller; // The MCP2515 object
@@ -147,5 +150,5 @@ private:
 /*
  * Declare a pointer to the main can_io instance
  */
-extern CAN_IO* mainCAN;
+extern CAN_IO* main_CAN;
 #endif

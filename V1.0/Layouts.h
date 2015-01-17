@@ -55,13 +55,14 @@ public:
 	/*
 	 * Creates a Frame object to represent this layout.
 	 */
-	virtual Frame generate_frame();
+	virtual Frame generate_frame() const;
 protected:
 	/*
 	 * Fill out the header info for a frame.
 	 */
-	void set_header(Frame& f);
+	 inline void set_header(Frame& f) const;
 };
+
 
 /*
  * BMS heartbeaat packet.
@@ -71,7 +72,7 @@ public:
 	BMS_Heartbeat(uint32_t d_id, uint32_t s_no) : device_id(d_id), serial_no(s_no) { id = BMS_HEARTBEAT_ID; }
 	BMS_Heartbeat(const Frame& frame) : device_id(frame.low), serial_no(frame.high) { id = frame.id; }
 
-	Frame generate_frame();
+	Frame generate_frame() const;
 
 	uint32_t device_id;
 	uint32_t serial_no;
@@ -85,7 +86,7 @@ public:
 	BMS_SOC(uint32_t pow_cons, uint32_t per_SOC) : power_consumed(pow_cons), percent_SOC(per_SOC) { id = BMS_SOC_ID; }
 	BMS_SOC(const Frame& frame) : power_consumed(frame.lowf), percent_SOC(frame.highf) { id = frame.id; }
 
-	Frame generate_frame();
+	Frame generate_frame() const;
 
 	float power_consumed;
 	float percent_SOC;
@@ -101,7 +102,7 @@ public:
 		{ id = BMS_BAL_SOC_ID; }
 	BMS_BalanceSOC(const Frame& frame) : power_supplied(frame.low), SOC_mismatch(frame.high) { id = frame.id; }
 
-	Frame generate_frame();
+	Frame generate_frame() const;
 
 	float power_supplied;
 	float SOC_mismatch;
@@ -123,7 +124,7 @@ public:
 	precharge_status = 0x0000 | (frame.data[1] << 16) | (frame.data[2] << 12) | (frame.data[3] << 8) | (frame.data[4] << 4) | frame.data[5];
 }
 
-	Frame generate_frame();
+	Frame generate_frame() const;
 
 	uint8_t driver_status;
 	uint64_t precharge_status;
@@ -139,7 +140,7 @@ public:
 	BMS_VoltageCurrent(uint32_t v, uint32_t c) : voltage(v), current(c) { id = BMS_VOLT_CURR_ID; }
 	BMS_VoltageCurrent(const Frame& frame) : voltage(frame.low), current(frame.high) { id = frame.id; }
 
-	Frame generate_frame();
+	Frame generate_frame() const;
 
 	uint32_t voltage;
 	uint32_t current;
@@ -157,7 +158,7 @@ public:
 		flags(frame.data[4]), no_cmus(frame.data[5]), firmware_build(frame.s3)
 		{ id = frame.id; }
 
-	Frame generate_frame();
+	Frame generate_frame() const;
 
 	uint16_t voltage_rising;
 	uint16_t voltage_falling;
@@ -179,7 +180,7 @@ public:
 		fan_consumption(frame.s2), cmu_consumption(frame.s3)
 		{ id = frame.id; }
 
-	Frame generate_frame();
+	Frame generate_frame() const;
 
 	uint16_t fan0_speed;
 	uint16_t fan1_speed;
@@ -202,7 +203,7 @@ public:
 	MC_Heartbeat(uint32_t t_id, uint32_t s_no) : trituim_id(t_id), serial_no(s_no) { id = MC_HEARTBEAT_ID; }
 	MC_Heartbeat(const Frame& frame) : trituim_id(frame.low), serial_no(frame.high) { id = frame.id; }
 
-	Frame generate_frame();
+	Frame generate_frame() const;
 
 	uint32_t trituim_id; // is actually a char[8]
 	uint32_t serial_no;
@@ -219,7 +220,7 @@ public:
 	MC_Status(const Frame& frame) : active_motor(frame.s1), err_flags(frame.s2), limit_flags(frame.s3)
 		{ id = frame.id; }
 
-	Frame generate_frame();
+	Frame generate_frame() const;
 
 	uint16_t active_motor;
 	uint16_t err_flags;
@@ -234,7 +235,7 @@ public:
 	MC_BusStatus(float bc, float bv) : bus_current(bc), bus_voltage(bv) { id = MC_BUS_STATUS_ID; }
 	MC_BusStatus(const Frame& frame) : bus_current(frame.lowf), bus_voltage(frame.highf) { id = frame.id; }
 
-	Frame generate_frame();
+	Frame generate_frame() const;
 
 	float bus_current;
 	float bus_voltage;
@@ -248,7 +249,7 @@ public:
 	MC_Velocity(float car_v, float motor_v) : car_velocity(car_v), motor_velocity(motor_v) { id = MC_VELOCITY_ID; }
 	MC_Velocity(const Frame& frame) : car_velocity(frame.lowf), motor_velocity(frame.highf) { id = frame.id; }
 
-	Frame generate_frame();
+	Frame generate_frame() const;
 
 	float car_velocity;
 	float motor_velocity;
@@ -262,7 +263,7 @@ public:
 	MC_PhaseCurrent(float a, float b) : phase_a(a), phase_b(b) { id = MC_PHASE_ID; }
 	MC_PhaseCurrent(const Frame& frame) : phase_a(frame.lowf), phase_b(frame.highf) { id = frame.id; }
 
-	Frame generate_frame();
+	Frame generate_frame() const;
 
 	float phase_a;
 	float phase_b;
@@ -273,7 +274,7 @@ public:
 	MC_FanSpeed(float rpm, float v) : speed(rpm), drive(v) {id = MC_FANSPEED_ID; }
 	MC_FanSpeed(const Frame& frame) : speed(frame.lowf), drive(frame.highf) { id = frame.id; }
 
-	Frame generate_frame();
+	Frame generate_frame() const;
 
 	float speed;
 	float drive;
@@ -287,7 +288,7 @@ public:
 	DC_Heartbeat(uint32_t d_id, uint32_t s_no) : dc_id (d_id), serial_no (s_no) { id = DC_HEARTBEAT_ID; }
 	DC_Heartbeat(Frame& frame) : dc_id(frame.low), serial_no(frame.high) { id = frame.id; }
 
-	Frame generate_frame();
+	Frame generate_frame() const;
 
 	uint32_t dc_id;
 	uint32_t serial_no;
@@ -301,7 +302,7 @@ public:
 	DC_Drive(float v, float c) : velocity(v), current(c) { id = DC_DRIVE_ID; }
 	DC_Drive(const Frame& frame) : velocity(frame.lowf), current(frame.highf) { id = frame.id; }
 
-	Frame generate_frame();
+	Frame generate_frame() const;
 
 	float velocity;
 	float current;
@@ -315,7 +316,7 @@ public:
 	DC_Power(float bc) : bus_current(bc) { id = DC_POWER_ID; }
 	DC_Power(const Frame& frame) : bus_current(frame.lowf) { id = frame.id; }
 
-	Frame generate_frame();
+	Frame generate_frame() const;
 
 	float bus_current;
 };
@@ -328,7 +329,7 @@ public:
 	DC_Reset() { id = DC_RESET_ID; }
 	DC_Reset(const Frame& frame) { id = frame.id; }
 
-	Frame generate_frame();
+	Frame generate_frame() const;
 };
 
 /*
@@ -341,7 +342,7 @@ public:
 
 	bool is_run;
 
-        Frame generate_frame();
+        Frame generate_frame() const;
 };
 
 /*
@@ -355,6 +356,6 @@ public:
 	byte velocity; 
 	// Placeholder for steering wheel packet. Will be filled out later.
 
-        Frame generate_frame();
+        Frame generate_frame() const;
 };
 #endif

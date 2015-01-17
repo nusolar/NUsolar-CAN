@@ -14,28 +14,28 @@ errptr(0), INT_pin(INT_p), controller(CS_pin, INT_p), bus_speed(baud), bus_freq(
  */
 void CAN_ISR()
 {
-  mainCAN->receiveCAN();
+  main_CAN->Fetch();
 }
 // Make sure to initialize the mainCAN pointer to 0 here.
-CAN_IO* mainCAN = 0;
+CAN_IO* main_CAN = 0;
 
 /*
  * Setup function for CAN_IO. Arguments are a FilterInfo struct and a pointer to a place to raise error flags.
  */
-void CAN_IO::setup(const CANFilterOpt& filters, uint16_t* errorflags) {
+void CAN_IO::Setup(const CANFilterOpt& filters, uint16_t* errorflags) {
 	// SPI setup
 	SPI.setClockDivider(10);
 	SPI.setDataMode(SPI_MODE0);
 	SPI.setBitOrder(MSBFIRST);
 	SPI.begin();
 
-        // Set as main can
-        mainCAN = this;
-        
-        attachInterrupt(INT_pin,CAN_ISR,LOW);
-        
-        // Attach error flag pointer
-        errptr = errorflags;
+	// Set as main can
+	main_CAN = this;
+	
+	attachInterrupt(INT_pin,CAN_ISR,LOW);
+	
+	// Attach error flag pointer
+	errptr = errorflags;
 
 	// init the controller
 	int baudRate = controller.Init(bus_speed, bus_freq);
@@ -63,10 +63,11 @@ void CAN_IO::setup(const CANFilterOpt& filters, uint16_t* errorflags) {
 
 	// return controller to normal mode
 	if (!controller.Mode(MODE_NORMAL)) { // error
+		*errptr |= CANERR_SETUP_MODEFAIL;
 	}
 }
 
-void CAN_IO::receiveCAN() {
+void CAN_IO::Fetch() {
 	// read status of CANINTF register
 	byte interrupt = controller.GetInterrupt();
 
@@ -115,8 +116,13 @@ void CAN_IO::receiveCAN() {
 	// clear interrupt
 	controller.ResetInterrupt(INTALL); // reset all interrupts
 }
-void CAN_IO::sendCAN(Layout& layout, uint8_t buffer) {
+
+void CAN_IO::Send(const Layout& layout, uint8_t buffer) {
 	controller.LoadBuffer(buffer, layout.generate_frame());
+	controller.SendBuffer(buffer);
+}
+void CAN_IO::Send(const Frame& frame, uint8_t buffer) {
+	controller.LoadBuffer(buffer, frame);
 	controller.SendBuffer(buffer);
 }
 

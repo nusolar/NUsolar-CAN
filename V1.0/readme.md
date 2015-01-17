@@ -27,7 +27,7 @@ Usage
 	setRB1(m1, f2, f3, f4, f5)
 to configure the masks and filters for the two receive buffers on the MCP2515.
 
-3. Call can.setup(filterOpts, errptr) to initialize the MCP2515.
+3. Call can.Setup(filterOpts, errptr) to initialize the MCP2515.
 	- filterOpts is the object you created in step 2.
 	- errptr is the address of a uint16_t where the library will store error flags.
 
@@ -36,15 +36,15 @@ NOTE: Because of the way interrupt service routines work, only one CAN object ca
 4. To send a packet, create a layout object:
 	DC_Drive drivePacket(velocity, current);
 Call
-	can.sendPacket(drivePacket,TXB0);
+	can.Send(drivePacket,TXB0);
 where TXB0 specifies one of the three transmission buffers to send the message out over (alternate buffers to send messages in quicker succession).
 
 NOTE: Currently, the library does not wait for a buffer to become open before attempting to load it. If the buffer you are trying to send from is still waiting to send, your packet will not be sent.
 
 5. Messages are automatically received by the Arduino and loaded into an internal frame FIFO buffer. To get the messages on this buffer, use
-	can.messageExists();
+	can.MessageExists();
 to check whether it is full, and then
-	Frame& f = can.messageDequeue();
+	Frame& f = can.Read();
 to get a reference to the first frame in the queue.
 
 You can find the packet type of this frame using f.id.
@@ -69,22 +69,22 @@ void setup()
 {
 	CANFilterOpt filter;
 	filter.setRB0(MASK_Sxxx,DC_DRIVE_ID,0);
-filter.setRB1(MASK_Sxxx,BMS_SOC_ID,0,0,0);
+	filter.setRB1(MASK_Sxxx,BMS_SOC_ID,0,0,0);
 
-	can.setup(filter, &errors);
+	can.Setup(filter, &errors);
 }
 
 void loop()
 {
 	// Send a message
 	DC_Drive packet(100.0, 0.5);
-	can.sendCAN(packet,TXB0);
+	can.Send(packet,TXB0);
 	delay(10); //Short delay to allow message to be sent
 
 	//Receive a message
-	if (can.messageExists())
+	if (can.MessageExists())
 	{
-		Frame& f = can.messageDequeue();
+		Frame& f = can.Read();
 		
 		switch (f.id)
 		{

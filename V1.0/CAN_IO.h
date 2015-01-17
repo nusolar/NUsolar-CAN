@@ -81,7 +81,7 @@ struct CANFilterOpt {
  */
 class CAN_IO {
 public:
-	RX_Queue<8> RXbuffer;
+	RX_Queue<16> RXbuffer;
 
 	/*
 	 * Constructor. Creates a MCP2515 object using

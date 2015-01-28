@@ -40,6 +40,9 @@
 #define DC_SWITCHPOS_ID		0x505
 #define DC_STEERING_ID		0x510
 
+ // steering wheel TX
+ #define SW_HEARTBEAT_ID	0x700
+
 /*
  * Some macros for conversion
  */

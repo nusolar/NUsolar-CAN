@@ -40,8 +40,11 @@
 #define DC_SWITCHPOS_ID		0x505
 #define DC_STEERING_ID		0x510
 
- // steering wheel TX
- #define SW_HEARTBEAT_ID	0x700
+// steering wheel TX
+#define SW_HEARTBEAT_ID		0x700
+#define SW_DATA_ID 			0x701
+
+// steering wheel data masks
 
 /*
  * Some macros for conversion

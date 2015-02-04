@@ -44,7 +44,7 @@ Frame BMS_BalanceSOC::generate_frame() const {
 	return f;
 }
 
-//BMS_PrechargeStatus::BMS_PrechargeStatus(const Frame& frame) 
+//BMS_PrechargeStatus::BMS_PrechargeStatus(const Frame& frame)
 
 Frame BMS_PrechargeStatus::generate_frame() const {
 	Frame f;
@@ -181,4 +181,11 @@ Frame DC_Steering::generate_frame() const {
 	f.data[0] = velocity;
 	set_header(f);
 	return f;
+}
+
+Frame SW_Data::generate_frame() const {
+    Frame f;
+    f.data[0] = flags;
+    set_header(f);
+    return f;
 }

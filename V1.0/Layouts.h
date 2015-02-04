@@ -364,4 +364,17 @@ public:
 
         Frame generate_frame() const;
 };
+
+/* 
+ * Steering wheel data packet, sent to the driver controls.
+ */
+class SW_Data : public Layout {
+public:
+	SW_Data(byte data) : flags(data) { id = SW_DATA_ID; }
+	SW_Data(const Frame& frame) : flags(frame.data[0]) { id = frame.id; }
+
+	byte flags; 
+
+	Frame generate_frame() const;
+};
 #endif

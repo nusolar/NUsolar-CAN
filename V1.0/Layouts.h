@@ -370,11 +370,45 @@ public:
  */
 class SW_Data : public Layout {
 public:
-	SW_Data(byte data) : flags(data) { id = SW_DATA_ID; }
-	SW_Data(const Frame& frame) : flags(frame.data[0]) { id = frame.id; }
+	SW_Data(byte data) : flags(data) { 
+		id = SW_DATA_ID; 
+		populate_fields();
+	}
+	SW_Data(byte _gear, bool _headlights, bool _hazards, bool _cruisectrl, bool _horn, bool _lts, bool _rts) { 
+		id = SW_DATA_ID;
+		byte = 0;
+		byte |= _gear;
+		byte |= _headlights << 2;
+		byte |= _hazards << 3;
+		byte |= _cruisectrl << 4;
+		byte |= _horn << 5;
+		byte |= _lts << 6;
+		byte |= _rts << 7;
 
-	byte flags; 
+		populate_fields();
+	}
+	SW_Data(const Frame& frame) : flags(frame.data[0]) { 
+		id = frame.id; 
+		populate_fields();
+	}
+
+	byte flags;
+
+	//data members
+	bool headlights, hazards, lts, rts, cruisectrl, horn;
+	byte gear;
 
 	Frame generate_frame() const;
+
+private:
+	void populate_fields() { 
+		gear 		= (byte)      & 3u; //Get first two bits. 0 = off, 1 = fwd, 2 = rev, 4 = undefined
+		headlights 	= (byte >> 2) & 1u;
+		hazards 	= (byte >> 3) & 1u;
+		cruisectrl  = (byte >> 4) & 1u;
+		horn 		= (byte >> 5) & 1u;
+		lts 	 	= (byte >> 6) & 1u;
+		rts 	 	= (byte >> 7) & 1u;
+	}
 };
 #endif

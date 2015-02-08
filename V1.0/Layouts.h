@@ -376,14 +376,14 @@ public:
 	}
 	SW_Data(byte _gear, bool _headlights, bool _hazards, bool _cruisectrl, bool _horn, bool _lts, bool _rts) { 
 		id = SW_DATA_ID;
-		byte = 0;
-		byte |= _gear;
-		byte |= _headlights << 2;
-		byte |= _hazards << 3;
-		byte |= _cruisectrl << 4;
-		byte |= _horn << 5;
-		byte |= _lts << 6;
-		byte |= _rts << 7;
+		flags = 0;
+		flags |= _gear;
+		flags |= _headlights << 2;
+		flags |= _hazards << 3;
+		flags |= _cruisectrl << 4;
+		flags |= _horn << 5;
+		flags |= _lts << 6;
+		flags |= _rts << 7;
 
 		populate_fields();
 	}
@@ -402,13 +402,13 @@ public:
 
 private:
 	void populate_fields() { 
-		gear 		= (byte)      & 3u; //Get first two bits. 0 = off, 1 = fwd, 2 = rev, 4 = undefined
-		headlights 	= (byte >> 2) & 1u;
-		hazards 	= (byte >> 3) & 1u;
-		cruisectrl  = (byte >> 4) & 1u;
-		horn 		= (byte >> 5) & 1u;
-		lts 	 	= (byte >> 6) & 1u;
-		rts 	 	= (byte >> 7) & 1u;
+		gear 		= (flags)      & 3u; //Get first two bits. 0 = off, 1 = fwd, 2 = rev, 4 = undefined
+		headlights 	= (flags >> 2) & 1u;
+		hazards 	= (flags >> 3) & 1u;
+		cruisectrl  = (flags >> 4) & 1u;
+		horn 		= (flags >> 5) & 1u;
+		lts 	 	= (flags >> 6) & 1u;
+		rts 	 	= (flags >> 7) & 1u;
 	}
 };
 #endif

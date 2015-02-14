@@ -24,14 +24,15 @@ CAN_IO* main_CAN = 0;
  */
 void CAN_IO::Setup(const CANFilterOpt& filters, uint16_t* errorflags) {
 	// SPI setup
-	SPI.setClockDivider(10);
-	SPI.setDataMode(SPI_MODE0);
+	//SPI.setClockDivider(10/*SPI_CLOCK_DIV4*/);
+	SPI.setDataMode(SPI_MODE1);
 	SPI.setBitOrder(MSBFIRST);
 	SPI.begin();
 
 	// Set as main can
 	main_CAN = this;
-	
+
+	pinMode(INT_pin,INPUT_PULLUP);	
 	attachInterrupt(INT_pin,CAN_ISR,LOW);
 	
 	// Attach error flag pointer
@@ -41,11 +42,13 @@ void CAN_IO::Setup(const CANFilterOpt& filters, uint16_t* errorflags) {
 	int baudRate = controller.Init(bus_speed, bus_freq);
 	if (baudRate <= 0) { // error
 		*errptr |= CANERR_SETUP_BAUDFAIL;
+		Serial.println("Baud ERROR");
 	}
 
 	// return controller to config mode
-	if (!controller.Mode(MODE_CONFIG)) { // error
+	if (!controller.Mode(MODE_LOOPBACK)) { // error
 		*errptr |= CANERR_SETUP_MODEFAIL;
+		Serial.println("Mode ERROR");
 	}
 
 	// disable interrupts we don't care about

@@ -176,9 +176,13 @@ Frame DC_SwitchPos::generate_frame() const {
 	return f;
 }
 
-Frame DC_Steering::generate_frame() const {
+Frame DC_Info::generate_frame() const {
 	Frame f;
-	f.data[0] = velocity;
+	f.s0 = (uint16_t) (accel_ratio * 100); // convert to integer 0-100 so only two bytes required
+	f.s1 = (uint16_t) (regen_ratio * 100);
+	f.s2 = can_error_flags;
+	f.data[6] = dc_error_flags;
+	f.data[7] = brake_engaged;
 	set_header(f);
 	return f;
 }

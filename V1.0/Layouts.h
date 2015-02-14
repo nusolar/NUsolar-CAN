@@ -38,7 +38,7 @@
 #define DC_POWER_ID			0x502
 #define DC_RESET_ID			0x503
 #define DC_SWITCHPOS_ID		0x505
-#define DC_STEERING_ID		0x510
+#define DC_INFO_ID			0x510
 
 // steering wheel TX
 #define SW_HEARTBEAT_ID		0x700
@@ -352,17 +352,25 @@ public:
 };
 
 /*
- * Driver controls steering wheel display data packet
+ * Driver controls information packet
  */
-class DC_Steering : public Layout {
+class DC_Info : public Layout {
 public:
-	DC_Steering(byte vel) : velocity(vel) { id = DC_STEERING_ID; }
-	DC_Steering(const Frame& frame) : velocity(frame.data[0]) { id = frame.id; }
+	DC_Info(float accel, float regen, bool brake, uint16_t can_errors, byte dc_errors) : 
+		accel_ratio(accel), regen_ratio(regen), brake_engaged(brake), 
+		can_error_flags(can_errors), dc_error_flags (dc_errors) 
+		{ id = DC_INFO_ID; }
+	DC_Info(const Frame& frame) : 
+		accel_ratio(frame.s0/100.0f), regen_ratio(frame.s1/100.0f), can_error_flags(frame.s2),
+		dc_error_flags(frame.data[6]), brake_engaged(frame.data[7])
+		{ id = frame.id; }
 
-	byte velocity; 
-	// Placeholder for steering wheel packet. Will be filled out later.
+	float accel_ratio, regen_ratio; // these will be stored as integers 0-100 in frame 
+	uint16_t can_error_flags;
+	byte dc_error_flags;
+	bool brake_engaged;
 
-        Frame generate_frame() const;
+	Frame generate_frame() const;
 };
 
 /* 

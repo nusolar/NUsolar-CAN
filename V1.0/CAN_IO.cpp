@@ -24,8 +24,8 @@ CAN_IO* main_CAN = 0;
  */
 void CAN_IO::Setup(const CANFilterOpt& filters, uint16_t* errorflags) {
 	// SPI setup
-	//SPI.setClockDivider(10/*SPI_CLOCK_DIV4*/);
-	SPI.setDataMode(SPI_MODE1);
+	//SPI.setClockDivider(10);
+	SPI.setDataMode(SPI_MODE0);
 	SPI.setBitOrder(MSBFIRST);
 	SPI.begin();
 
@@ -46,7 +46,7 @@ void CAN_IO::Setup(const CANFilterOpt& filters, uint16_t* errorflags) {
 	}
 
 	// return controller to config mode
-	if (!controller.Mode(MODE_LOOPBACK)) { // error
+	if (!controller.Mode(MODE_CONFIG)) { // error
 		*errptr |= CANERR_SETUP_MODEFAIL;
 		Serial.println("Mode ERROR");
 	}

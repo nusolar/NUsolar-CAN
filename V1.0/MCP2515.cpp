@@ -367,6 +367,6 @@ bool MCP2515::Mode(byte mode) {
   BitModify(CANCTRL, 0b11100000, mode);
   delay(10); // allow for any transmissions to complete
   byte data = Read(CANSTAT); // check mode has been set
-Serial.print(data,BIN);
+Serial.println(data,BIN);
   return ((data & mode)==mode);
 }

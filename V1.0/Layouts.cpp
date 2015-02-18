@@ -178,11 +178,11 @@ Frame DC_SwitchPos::generate_frame() const {
 
 Frame DC_Info::generate_frame() const {
 	Frame f;
-	f.s0 = (uint16_t) (accel_ratio * 100); // convert to integer 0-100 so only two bytes required
-	f.s1 = (uint16_t) (regen_ratio * 100);
-	f.s2 = can_error_flags;
-	f.data[6] = dc_error_flags;
-	f.data[7] = brake_engaged;
+	f.data[0] = (uint8_t) (accel_ratio * 100); // convert to integer 0-100 so only two bytes required
+	f.data[1] = (uint8_t) (regen_ratio * 100);
+	f.s1 = can_error_flags;
+	f.data[4] = dc_error_flags;
+	f.data[5] = brake_engaged;
 	set_header(f);
 	return f;
 }

@@ -361,8 +361,8 @@ public:
 		can_error_flags(can_errors), dc_error_flags (dc_errors) 
 		{ id = DC_INFO_ID; }
 	DC_Info(const Frame& frame) : 
-		accel_ratio(frame.s0/100.0f), regen_ratio(frame.s1/100.0f), can_error_flags(frame.s2),
-		dc_error_flags(frame.data[6]), brake_engaged(frame.data[7])
+		accel_ratio(frame.data[0]/100.0f), regen_ratio(frame.data[1]/100.0f), can_error_flags(frame.s1),
+		dc_error_flags(frame.data[4]), brake_engaged(frame.data[5])
 		{ id = frame.id; }
 
 	float accel_ratio, regen_ratio; // these will be stored as integers 0-100 in frame 

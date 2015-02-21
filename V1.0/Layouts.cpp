@@ -12,13 +12,14 @@ Frame Layout::generate_frame() const {
 
 
 // Helper function. We should really use a Macro or __inline__ function here.
-inline void Layout::set_header(Frame& f) const {
+inline void Layout::set_header(Frame& f, byte size = 8) const {
 	f.id = id;
 	f.dlc = 8; // send 8 bytes
 	f.ide = 0; // make it a standard frame
 	f.rtr = 0; // make it a data frame
 	f.srr = 0;
 }
+
 
 Frame BMS_Heartbeat::generate_frame() const {
 	Frame f;
@@ -190,6 +191,6 @@ Frame DC_Info::generate_frame() const {
 Frame SW_Data::generate_frame() const {
     Frame f;
     f.data[0] = flags;
-    set_header(f);
+    set_header(f,1);
     return f;
 }

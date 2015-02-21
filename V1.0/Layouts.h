@@ -66,7 +66,7 @@ protected:
 	/*
 	 * Fill out the header info for a frame.
 	 */
-	 inline void set_header(Frame& f) const;
+	 inline void set_header(Frame& f, byte size) const;
 };
 
 

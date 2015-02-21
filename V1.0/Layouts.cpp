@@ -14,7 +14,7 @@ Frame Layout::generate_frame() const {
 // Helper function. We should really use a Macro or __inline__ function here.
 inline void Layout::set_header(Frame& f, byte size = 8) const {
 	f.id = id;
-	f.dlc = 8; // send 8 bytes
+	f.dlc = size; // send 8 bytes
 	f.ide = 0; // make it a standard frame
 	f.rtr = 0; // make it a data frame
 	f.srr = 0;
@@ -184,7 +184,7 @@ Frame DC_Info::generate_frame() const {
 	f.s1 = can_error_flags;
 	f.data[4] = dc_error_flags;
 	f.data[5] = brake_engaged;
-	set_header(f);
+	set_header(f,6);
 	return f;
 }
 

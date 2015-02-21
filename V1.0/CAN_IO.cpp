@@ -15,6 +15,7 @@ errptr(0), INT_pin(INT_p), controller(CS_pin, INT_p), bus_speed(baud), bus_freq(
 void CAN_ISR()
 {
   main_CAN->Fetch();
+Serial.print("h");
 }
 // Make sure to initialize the mainCAN pointer to 0 here.
 CAN_IO* main_CAN = 0;
@@ -73,6 +74,8 @@ void CAN_IO::Setup(const CANFilterOpt& filters, uint16_t* errorflags) {
 void CAN_IO::Fetch() {
 	// read status of CANINTF register
 	byte interrupt = controller.GetInterrupt();
+
+	*errptr = 0x00;
 
 	if (interrupt & MERRF) { // message error
 		*errptr |= CANERR_MESSAGE_ERROR;

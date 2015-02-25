@@ -94,7 +94,7 @@ public:
 	 * including read masks/filters. All types of interrupt
 	 * are enabled.
 	 */
-	void Setup(const CANFilterOpt& filters, uint16_t* errorflags);
+	void Setup(const CANFilterOpt& filters, uint16_t* errorflags, byte interrupts);
 	
 	/* Reconfigure the interrupts that are enabled on the MCP2515 */
 	bool ConfigureInterrupts(byte interrupts);

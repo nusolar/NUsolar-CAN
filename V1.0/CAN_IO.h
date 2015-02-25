@@ -95,6 +95,9 @@ public:
 	 * are enabled.
 	 */
 	void Setup(const CANFilterOpt& filters, uint16_t* errorflags);
+	
+	/* Reconfigure the interrupts that are enabled on the MCP2515 */
+	bool ConfigureInterrupts(byte interrupts);
 
 	/*
 	 * Invoked when the interrupt pin is pulled low. Handles
@@ -137,7 +140,7 @@ private:
 	/*
 	 * Pointer to a memory space in which we will store errors
 	 */
-	uint16_t* errptr;
+	public: uint16_t* errptr;
 
 	/*
 	 * Helper function for configuring the RX masks/filters.

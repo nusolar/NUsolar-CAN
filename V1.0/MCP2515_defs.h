@@ -79,6 +79,16 @@ typedef struct
 #define MERRF                  0x80
 #define INTALL                 0xFF
 
+// CANINTE
+#define RX0IE                  0x01
+#define RX1IE                  0x02
+#define TX0IE                  0x04
+#define TX1IE                  0x08
+#define TX2IE                  0x10
+#define ERRIE                  0x20
+#define WAKIE                  0x40
+#define MERRE                  0x80
+
 // Configuration Registers
 #define CANSTAT         0x0E
 #define CANCTRL         0x0F

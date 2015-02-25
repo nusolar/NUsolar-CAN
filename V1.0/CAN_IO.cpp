@@ -15,7 +15,6 @@ errptr(0), INT_pin(INT_p), controller(CS_pin, INT_p), bus_speed(baud), bus_freq(
 void CAN_ISR()
 {
   main_CAN->Fetch();
-Serial.print("h");
 }
 // Make sure to initialize the mainCAN pointer to 0 here.
 CAN_IO* main_CAN = 0;
@@ -23,7 +22,7 @@ CAN_IO* main_CAN = 0;
 /*
  * Setup function for CAN_IO. Arguments are a FilterInfo struct and a pointer to a place to raise error flags.
  */
-void CAN_IO::Setup(const CANFilterOpt& filters, uint16_t* errorflags) {
+void CAN_IO::Setup(const CANFilterOpt& filters, uint16_t* errorflags, byte interrupts = MERRE | RX0IE | RX1IE | ERRIE ) {
 	// SPI setup
 	//SPI.setClockDivider(10);
 	SPI.setDataMode(SPI_MODE0);
@@ -53,7 +52,7 @@ void CAN_IO::Setup(const CANFilterOpt& filters, uint16_t* errorflags) {
 	}
 
 	// disable interrupts we don't care about
-	controller.Write(CANINTE, 0xA3); // 10100011
+	controller.Write(CANINTE, interrupts);
 
 	// config RX masks/filters
 	write_rx_filter(RXM0SIDH, filters.RXM0);
@@ -139,6 +138,19 @@ void CAN_IO::Send(const Frame& frame, uint8_t buffer) {
 void CAN_IO::write_rx_filter(uint8_t address, uint16_t data) {
 	uint8_t bytes[2] = { first_byte(data), second_byte(data) };
 	controller.Write(address, bytes, 2);
+}
+
+bool CAN_IO::ConfigureInterrupts(byte interrupts)
+{
+	if (controller.Mode(MODE_CONFIG))
+	{
+		controller.Write(CANINTE,interrupts);
+		if (controller.Mode(MODE_NORMAL))
+			return true;
+		else return false;
+	}
+	else return false;
+
 }
 
 #undef first_byte

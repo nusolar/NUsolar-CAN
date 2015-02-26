@@ -22,7 +22,7 @@ CAN_IO* main_CAN = 0;
 /*
  * Setup function for CAN_IO. Arguments are a FilterInfo struct and a pointer to a place to raise error flags.
  */
-void CAN_IO::Setup(const CANFilterOpt& filters, uint16_t* errorflags, byte interrupts = MERRE | RX0IE | RX1IE | ERRIE ) {
+void CAN_IO::Setup(const CANFilterOpt& filters, uint16_t* errorflags, byte interrupts) {
 	// SPI setup
 	//SPI.setClockDivider(10);
 	SPI.setDataMode(SPI_MODE0);

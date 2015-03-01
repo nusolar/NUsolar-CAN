@@ -62,7 +62,7 @@ Frame BMS_PrechargeStatus::generate_frame() const {
 Frame BMS_VoltageCurrent::generate_frame() const {
 	Frame f;
 	f.low = voltage;
-	f.high = current;
+	f.high = (uint32_t)current; // Need to cast this as an unsigned int since our frame doesn't have signed members.
 	set_header(f);
 	return f;
 }
@@ -193,4 +193,12 @@ Frame SW_Data::generate_frame() const {
     f.data[0] = flags;
     set_header(f,1);
     return f;
+}
+
+Frame BMShub_VoltageCurrent::generate_frame() const {
+	Frame f;
+	f.low = voltage;
+	f.high = (uint32_t)current; // Need to cast this as an unsigned int since our frame doesn't have signed members.
+	set_header(f);
+	return f;
 }

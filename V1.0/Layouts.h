@@ -24,6 +24,9 @@
 #define BMS_FAN_STATUS_ID	0x6FC
 #define BMS_STATUS_EXT_ID	0x6FD
 
+//BMShub TX
+#define BMSHUB_VOLT_CURR_ID 0x6FE // Reserved by Tritium, but we'll use it now.
+
 // motor controller TX
 #define MC_HEARTBEAT_ID		0x400
 #define MC_STATUS_ID 		0x401
@@ -43,6 +46,8 @@
 // steering wheel TX
 #define SW_HEARTBEAT_ID		0x700
 #define SW_DATA_ID 			0x701
+
+
 
 // steering wheel data masks
 
@@ -143,13 +148,13 @@ public:
  */
 class BMS_VoltageCurrent : public Layout {
 public:
-	BMS_VoltageCurrent(uint32_t v, uint32_t c) : voltage(v), current(c) { id = BMS_VOLT_CURR_ID; }
-	BMS_VoltageCurrent(const Frame& frame) : voltage(frame.low), current(frame.high) { id = frame.id; }
+	BMS_VoltageCurrent(uint32_t v, int32_t c) : voltage(v), current(c) { id = BMS_VOLT_CURR_ID; }
+	BMS_VoltageCurrent(const Frame& frame) : voltage(frame.low), current(int32_t(frame.high)) { id = frame.id; }
 
 	Frame generate_frame() const;
 
 	uint32_t voltage;
-	uint32_t current;
+	int32_t current;
 };
 
 /*
@@ -418,5 +423,19 @@ private:
 		lts 	 	= (flags >> 6) & 1u;
 		rts 	 	= (flags >> 7) & 1u;
 	}
+};
+
+/*
+ * BMShub voltage and current packet.
+ */
+class BMShub_VoltageCurrent : public Layout {
+public:
+	BMShub_VoltageCurrent(uint32_t v, int32_t c) : voltage(v), current(c) { id = BMShub_VOLT_CURR_ID; }
+	BMShub_VoltageCurrent(const Frame& frame) : voltage(frame.low), current(int32_t(frame.high)) { id = frame.id; }
+
+	Frame generate_frame() const;
+
+	uint32_t voltage;
+	int32_t current;
 };
 #endif

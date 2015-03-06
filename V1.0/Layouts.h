@@ -430,7 +430,7 @@ private:
  */
 class BMShub_VoltageCurrent : public Layout {
 public:
-	BMShub_VoltageCurrent(uint32_t v, int32_t c) : voltage(v), current(c) { id = BMShub_VOLT_CURR_ID; }
+	BMShub_VoltageCurrent(uint32_t v, int32_t c) : voltage(v), current(c) { id = BMSHUB_VOLT_CURR_ID; }
 	BMShub_VoltageCurrent(const Frame& frame) : voltage(frame.low), current(int32_t(frame.high)) { id = frame.id; }
 
 	Frame generate_frame() const;

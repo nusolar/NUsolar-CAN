@@ -62,7 +62,7 @@ Frame BMS_PrechargeStatus::generate_frame() const {
 Frame BMS_VoltageCurrent::generate_frame() const {
 	Frame f;
 	f.low = voltage;
-	f.high = current;
+	f.high = uint_32(current); //cast a long as an unsigned integer
 	set_header(f);
 	return f;
 }

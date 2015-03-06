@@ -31,6 +31,7 @@
 #define MC_VELOCITY_ID		0x403
 #define MC_PHASE_ID			0x404
 #define MC_FANSPEED_ID		0x410
+#define MC_ODOAMP_ID			0x414
 
 // driver controls TX
 #define DC_HEARTBEAT_ID		0x500
@@ -89,7 +90,7 @@ public:
  */
 class BMS_SOC : public Layout {
 public:
-	BMS_SOC(uint32_t pow_cons, uint32_t per_SOC) : power_consumed(pow_cons), percent_SOC(per_SOC) { id = BMS_SOC_ID; }
+	BMS_SOC(float pow_cons, float per_SOC) : power_consumed(pow_cons), percent_SOC(per_SOC) { id = BMS_SOC_ID; }
 	BMS_SOC(const Frame& frame) : power_consumed(frame.lowf), percent_SOC(frame.highf) { id = frame.id; }
 
 	Frame generate_frame() const;
@@ -103,10 +104,10 @@ public:
  */
 class BMS_BalanceSOC : public Layout {
 public:
-	BMS_BalanceSOC(uint32_t pow_supp, uint32_t SOC_mis) : 
+	BMS_BalanceSOC(float pow_supp, float SOC_mis) : 
 		power_supplied(pow_supp), SOC_mismatch(SOC_mis) 
 		{ id = BMS_BAL_SOC_ID; }
-	BMS_BalanceSOC(const Frame& frame) : power_supplied(frame.low), SOC_mismatch(frame.high) { id = frame.id; }
+	BMS_BalanceSOC(const Frame& frame) : power_supplied(frame.lowf), SOC_mismatch(frame.highf) { id = frame.id; }
 
 	Frame generate_frame() const;
 
@@ -143,13 +144,13 @@ public:
  */
 class BMS_VoltageCurrent : public Layout {
 public:
-	BMS_VoltageCurrent(uint32_t v, uint32_t c) : voltage(v), current(c) { id = BMS_VOLT_CURR_ID; }
-	BMS_VoltageCurrent(const Frame& frame) : voltage(frame.low), current(frame.high) { id = frame.id; }
+	BMS_VoltageCurrent(uint32_t v, long c) : voltage(v), current(c) { id = BMS_VOLT_CURR_ID; }
+	BMS_VoltageCurrent(const Frame& frame) : voltage(frame.low), current(long(frame.high)) { id = frame.id; }
 
 	Frame generate_frame() const;
 
 	uint32_t voltage;
-	uint32_t current;
+	long current;
 };
 
 /*
@@ -284,6 +285,17 @@ public:
 
 	float speed;
 	float drive;
+};
+
+class MC_OdoAmp : public Layout {
+public:
+	MC_OdoAmp(float Ah, float odom) : bus_amphours(Ah), odometer(odom) {id = MC_ODOAMP_ID; }
+	MC_OdoAmp(const Frame& frame) : bus_amphours(frame.lowf), odometer(frame.highf) { id = frame.id; }
+
+	Frame generate_frame() const;
+
+	float bus_amphours;
+	float odometer;
 };
 
 /*

@@ -29,20 +29,22 @@ struct CANFilterOpt {
 
 	CANFilterOpt() : RXM0(0), RXM1(0) {} // Initialize to no masking
 
-	void setRB0(uint16_t m0, uint16_t f0, uint16_t f1)
+	CANFilterOpt& setRB0(uint16_t m0, uint16_t f0, uint16_t f1)
 	{
 	  RXM0 = m0;
 	  RXF0 = f0;
 	  RXF1 = f1;
+	  return *(this); //Allow chaining
 	}
 	
-	void setRB1(uint16_t m1, uint16_t f2, uint16_t f3, uint16_t f4, uint16_t f5)
+	CANFilterOpt& setRB1(uint16_t m1, uint16_t f2, uint16_t f3, uint16_t f4, uint16_t f5)
 	{
 	  RXM1 = m1;
 	  RXF2 = f2;
 	  RXF3 = f3;
 	  RXF4 = f4;
 	  RXF5 = f5;
+	  return *(this); //Allow chaining
 	}
 };
 

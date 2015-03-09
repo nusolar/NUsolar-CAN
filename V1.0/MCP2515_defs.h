@@ -27,15 +27,22 @@ typedef struct
       union {
         // 8 bytes
         uint64_t value;
+        // 8 bytes (signed)
+        int64_t  value_s;
         // 4 bytes (float)
         struct {
-          float lowf;
-          float highf;
+          float low_f;
+          float high_f;
         };
         // 4 bytes (int)
         struct {
           uint32_t low;
           uint32_t high;
+        };
+        // 4 bytes (signed int)
+        struct {
+          signed long  low_s;
+          signed long  high_s;
         };
         // 2 bytes
         struct {
@@ -43,6 +50,13 @@ typedef struct
           uint16_t s1;
           uint16_t s2;
           uint16_t s3;
+        };
+        // 2 bytes (signed)
+        struct {
+          signed int i0;
+          signed int i1;
+          signed int i2;
+          signed int i3;
         };
         // 1 byte
         uint8_t data[8];

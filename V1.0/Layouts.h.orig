@@ -95,7 +95,11 @@ public:
 class BMS_SOC : public Layout {
 public:
 	BMS_SOC(uint32_t pow_cons, uint32_t per_SOC) : power_consumed(pow_cons), percent_SOC(per_SOC) { id = BMS_SOC_ID; }
+<<<<<<< Updated upstream
+	BMS_SOC(const Frame& frame) : power_consumed(frame.lowf), percent_SOC(frame.highf) { id = frame.id; }
+=======
 	BMS_SOC(const Frame& frame) : power_consumed(frame.low_f), percent_SOC(frame.high_f) { id = frame.id; }
+>>>>>>> Stashed changes
 
 	Frame generate_frame() const;
 
@@ -149,7 +153,11 @@ public:
 class BMS_VoltageCurrent : public Layout {
 public:
 	BMS_VoltageCurrent(uint32_t v, int32_t c) : voltage(v), current(c) { id = BMS_VOLT_CURR_ID; }
+<<<<<<< Updated upstream
+	BMS_VoltageCurrent(const Frame& frame) : voltage(frame.low), current(int32_t(frame.high)) { id = frame.id; }
+=======
 	BMS_VoltageCurrent(const Frame& frame) : voltage(frame.low), current(frame.high_s) { id = frame.id; }
+>>>>>>> Stashed changes
 
 	Frame generate_frame() const;
 
@@ -431,7 +439,11 @@ private:
 class BMShub_VoltageCurrent : public Layout {
 public:
 	BMShub_VoltageCurrent(uint32_t v, int32_t c) : voltage(v), current(c) { id = BMSHUB_VOLT_CURR_ID; }
+<<<<<<< Updated upstream
+	BMShub_VoltageCurrent(const Frame& frame) : voltage(frame.low), current(int32_t(frame.high)) { id = frame.id; }
+=======
 	BMShub_VoltageCurrent(const Frame& frame) : voltage(frame.low), current(frame.high_s) { id = frame.id; }
+>>>>>>> Stashed changes
 
 	Frame generate_frame() const;
 

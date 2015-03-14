@@ -112,7 +112,7 @@ public:
 	BMS_BalanceSOC(float pow_supp, float SOC_mis) : 
 		power_supplied(pow_supp), SOC_mismatch(SOC_mis) 
 		{ id = BMS_BAL_SOC_ID; }
-	BMS_BalanceSOC(const Frame& frame) : power_supplied(frame.lowf), SOC_mismatch(frame.highf) { id = frame.id; }
+	BMS_BalanceSOC(const Frame& frame) : power_supplied(frame.low_f), SOC_mismatch(frame.high_f) { id = frame.id; }
 
 	Frame generate_frame() const;
 
@@ -295,7 +295,7 @@ public:
 class MC_OdoAmp : public Layout {
 public:
 	MC_OdoAmp(float Ah, float odom) : bus_amphours(Ah), odometer(odom) {id = MC_ODOAMP_ID; }
-	MC_OdoAmp(const Frame& frame) : bus_amphours(frame.lowf), odometer(frame.highf) { id = frame.id; }
+	MC_OdoAmp(const Frame& frame) : bus_amphours(frame.low_f), odometer(frame.high_f) { id = frame.id; }
 
 	Frame generate_frame() const;
 

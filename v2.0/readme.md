@@ -1,8 +1,8 @@
-NUsolar MCP2515 CAN_IO Library (v1.0)
+NUsolar MCP2515 CAN_IO Library (v2.0)
 ==================================
 Author: 	Alexander Martin
 Date:		1/16/2015
-Version:	1.0
+Version:	2.0
 
 Goals
 -----
@@ -10,7 +10,7 @@ This library is intended to simplify CAN bus communication for Arduino MCUs in N
 
 Installation
 -----
-To use the library, simply install the files in <C:/NUsolar/sc7-can/v1.0/> and copy the two libinclude files into your arduino sketch folder. 
+To use the library, simply install the files in <C:/NUsolar/sc7-can/v2.0/> and copy the two libinclude files into your arduino sketch folder. 
 
 #include sc7-can-libinclude.h
 at the top of every code file which will use the CAN_IO library.
@@ -23,8 +23,8 @@ Usage
   CAN_IO can( CSpin, INTpin, baudrate (kbps), freq. Osc. (Mhz));
 
 2. Create a CANFilterOpt object and use the two functions
-	setRB0(m0, f0, f1)
-	setRB1(m1, f2, f3, f4, f5)
+	.setRB0(m0, f0, f1)
+	.setRB1(m1, f2, f3, f4, f5)
 to configure the masks and filters for the two receive buffers on the MCP2515.
 
 3. Call can.Setup(filterOpts, errptr) to initialize the MCP2515.
@@ -38,6 +38,8 @@ NOTE: Because of the way interrupt service routines work, only one CAN object ca
 Call
 	can.Send(drivePacket,TXB0);
 where TXB0 specifies one of the three transmission buffers to send the message out over (alternate buffers to send messages in quicker succession).
+You can also use an anonymous packet object:
+	can.Send(DC_Drive(velocity, current), TXB0);
 
 NOTE: Currently, the library does not wait for a buffer to become open before attempting to load it. If the buffer you are trying to send from is still waiting to send, your packet will not be sent.
 
@@ -77,8 +79,7 @@ void setup()
 void loop()
 {
 	// Send a message
-	DC_Drive packet(100.0, 0.5);
-	can.Send(packet,TXB0);
+	can.Send( DC_Drive(100.0, 0.5) ,TXB0);
 	delay(10); //Short delay to allow message to be sent
 
 	//Receive a message

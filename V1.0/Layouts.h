@@ -24,6 +24,9 @@
 #define BMS_FAN_STATUS_ID	0x6FC
 #define BMS_STATUS_EXT_ID	0x6FD
 
+//BMShub TX
+#define BMSHUB_VOLT_CURR_ID 0x6FE // Reserved by Tritium, but we'll use it now.
+
 // motor controller TX
 #define MC_HEARTBEAT_ID		0x400
 #define MC_STATUS_ID 		0x401
@@ -44,6 +47,8 @@
 // steering wheel TX
 #define SW_HEARTBEAT_ID		0x700
 #define SW_DATA_ID 			0x701
+
+
 
 // steering wheel data masks
 
@@ -91,7 +96,7 @@ public:
 class BMS_SOC : public Layout {
 public:
 	BMS_SOC(float pow_cons, float per_SOC) : power_consumed(pow_cons), percent_SOC(per_SOC) { id = BMS_SOC_ID; }
-	BMS_SOC(const Frame& frame) : power_consumed(frame.lowf), percent_SOC(frame.highf) { id = frame.id; }
+	BMS_SOC(const Frame& frame) : power_consumed(frame.low_f), percent_SOC(frame.high_f) { id = frame.id; }
 
 	Frame generate_frame() const;
 
@@ -144,13 +149,13 @@ public:
  */
 class BMS_VoltageCurrent : public Layout {
 public:
-	BMS_VoltageCurrent(uint32_t v, long c) : voltage(v), current(c) { id = BMS_VOLT_CURR_ID; }
-	BMS_VoltageCurrent(const Frame& frame) : voltage(frame.low), current(long(frame.high)) { id = frame.id; }
+	BMS_VoltageCurrent(uint32_t v, int32_t c) : voltage(v), current(c) { id = BMS_VOLT_CURR_ID; }
+	BMS_VoltageCurrent(const Frame& frame) : voltage(frame.low), current(frame.high_s) { id = frame.id; }
 
 	Frame generate_frame() const;
 
 	uint32_t voltage;
-	long current;
+	int32_t current;
 };
 
 /*
@@ -240,7 +245,7 @@ public:
 class MC_BusStatus : public Layout {
 public:
 	MC_BusStatus(float bc, float bv) : bus_current(bc), bus_voltage(bv) { id = MC_BUS_STATUS_ID; }
-	MC_BusStatus(const Frame& frame) : bus_current(frame.lowf), bus_voltage(frame.highf) { id = frame.id; }
+	MC_BusStatus(const Frame& frame) : bus_current(frame.low_f), bus_voltage(frame.high_f) { id = frame.id; }
 
 	Frame generate_frame() const;
 
@@ -254,7 +259,7 @@ public:
 class MC_Velocity : public Layout {
 public:
 	MC_Velocity(float car_v, float motor_v) : car_velocity(car_v), motor_velocity(motor_v) { id = MC_VELOCITY_ID; }
-	MC_Velocity(const Frame& frame) : car_velocity(frame.lowf), motor_velocity(frame.highf) { id = frame.id; }
+	MC_Velocity(const Frame& frame) : car_velocity(frame.low_f), motor_velocity(frame.high_f) { id = frame.id; }
 
 	Frame generate_frame() const;
 
@@ -268,7 +273,7 @@ public:
 class MC_PhaseCurrent : public Layout {
 public:
 	MC_PhaseCurrent(float a, float b) : phase_a(a), phase_b(b) { id = MC_PHASE_ID; }
-	MC_PhaseCurrent(const Frame& frame) : phase_a(frame.lowf), phase_b(frame.highf) { id = frame.id; }
+	MC_PhaseCurrent(const Frame& frame) : phase_a(frame.low_f), phase_b(frame.high_f) { id = frame.id; }
 
 	Frame generate_frame() const;
 
@@ -279,7 +284,7 @@ public:
 class MC_FanSpeed : public Layout {
 public:
 	MC_FanSpeed(float rpm, float v) : speed(rpm), drive(v) {id = MC_FANSPEED_ID; }
-	MC_FanSpeed(const Frame& frame) : speed(frame.lowf), drive(frame.highf) { id = frame.id; }
+	MC_FanSpeed(const Frame& frame) : speed(frame.low_f), drive(frame.high_f) { id = frame.id; }
 
 	Frame generate_frame() const;
 
@@ -318,7 +323,7 @@ public:
 class DC_Drive : public Layout {
 public:
 	DC_Drive(float v, float c) : velocity(v), current(c) { id = DC_DRIVE_ID; }
-	DC_Drive(const Frame& frame) : velocity(frame.lowf), current(frame.highf) { id = frame.id; }
+	DC_Drive(const Frame& frame) : velocity(frame.low_f), current(frame.high_f) { id = frame.id; }
 
 	Frame generate_frame() const;
 
@@ -332,7 +337,7 @@ public:
 class DC_Power : public Layout {
 public:
 	DC_Power(float bc) : bus_current(bc) { id = DC_POWER_ID; }
-	DC_Power(const Frame& frame) : bus_current(frame.lowf) { id = frame.id; }
+	DC_Power(const Frame& frame) : bus_current(frame.low_f) { id = frame.id; }
 
 	Frame generate_frame() const;
 
@@ -430,5 +435,19 @@ private:
 		lts 	 	= (flags >> 6) & 1u;
 		rts 	 	= (flags >> 7) & 1u;
 	}
+};
+
+/*
+ * BMShub voltage and current packet.
+ */
+class BMShub_VoltageCurrent : public Layout {
+public:
+	BMShub_VoltageCurrent(uint32_t v, int32_t c) : voltage(v), current(c) { id = BMSHUB_VOLT_CURR_ID; }
+	BMShub_VoltageCurrent(const Frame& frame) : voltage(frame.low), current(frame.high_s) { id = frame.id; }
+
+	Frame generate_frame() const;
+
+	uint32_t voltage;
+	int32_t current;
 };
 #endif

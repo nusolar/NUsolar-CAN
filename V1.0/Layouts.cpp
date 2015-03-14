@@ -31,16 +31,16 @@ Frame BMS_Heartbeat::generate_frame() const {
 
 Frame BMS_SOC::generate_frame() const {
 	Frame f;
-	f.lowf = power_consumed;
-	f.highf = percent_SOC;
+	f.low_f = power_consumed;
+	f.high_f = percent_SOC;
 	set_header(f);
 	return f;
 }
 
 Frame BMS_BalanceSOC::generate_frame() const {
 	Frame f;
-	f.lowf = power_supplied;
-	f.highf = SOC_mismatch;
+	f.low_f = power_supplied;
+	f.high_f = SOC_mismatch;
 	set_header(f);
 	return f;
 }
@@ -62,7 +62,7 @@ Frame BMS_PrechargeStatus::generate_frame() const {
 Frame BMS_VoltageCurrent::generate_frame() const {
 	Frame f;
 	f.low = voltage;
-	f.high = uint32_t(current); //cast a long as an unsigned integer
+	f.high_s = current; //store in high_s (signed)
 	set_header(f);
 	return f;
 }
@@ -108,32 +108,32 @@ Frame MC_Status::generate_frame() const {
 
 Frame MC_BusStatus::generate_frame() const {
 	Frame f;
-	f.lowf = bus_current;
-	f.highf = bus_voltage;
+	f.low_f = bus_current;
+	f.high_f = bus_voltage;
 	set_header(f);
 	return f;
 }
 
 Frame MC_Velocity::generate_frame() const {
 	Frame f;
-	f.lowf = car_velocity;
-	f.highf = motor_velocity;
+	f.low_f = car_velocity;
+	f.high_f = motor_velocity;
 	set_header(f);
 	return f;
 }
 
 Frame MC_PhaseCurrent::generate_frame() const {
 	Frame f;
-	f.lowf = phase_a;
-	f.highf = phase_b;
+	f.low_f = phase_a;
+	f.high_f = phase_b;
 	set_header(f);
 	return f;
 }
 
 Frame MC_FanSpeed::generate_frame() const {
 	Frame f;
-	f.lowf = speed;
-	f.highf = drive;
+	f.low_f = speed;
+	f.high_f = drive;
 	set_header(f);
 	return f;
 }
@@ -148,16 +148,16 @@ Frame DC_Heartbeat::generate_frame() const {
 
 Frame DC_Drive::generate_frame() const {
 	Frame f;
-	f.lowf = velocity;
-	f.highf = current;
+	f.low_f = velocity;
+	f.high_f = current;
 	set_header(f);
 	return f;
 }
 
 Frame DC_Power::generate_frame() const {
 	Frame f;
-	f.lowf = bus_current;
-	f.highf = 0;
+	f.low_f = bus_current;
+	f.high_f = 0;
 	set_header(f);
 	return f;
 }
@@ -194,4 +194,12 @@ Frame SW_Data::generate_frame() const {
     f.data[0] = flags;
     set_header(f,1);
     return f;
+}
+
+Frame BMShub_VoltageCurrent::generate_frame() const {
+	Frame f;
+	f.low = voltage;
+	f.high_s = current; //store in high_s (signed)
+	set_header(f);
+	return f;
 }

@@ -184,7 +184,8 @@ Frame DC_Info::generate_frame() const {
 	f.s1 = can_error_flags;
 	f.data[4] = dc_error_flags;
 	f.data[5] = brake_engaged;
-	set_header(f,6);
+	f.data[6] = was_reset;
+	set_header(f,7);
 	return f;
 }
 

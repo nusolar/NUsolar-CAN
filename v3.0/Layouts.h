@@ -373,18 +373,18 @@ public:
  */
 class DC_Info : public Layout {
 public:
-	DC_Info(float accel, float regen, bool brake, uint16_t can_errors, byte dc_errors, bool reset) : 
+	DC_Info(float accel, float regen, bool brake, uint16_t can_errors, byte dc_errors, bool reset, byte current_gear) : 
 		accel_ratio(accel), regen_ratio(regen), brake_engaged(brake), 
-		can_error_flags(can_errors), dc_error_flags (dc_errors), was_reset(reset)
+		can_error_flags(can_errors), dc_error_flags (dc_errors), was_reset(reset), gear(current_gear)
 		{ id = DC_INFO_ID; }
 	DC_Info(const Frame& frame) : 
 		accel_ratio(frame.data[0]/100.0f), regen_ratio(frame.data[1]/100.0f), can_error_flags(frame.s1),
-		dc_error_flags(frame.data[4]), brake_engaged(frame.data[5]), was_reset(frame.data[6])
+		dc_error_flags(frame.data[4]), brake_engaged(frame.data[5]), was_reset(frame.data[6]), gear(frame.data[7])
 		{ id = frame.id; }
 
 	float accel_ratio, regen_ratio; // these will be stored as integers 0-100 in frame 
 	uint16_t can_error_flags;
-	byte dc_error_flags;
+	byte dc_error_flags, gear;
 	bool brake_engaged, was_reset;
 
 	Frame generate_frame() const;

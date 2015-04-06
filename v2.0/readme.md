@@ -44,9 +44,10 @@ You can also use an anonymous packet object:
 NOTE: Currently, the library does not wait for a buffer to become open before attempting to load it. If the buffer you are trying to send from is still waiting to send, your packet will not be sent.
 
 5. Messages are automatically received by the Arduino and loaded into an internal frame FIFO buffer. To get the messages on this buffer, use
-	can.Available();
-to check whether it is full, and then
-	Frame& f = can.Read();
+	if (can.Available()) {
+		Frame& f = can.Read();
+		/*...*/
+	}
 to get a reference to the first frame in the queue.
 
 You can find the packet type of this frame using f.id.

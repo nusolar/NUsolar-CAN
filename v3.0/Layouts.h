@@ -442,12 +442,12 @@ private:
  */
 class BMShub_VoltageCurrent : public Layout {
 public:
-	BMShub_VoltageCurrent(uint32_t v, int32_t c) : voltage(v), current(c) { id = BMSHUB_VOLT_CURR_ID; }
-	BMShub_VoltageCurrent(const Frame& frame) : voltage(frame.low), current(frame.high_s) { id = frame.id; }
+	BMShub_VoltageCurrent(float v, float c) : voltage(v), current(c) { id = BMSHUB_VOLT_CURR_ID; }
+	BMShub_VoltageCurrent(const Frame& frame) : voltage(frame.low_f), current(frame.high_f) { id = frame.id; }
 
 	Frame generate_frame() const;
 
-	uint32_t voltage;
-	int32_t current;
+	float voltage;
+	float current;
 };
 #endif

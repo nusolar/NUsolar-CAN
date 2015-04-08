@@ -199,8 +199,8 @@ Frame SW_Data::generate_frame() const {
 
 Frame BMShub_VoltageCurrent::generate_frame() const {
 	Frame f;
-	f.low = voltage;
-	f.high_s = current; //store in high_s (signed)
+	f.low_f = voltage;
+	f.high_f = current; //store in high_f (float)
 	set_header(f);
 	return f;
 }

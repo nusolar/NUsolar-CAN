@@ -53,11 +53,6 @@
 // steering wheel data masks
 
 /*
- * Some macros for conversion
- */
-#define asfloat(X) 		reinterpret_cast<const float&>(X)
-#define asuint32_t(X) 	reinterpret_cast<uint32_t>(X)
-/*
  * Abstract base packet.
  */
 class Layout {
@@ -72,7 +67,7 @@ protected:
 	/*
 	 * Fill out the header info for a frame.
 	 */
-	 inline void set_header(Frame& f, byte size) const;
+	 inline void set_header(Frame& f, byte size = 8) const;
 };
 
 
@@ -355,15 +350,17 @@ public:
 	Frame generate_frame() const;
 };
 
+enum IgnitionState { Ignition_Start = 0x0040, Ignition_Run = 0x0020, Ignition_Park = 0x0010 };
+
 /*
  * Driver controls switch position packet.
  */
 class DC_SwitchPos : public Layout {
 public:
-	DC_SwitchPos(bool run) : is_run(run) { id = DC_SWITCHPOS_ID; }
-	DC_SwitchPos(const Frame& frame) : is_run((frame.low == 0x0020)) { id = frame.id; }
+	DC_SwitchPos(IgnitionState _state) : state(_state) { id = DC_SWITCHPOS_ID; }
+	DC_SwitchPos(const Frame& frame) : state(static_cast<IgnitionState>(frame.s0)) { id = frame.id; }
 
-	bool is_run;
+	IgnitionState state;
 
         Frame generate_frame() const;
 };

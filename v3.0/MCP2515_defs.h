@@ -20,10 +20,10 @@
 typedef struct
 {
       unsigned long id;      // EID if ide set, SID otherwise
-      byte srr;                  // Standard Frame Remote Transmit Request
-      byte rtr;                  // Remote Transmission Request
-      byte ide;                  // Extended ID flag
-      byte dlc;                  // Number of data bytes
+      byte srr = 0;                  // Standard Frame Remote Transmit Request
+      byte rtr = 0;                  // Remote Transmission Request
+      byte ide = 0;                  // Extended ID flag
+      byte dlc = 0;                  // Number of data bytes
       union {
         // 8 bytes
         uint64_t value;

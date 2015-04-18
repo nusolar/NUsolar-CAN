@@ -7,14 +7,15 @@
 
 Frame Layout::generate_frame() const {
 	Frame f;
+	set_header(f);
 	return f;
 }
 
 
 // Helper function. We should really use a Macro or __inline__ function here.
-inline void Layout::set_header(Frame& f, byte size = 8) const {
+inline void Layout::set_header(Frame& f, byte size) const {
 	f.id = id;
-	f.dlc = size; // send 8 bytes
+	f.dlc = size; // send size bytes
 	f.ide = 0; // make it a standard frame
 	f.rtr = 0; // make it a data frame
 	f.srr = 0;
@@ -172,7 +173,7 @@ Frame DC_Reset::generate_frame() const {
 
 Frame DC_SwitchPos::generate_frame() const {
 	Frame f;
-	f.low = is_run ? 0x0020 : 0x0040;
+	f.s0 = static_cast<uint16_t>(state);
 	set_header(f);
 	return f;
 }

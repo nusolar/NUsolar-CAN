@@ -3,6 +3,9 @@
  * Implementation of CAN packet layouts.
  */
 
+ /* Note: Uninitialized packets in frames must be set to UNUSED. They are not automatically initialized */
+#define UNUSED 0
+
 #include "Layouts.h"
 
 Frame Layout::generate_frame() const {
@@ -99,7 +102,7 @@ Frame MC_Heartbeat::generate_frame() const {
 
 Frame MC_Status::generate_frame() const {
 	Frame f;
-	f.s0 = 0;
+	f.s0 = UNUSED;
 	f.s1 = active_motor;
 	f.s2 = err_flags;
 	f.s3 = limit_flags;
@@ -174,6 +177,9 @@ Frame DC_Reset::generate_frame() const {
 Frame DC_SwitchPos::generate_frame() const {
 	Frame f;
 	f.s0 = static_cast<uint16_t>(state);
+	f.s1 = UNUSED;
+	f.s2 = UNUSED;
+	f.s3 = UNUSED;
 	set_header(f);
 	return f;
 }

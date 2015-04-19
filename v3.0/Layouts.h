@@ -350,17 +350,15 @@ public:
 	Frame generate_frame() const;
 };
 
-enum IgnitionState { Ignition_Start = 0x0040, Ignition_Run = 0x0020, Ignition_Park = 0x0010 };
-
 /*
  * Driver controls switch position packet.
  */
 class DC_SwitchPos : public Layout {
 public:
-	DC_SwitchPos(IgnitionState _state) : state(_state) { id = DC_SWITCHPOS_ID; }
-	DC_SwitchPos(const Frame& frame) : state(static_cast<IgnitionState>(frame.s0)) { id = frame.id; }
+	DC_SwitchPos(uint16_t _state) : state(_state) { id = DC_SWITCHPOS_ID; }
+	DC_SwitchPos(const Frame& frame) : state(uint16_t(frame.s0)) { id = frame.id; }
 
-	IgnitionState state;
+  uint16_t state;
 
         Frame generate_frame() const;
 };

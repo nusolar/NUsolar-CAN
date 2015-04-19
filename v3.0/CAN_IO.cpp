@@ -41,13 +41,15 @@ void CAN_IO::Setup(const CANFilterOpt& filters, uint16_t* errorflags, byte inter
 	// init the controller
 	int baudRate = controller.Init(bus_speed, bus_freq);
 	if (baudRate <= 0) { // error
-		*errptr |= CANERR_SETUP_BAUDFAIL;
+		*errptr |= CANERR_SETUP_BAUDFAIL; //deprecated. Remove LATER
+		errors |= CANERR_SETUP_BAUDFAIL;
 		Serial.println("Baud ERROR");
 	}
 
 	// return controller to config mode
 	if (!controller.Mode(MODE_CONFIG)) { // error
-		*errptr |= CANERR_SETUP_MODEFAIL;
+		*errptr |= CANERR_SETUP_MODEFAIL; //deprecated. Remove LATER
+		errors |= CANERR_SETUP_MODEFAIL;
 		Serial.println("Mode ERROR");
 	}
 
@@ -66,7 +68,8 @@ void CAN_IO::Setup(const CANFilterOpt& filters, uint16_t* errorflags, byte inter
 
 	// return controller to normal mode
 	if (!controller.Mode(MODE_NORMAL)) { // error
-		*errptr |= CANERR_SETUP_MODEFAIL;
+		*errptr |= CANERR_SETUP_MODEFAIL; //deprecated. Remove LATER
+		errors |= CANERR_SETUP_MODEFAIL;
 	}
 }
 
@@ -77,25 +80,44 @@ void CAN_IO::Fetch() {
 	*errptr = 0x00;
 
 	if (interrupt & MERRF) { // message error
-		*errptr |= CANERR_MESSAGE_ERROR;
+		*errptr |= CANERR_MESSAGE_ERROR; //deprecated. Remove LATER
+		this->errors |= CANERR_MESSAGE_ERROR;
 	}
+	else
+		this->errors &= (~CANERR_MESSAGE_ERROR);
 
 	if (interrupt & WAKIF) { // wake-up interrupt
 		// No Error implemented
 	}
 
 	if (interrupt & ERRIF) { // error interrupt
-		byte errors = controller.Read(EFLG);
-		/* Extract Errors from the extended error flag */
-		if (errors & 0xC0 == true)
+		byte eflg = controller.Read(EFLG);
+
+		if (eflg & 0x01) // If EWARN flag is set
 		{
-			*errptr |= CANERR_MCPBUF_FULL;
+
+			if (eflg & 0x02) // If RXWAR flag is set
+				this->rec = controller.Read(REC);
+
+			if (eflg & 0x04) // if TXWAR flag is set
+				this->tec = controller.Read(TEC);
+
+			if (eflg & 0x20) // if busmode flag is set
+				this->errors |= CANERR_BUSOFF_MODE;
+			else
+				this->errors &= (~CANERR_BUSOFF_MODE);
+
+			// Receive errors
+			if (eflg & 0x40) // if RX0OVR
+				this->errors |= CANERR_RX0FULL_OCCURED;
+
+			if (eflg & 0x80) // if RX1OVR
+				this->errors |= CANERR_RX1FULL_OCCURED;
+
+			if (eflg & 0xC0) // if RXnOVR
+				controller.BitModify(EFLG,0xC0,0x00); // Clear RXnOVR bits
 		}
 
-		if (errors & 0x40 == true)
-		{
-			*errptr |= CANERR_BUSOFF_MODE;
-		}
 	}
 
 	if (interrupt & TX2IF) { // transmit buffer 2 empty

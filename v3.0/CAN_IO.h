@@ -61,15 +61,9 @@ struct CANFilterOpt {
 
 /*
  * Define Extra can errors besides those defined in MCP2515_defs.
-  #define RX0IF                  0x01
-  #define RX1IF                  0x02
-  #define TX0IF                  0x04
-  #define TX1IF                  0x08
-  #define TX2IF                  0x10
-  #define ERRIF                  0x20
-  #define WAKIF                  0x40
-  #define MERRF                  0x80 
  */
+ 	#define CANERR_RX0FULL_OCCURED	0x0001 // RX0 buffer received valid message but RX0IF was set(this is cleared automatically, but the flag persists in errors until cleared by the user)
+  #define CANERR_RX1FULL_OCCURED	0x0002 // RX1 buffer received valid message but RX1IF was set (this is cleared automatically, but the flag persists in errors until cleared by the user)
   #define CANERR_SETUP_BAUDFAIL   0x0100 // Failed to set baud rate properly during setup
   #define CANERR_SETUP_MODEFAIL   0x0200 // Failed to switch modes
   #define CANERR_BUFFER_FULL      0x0400 // Local buffer is full
@@ -83,8 +77,6 @@ struct CANFilterOpt {
  */
 class CAN_IO {
 public:
-	RX_Queue<16> RXbuffer;
-
 	/*
 	 * Constructor. Creates a MCP2515 object using
 	 * the given pins.
@@ -133,16 +125,22 @@ public:
 
         
     MCP2515 controller; // The MCP2515 object
+   	RX_Queue<16> RXbuffer; //A queue for holding incoming messages
+
+    // Error data
+		uint32_t	errors;
+		uint32_t	tec;
+		uint32_t 	rec;
 	
 private:
-    byte      INT_pin;
+  byte    INT_pin;
 	int 	  bus_speed;
 	byte	  bus_freq;
 
 	/*
 	 * Pointer to a memory space in which we will store errors
 	 */
-	public: uint16_t* errptr;
+	public: uint16_t* errptr; // deprecated. Remove Later.
 
 	/*
 	 * Helper function for configuring the RX masks/filters.

@@ -176,7 +176,7 @@ Frame DC_Reset::generate_frame() const {
 
 Frame DC_SwitchPos::generate_frame() const {
 	Frame f;
-	f.s0 = static_cast<uint16_t>(state);
+	f.s0 = state;
 	f.s1 = UNUSED;
 	f.s2 = UNUSED;
 	f.s3 = UNUSED;

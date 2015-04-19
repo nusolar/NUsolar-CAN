@@ -79,6 +79,14 @@ void CAN_IO::Fetch() {
 
 	*errptr = 0x00;
 
+	if (interrupt & RX1IF) { // receive buffer 1 full
+		RXbuffer.enqueue(controller.ReadBuffer(RXB1));
+	}
+
+	if (interrupt & RX0IF) { // receive buffer 0 full
+		RXbuffer.enqueue(controller.ReadBuffer(RXB0));
+	}
+
 	if (interrupt & MERRF) { // message error
 		*errptr |= CANERR_MESSAGE_ERROR; //deprecated. Remove LATER
 		this->errors |= CANERR_MESSAGE_ERROR;
@@ -102,8 +110,12 @@ void CAN_IO::Fetch() {
 			if (eflg & 0x04) // if TXWAR flag is set
 				this->tec = controller.Read(TEC);
 
-			if (eflg & 0x20) // if busmode flag is set
+			if (eflg & 0x20) { // if busmode flag is set 
 				this->errors |= CANERR_BUSOFF_MODE;
+				controller.Reset();
+				delayMicroseconds(500);
+				return; // Get out of here, since we don't want to write anything else while it is resetting.
+			}
 			else
 				this->errors &= (~CANERR_BUSOFF_MODE);
 
@@ -130,14 +142,6 @@ void CAN_IO::Fetch() {
 
 	if (interrupt & TX0IF) { // transmit buffer 0 empty
 		// No Error implemented
-	}
-
-	if (interrupt & RX1IF) { // receive buffer 1 full
-		RXbuffer.enqueue(controller.ReadBuffer(RXB1));
-	}
-
-	if (interrupt & RX0IF) { // receive buffer 0 full
-		RXbuffer.enqueue(controller.ReadBuffer(RXB0));
 	}
 
 	// clear interrupt

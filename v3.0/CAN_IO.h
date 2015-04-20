@@ -88,7 +88,7 @@ public:
 	 * including read masks/filters. All types of interrupt
 	 * are enabled.
 	 */
-	void Setup(const CANFilterOpt& filters, uint16_t* errorflags, byte interrupts = MERRE | RX0IE | RX1IE | ERRIE );
+	void Setup(const CANFilterOpt& filters, byte interrupts = MERRE | RX0IE | RX1IE | ERRIE );
 	
 	/* Reconfigure the interrupts that are enabled on the MCP2515 */
 	bool ConfigureInterrupts(byte interrupts);
@@ -128,19 +128,14 @@ public:
    	RX_Queue<16> RXbuffer; //A queue for holding incoming messages
 
     // Error data
-		uint32_t	errors;
-		uint32_t	tec;
-		uint32_t 	rec;
+		volatile uint32_t	errors;
+		volatile uint32_t	tec;
+		volatile uint32_t 	rec;
 	
 private:
   byte    INT_pin;
 	int 	  bus_speed;
 	byte	  bus_freq;
-
-	/*
-	 * Pointer to a memory space in which we will store errors
-	 */
-	public: uint16_t* errptr; // deprecated. Remove Later.
 
 	/*
 	 * Helper function for configuring the RX masks/filters.

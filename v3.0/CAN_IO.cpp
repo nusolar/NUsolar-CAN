@@ -6,8 +6,8 @@
 #include "CAN_IO.h"
 #include <SPI.h>
 
-CAN_IO::CAN_IO(byte CS_pin, byte INT_p, int baud, byte freq) :
-errptr(0), INT_pin(INT_p), controller(CS_pin, INT_p), bus_speed(baud), bus_freq(freq)  {}
+CAN_IO::CAN_IO(byte CS_pin, byte INT_p, int baud, byte freq) : INT_pin(INT_p), controller(CS_pin, INT_p), bus_speed(baud), bus_freq(freq),
+tec(0), rec(0), errors(0)  {}
 
 /*
  * Define global interrupt function
@@ -22,7 +22,7 @@ CAN_IO* main_CAN = 0;
 /*
  * Setup function for CAN_IO. Arguments are a FilterInfo struct and a pointer to a place to raise error flags.
  */
-void CAN_IO::Setup(const CANFilterOpt& filters, uint16_t* errorflags, byte interrupts) {
+void CAN_IO::Setup(const CANFilterOpt& filters, byte interrupts) {
 	// SPI setup
 	//SPI.setClockDivider(10);
 	SPI.setDataMode(SPI_MODE0);
@@ -34,21 +34,16 @@ void CAN_IO::Setup(const CANFilterOpt& filters, uint16_t* errorflags, byte inter
 
 	pinMode(INT_pin,INPUT_PULLUP);	
 	attachInterrupt(INT_pin,CAN_ISR,LOW);
-	
-	// Attach error flag pointer
-	errptr = errorflags;
 
 	// init the controller
 	int baudRate = controller.Init(bus_speed, bus_freq);
 	if (baudRate <= 0) { // error
-		*errptr |= CANERR_SETUP_BAUDFAIL; //deprecated. Remove LATER
 		errors |= CANERR_SETUP_BAUDFAIL;
 		Serial.println("Baud ERROR");
 	}
 
 	// return controller to config mode
 	if (!controller.Mode(MODE_CONFIG)) { // error
-		*errptr |= CANERR_SETUP_MODEFAIL; //deprecated. Remove LATER
 		errors |= CANERR_SETUP_MODEFAIL;
 		Serial.println("Mode ERROR");
 	}
@@ -68,16 +63,13 @@ void CAN_IO::Setup(const CANFilterOpt& filters, uint16_t* errorflags, byte inter
 
 	// return controller to normal mode
 	if (!controller.Mode(MODE_NORMAL)) { // error
-		*errptr |= CANERR_SETUP_MODEFAIL; //deprecated. Remove LATER
-		errors |= CANERR_SETUP_MODEFAIL;
+			errors |= CANERR_SETUP_MODEFAIL;
 	}
 }
 
 void CAN_IO::Fetch() {
 	// read status of CANINTF register
 	byte interrupt = controller.GetInterrupt();
-
-	*errptr = 0x00;
 
 	if (interrupt & RX1IF) { // receive buffer 1 full
 		RXbuffer.enqueue(controller.ReadBuffer(RXB1));
@@ -88,7 +80,6 @@ void CAN_IO::Fetch() {
 	}
 
 	if (interrupt & MERRF) { // message error
-		*errptr |= CANERR_MESSAGE_ERROR; //deprecated. Remove LATER
 		this->errors |= CANERR_MESSAGE_ERROR;
 	}
 	else
@@ -109,9 +100,11 @@ void CAN_IO::Fetch() {
 
 			if (eflg & 0x04) // if TXWAR flag is set
 				this->tec = controller.Read(TEC);
+				Serial.print("T"); Serial.println(this->tec);
 
 			if (eflg & 0x20) { // if busmode flag is set 
 				this->errors |= CANERR_BUSOFF_MODE;
+				Serial.println("RESET MCP");
 				controller.Reset();
 				delayMicroseconds(500);
 				return; // Get out of here, since we don't want to write anything else while it is resetting.

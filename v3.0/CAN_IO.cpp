@@ -91,20 +91,21 @@ void CAN_IO::Fetch() {
 
 	if (interrupt & ERRIF) { // error interrupt
 		byte eflg = controller.Read(EFLG);
+		Serial.println(eflg,HEX);
 
 		if (eflg & 0x01) // If EWARN flag is set
 		{
 
-			if (eflg & 0x02) // If RXWAR flag is set
+			if (eflg & 0x0A) // If RXWAR flag is set
 				this->rec = controller.Read(REC);
 
-			if (eflg & 0x04) // if TXWAR flag is set
+			if (eflg & 0x14) // if TXWAR flag is set
 				this->tec = controller.Read(TEC);
 				Serial.print("T"); Serial.println(this->tec);
 
 			if (eflg & 0x20) { // if busmode flag is set 
 				this->errors |= CANERR_BUSOFF_MODE;
-				Serial.println("RESET MCP");
+				Serial.println("ResetMCP");
 				controller.Reset();
 				delayMicroseconds(500);
 				return; // Get out of here, since we don't want to write anything else while it is resetting.

@@ -174,7 +174,7 @@ Frame DC_Reset::generate_frame() const {
 	return f;
 }
 
-Frame DC_SwitchPos::generate_frame() const {
+/*Frame DC_SwitchPos::generate_frame() const {
 	Frame f;
 	f.s0 = (state == 0x0040) ? 0x0100 : 0x0000;// | 0x0100; //Switches don't seem to work, so we use the fuel door bit.
 	f.s1 = UNUSED;
@@ -182,17 +182,21 @@ Frame DC_SwitchPos::generate_frame() const {
 	f.s3 = UNUSED;
 	set_header(f);
 	return f;
-}
+}*/
 
 Frame DC_Info::generate_frame() const {
 	Frame f;
-	f.data[0] = (uint8_t) (accel_ratio * 100); // convert to integer 0-100 so only two bytes required
-	f.data[1] = (uint8_t) (regen_ratio * 100);
-	f.s1 = can_error_flags;
-	f.data[4] = dc_error_flags;
-	f.data[5] = brake_engaged;
-	f.data[6] = was_reset;
-	f.data[7] = gear;
+	f.s0 = 0;
+
+	f.data[2] = (uint8_t) (accel_ratio * 100); // convert to integer 0-100 so only two bytes required
+	f.data[3] = (uint8_t) (regen_ratio * 100);
+	f.s2 = can_error_flags;
+	f.data[6] = dc_error_flags;
+	f.s0 |= brake_engaged << 7;
+	f.s0 |= fuel_door << 8;
+	f.s0 |= was_reset << 9;
+	f.s0 |= gear;
+	f.s0 |= ignition_state;
 	set_header(f,7);
 	return f;
 }

@@ -41,8 +41,8 @@
 #define DC_DRIVE_ID			0x501
 #define DC_POWER_ID			0x502
 #define DC_RESET_ID			0x503
-#define DC_SWITCHPOS_ID		0x505
-#define DC_INFO_ID			0x510
+//#define DC_SWITCHPOS_ID		0x505
+#define DC_INFO_ID			0x505
 
 // steering wheel TX
 #define SW_HEARTBEAT_ID		0x700
@@ -353,7 +353,7 @@ public:
 /*
  * Driver controls switch position packet.
  */
-class DC_SwitchPos : public Layout {
+/*class DC_SwitchPos : public Layout {
 public:
 	DC_SwitchPos(uint16_t _state) : state(_state) { id = DC_SWITCHPOS_ID; }
 	DC_SwitchPos(const Frame& frame) : state(uint16_t(frame.s0)) { id = frame.id; }
@@ -361,26 +361,54 @@ public:
   uint16_t state;
 
         Frame generate_frame() const;
-};
+};*/
 
 /*
- * Driver controls information packet
+ * Driver controls information packet (this is really really messy code, I'm sorry. I'll clean it up later)
  */
 class DC_Info : public Layout {
 public:
-	DC_Info(float accel, float regen, bool brake, uint16_t can_errors, byte dc_errors, bool reset, byte current_gear) : 
-		accel_ratio(accel), regen_ratio(regen), brake_engaged(brake), 
-		can_error_flags(can_errors), dc_error_flags (dc_errors), was_reset(reset), gear(current_gear)
-		{ id = DC_INFO_ID; }
-	DC_Info(const Frame& frame) : 
-		accel_ratio(frame.data[0]/100.0f), regen_ratio(frame.data[1]/100.0f), can_error_flags(frame.s1),
-		dc_error_flags(frame.data[4]), brake_engaged(frame.data[5]), was_reset(frame.data[6]), gear(frame.data[7])
-		{ id = frame.id; }
+	DC_Info(float accel, 
+					float regen,
+					bool brake,
+					uint16_t can_errors,
+					byte dc_errors,
+					bool reset,
+					bool fuel,
+					byte current_gear,
+					uint16_t ignition) { 
+
+			accel_ratio = accel;
+			regen_ratio = regen;
+			brake_engaged = brake;
+			can_error_flags = can_errors;
+			dc_error_flags = dc_errors;
+			was_reset = reset;
+			gear = current_gear;
+			ignition_state = ignition;
+			fuel_door = fuel;
+
+			id = DC_INFO_ID; }
+
+	DC_Info(const Frame& frame)
+		{ 
+			accel_ratio = frame.data[2]/100.0f;
+			regen_ratio = frame.data[3]/100.0f;
+			brake_engaged = (bool)frame.s0 & 0x0080;
+			can_error_flags = frame.s2;
+			dc_error_flags = frame.data[6];
+			was_reset = (bool)frame.s0 & 0x0200; 
+			gear = frame.s0 & 0x000F; 
+			ignition_state = frame.s0 & 0x0070;
+			fuel_door = (bool)frame.s0 & 0x0100;
+
+			id = frame.id; }
 
 	float accel_ratio, regen_ratio; // these will be stored as integers 0-100 in frame 
 	uint16_t can_error_flags;
 	byte dc_error_flags, gear;
-	bool brake_engaged, was_reset;
+	bool brake_engaged, was_reset, fuel_door;
+	uint16_t ignition_state;
 
 	Frame generate_frame() const;
 };

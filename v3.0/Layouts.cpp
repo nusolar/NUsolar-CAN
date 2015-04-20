@@ -176,7 +176,7 @@ Frame DC_Reset::generate_frame() const {
 
 Frame DC_SwitchPos::generate_frame() const {
 	Frame f;
-	f.s0 = state;
+	f.s0 = (state == 0x0040) ? 0x0100 : 0x0000;// | 0x0100; //Switches don't seem to work, so we use the fuel door bit.
 	f.s1 = UNUSED;
 	f.s2 = UNUSED;
 	f.s3 = UNUSED;

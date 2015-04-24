@@ -29,7 +29,7 @@ public:
 	/*
 	 * Constructor. Initializes the queue.
 	 */
-	RX_Queue() : head(0), tail(0) {}
+	RX_Queue() : head(0), tail(0), isFull(0) {}
 
 	/*
 	 * Returns true if the queue is full.

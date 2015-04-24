@@ -15,6 +15,7 @@ tec(0), rec(0), errors(0)  {}
 void CAN_ISR()
 {
   main_CAN->Fetch();
+  main_CAN->int_counter++;
 }
 // Make sure to initialize the mainCAN pointer to 0 here.
 CAN_IO* main_CAN = 0;
@@ -84,6 +85,12 @@ void CAN_IO::Fetch() {
 	// read status of CANINTF register
 	byte interrupt = controller.GetInterrupt();
 
+	// Note: Not all interrupts may be enabled. We add all the important ones here in case
+	// you want to use them. Enabling interrupts other than the RXnIF interrupts may cause
+	// certain microcontrollers *cough* arduino *cough* to freeze if a bus error happens.
+	// It is recommended that only the RXnIF interrupts be enabled and the rest of the can
+	// be read by periodically calling FetchErrors().
+
 	if (interrupt & RX1IF) { // receive buffer 1 full
 		RXbuffer.enqueue(controller.ReadBuffer(RXB1));
 	}
@@ -103,48 +110,7 @@ void CAN_IO::Fetch() {
 	}
 
 	if (interrupt & ERRIF) { // error interrupt
-		byte eflg = controller.Read(EFLG);
-
-		if (eflg & 0x01) // If EWARN flag is set
-		{
-			if (eflg & 0x0A) // If RXWAR flag is set
-			{
-				this->rec = controller.Read(REC);
-			}
-
-			if (eflg & 0x14) // if TXWAR flag is set
-			{
-				this->tec = controller.Read(TEC);
-			}
-
-			if (eflg & 0x20) // if busmode flag is set 
-				this->errors |= CANERR_BUSOFF_MODE;
-			else
-				this->errors &= (~CANERR_BUSOFF_MODE);
-
-			if (this->tec > 135 || this->rec > 135 
-				|| errors & CANERR_BUSOFF_MODE) // If any TX/RX errors have occured, raise this flag.
-				this->errors |= CANERR_HIGH_ERROR_COUNT;
-			else
-				this->errors &= ~CANERR_HIGH_ERROR_COUNT;
-
-			// Receive errors
-			if (eflg & 0x40) // if RX0OVR
-				this->errors |= CANERR_RX0FULL_OCCURED;
-			else
-				this->errors &= ~CANERR_RX0FULL_OCCURED;
-
-			if (eflg & 0x80) // if RX1OVR
-				this->errors |= CANERR_RX1FULL_OCCURED;
-			else
-				this->errors &= ~CANERR_RX1FULL_OCCURED;
-
-			if (eflg & 0xC0) // if RXnOVR
-				controller.BitModify(EFLG,0xC0,0x00); // Clear RXnOVR bits
-		}
-		else
-			errors &= ~(CANERR_HIGH_ERROR_COUNT & CANERR_BUSOFF_MODE & CANERR_RX0FULL_OCCURED & CANERR_RX1FULL_OCCURED);
-
+		this->FecthErrors();
 	}
 
 	if (interrupt & TX2IF) { // transmit buffer 2 empty
@@ -161,6 +127,43 @@ void CAN_IO::Fetch() {
 
 	// clear interrupt
 	controller.ResetInterrupt(INTALL); // reset all interrupts
+}
+
+void CAN_IO::FetchErrors() {
+	this->tec = controller.Read(TEC);
+	this->rec = controller.Read(REC);
+
+	byte eflg = controller.Read(EFLG);
+
+	if (eflg & 0x01) // If EWARN flag is set
+	{
+		if (eflg & 0x20) // if busmode flag is set 
+			this->errors |= CANERR_BUSOFF_MODE;
+		else
+			this->errors &= (~CANERR_BUSOFF_MODE);
+
+		if (this->tec > 135 || this->rec > 135 
+			|| errors & CANERR_BUSOFF_MODE) // If any TX/RX errors have occured, raise this flag.
+			this->errors |= CANERR_HIGH_ERROR_COUNT;
+		else
+			this->errors &= ~CANERR_HIGH_ERROR_COUNT;
+
+		// Receive errors
+		if (eflg & 0x40) // if RX0OVR
+			this->errors |= CANERR_RX0FULL_OCCURED;
+		else
+			this->errors &= ~CANERR_RX0FULL_OCCURED;
+
+		if (eflg & 0x80) // if RX1OVR
+			this->errors |= CANERR_RX1FULL_OCCURED;
+		else
+			this->errors &= ~CANERR_RX1FULL_OCCURED;
+
+		if (eflg & 0xC0) // if RXnOVR
+			controller.BitModify(EFLG,0xC0,0x00); // Clear RXnOVR bits
+	}
+	else
+		errors &= ~(CANERR_HIGH_ERROR_COUNT & CANERR_BUSOFF_MODE & CANERR_RX0FULL_OCCURED & CANERR_RX1FULL_OCCURED);
 }
 
 void CAN_IO::Send(const Layout& layout, uint8_t buffer) {

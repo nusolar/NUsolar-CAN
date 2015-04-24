@@ -103,6 +103,11 @@ public:
 	void Fetch();
 
 	/*
+	 * Get and parse the error flag bit from the MCP2515 into my variables errors, tec, and rec.
+	 */
+	void FetchErrors();
+
+	/*
 	 * Sends messages to the CAN bus via the controller.
 	 */
 	void Send(const Layout& layout, uint8_t buffer);
@@ -114,15 +119,6 @@ public:
 	inline Frame& Read()
 	{
 		return RXbuffer.dequeue();
-	}
-
-	/*
-	 * Reads the TEC and REC error counts from the 2515 and puts them in local variables
-	 */
-	inline void ReadTECREC()
-	{
-		this->tec = controller.Read(TEC);
-		this->rec = controller.Read(REC);
 	}
       
 	/*

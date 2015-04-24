@@ -24,10 +24,15 @@ CAN_IO* main_CAN = 0;
  */
 void CAN_IO::Setup(const CANFilterOpt& filters, byte interrupts) {
 	// SPI setup
-	//SPI.setClockDivider(10);
+	SPI.setClockDivider(10);
 	SPI.setDataMode(SPI_MODE0);
 	SPI.setBitOrder(MSBFIRST);
 	SPI.begin();
+
+	// Clear error counters
+	errors = 0;
+	tec = 0;
+	rec = 0;
 
 	// Set as main can
 	main_CAN = this;
@@ -39,19 +44,21 @@ void CAN_IO::Setup(const CANFilterOpt& filters, byte interrupts) {
 	int baudRate = controller.Init(bus_speed, bus_freq);
 	if (baudRate <= 0) { // error
 		errors |= CANERR_SETUP_BAUDFAIL;
-		Serial.println("Baud ERROR");
+		if (Serial) Serial.println("Baud ERROR");
 	}
 
 	// return controller to config mode
 	if (!controller.Mode(MODE_CONFIG)) { // error
 		errors |= CANERR_SETUP_MODEFAIL;
-		Serial.println("Mode ERROR");
+		if (Serial) Serial.println("Mode ERROR");
 	}
 
 	// disable interrupts we don't care about
 	controller.Write(CANINTE, interrupts);
+	this->my_interrupts = interrupts;
 
 	// config RX masks/filters
+	this->my_filters = filters;
 	write_rx_filter(RXM0SIDH, filters.RXM0);
 	write_rx_filter(RXM1SIDH, filters.RXM1);
 	write_rx_filter(RXF0SIDH, filters.RXF0);
@@ -65,6 +72,12 @@ void CAN_IO::Setup(const CANFilterOpt& filters, byte interrupts) {
 	if (!controller.Mode(MODE_NORMAL)) { // error
 			errors |= CANERR_SETUP_MODEFAIL;
 	}
+}
+
+void CAN_IO::ResetController() {
+	noInterrupts();
+	this->Setup(this->my_filters,this->my_interrupts);
+	interrupts();
 }
 
 void CAN_IO::Fetch() {
@@ -91,38 +104,46 @@ void CAN_IO::Fetch() {
 
 	if (interrupt & ERRIF) { // error interrupt
 		byte eflg = controller.Read(EFLG);
-		Serial.println(eflg,HEX);
 
 		if (eflg & 0x01) // If EWARN flag is set
 		{
-
 			if (eflg & 0x0A) // If RXWAR flag is set
+			{
 				this->rec = controller.Read(REC);
+			}
 
 			if (eflg & 0x14) // if TXWAR flag is set
+			{
 				this->tec = controller.Read(TEC);
-				Serial.print("T"); Serial.println(this->tec);
-
-			if (eflg & 0x20) { // if busmode flag is set 
-				this->errors |= CANERR_BUSOFF_MODE;
-				Serial.println("ResetMCP");
-				controller.Reset();
-				delayMicroseconds(500);
-				return; // Get out of here, since we don't want to write anything else while it is resetting.
 			}
+
+			if (eflg & 0x20) // if busmode flag is set 
+				this->errors |= CANERR_BUSOFF_MODE;
 			else
 				this->errors &= (~CANERR_BUSOFF_MODE);
+
+			if (this->tec > 135 || this->rec > 135 
+				|| errors & CANERR_BUSOFF_MODE) // If any TX/RX errors have occured, raise this flag.
+				this->errors |= CANERR_HIGH_ERROR_COUNT;
+			else
+				this->errors &= ~CANERR_HIGH_ERROR_COUNT;
 
 			// Receive errors
 			if (eflg & 0x40) // if RX0OVR
 				this->errors |= CANERR_RX0FULL_OCCURED;
+			else
+				this->errors &= ~CANERR_RX0FULL_OCCURED;
 
 			if (eflg & 0x80) // if RX1OVR
 				this->errors |= CANERR_RX1FULL_OCCURED;
+			else
+				this->errors &= ~CANERR_RX1FULL_OCCURED;
 
 			if (eflg & 0xC0) // if RXnOVR
 				controller.BitModify(EFLG,0xC0,0x00); // Clear RXnOVR bits
 		}
+		else
+			errors &= ~(CANERR_HIGH_ERROR_COUNT & CANERR_BUSOFF_MODE & CANERR_RX0FULL_OCCURED & CANERR_RX1FULL_OCCURED);
 
 	}
 

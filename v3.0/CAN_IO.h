@@ -69,7 +69,8 @@ struct CANFilterOpt {
   #define CANERR_BUFFER_FULL      0x0400 // Local buffer is full
   #define CANERR_MCPBUF_FULL      0x0800 // MCP2515 is reporting buffer overflow errors
   #define CANERR_MESSAGE_ERROR	  0x1000 // Message transmission error 
-  #define CANERR_BUSOFF_MODE	  0x2000 // MCP2515 has entered Bus Off mode
+  #define CANERR_BUSOFF_MODE	  	0x2000 // MCP2515 has entered Bus Off mode
+  #define CANERR_HIGH_ERROR_COUNT	0x4000 // Triggered when TEC or REC exceeds 96
 
 /*
  * Class for handling CAN I/O operations using the
@@ -89,6 +90,8 @@ public:
 	 * are enabled.
 	 */
 	void Setup(const CANFilterOpt& filters, byte interrupts = MERRE | RX0IE | RX1IE | ERRIE );
+
+	void ResetController();
 	
 	/* Reconfigure the interrupts that are enabled on the MCP2515 */
 	bool ConfigureInterrupts(byte interrupts);
@@ -112,6 +115,15 @@ public:
 	{
 		return RXbuffer.dequeue();
 	}
+
+	/*
+	 * Reads the TEC and REC error counts from the 2515 and puts them in local variables
+	 */
+	inline void ReadTECREC()
+	{
+		this->tec = controller.Read(TEC);
+		this->rec = controller.Read(REC);
+	}
       
 	/*
 	 * Returns true if the RX buffer is not empty.
@@ -130,12 +142,17 @@ public:
     // Error data
 		volatile uint32_t	errors;
 		volatile uint32_t	tec;
-		volatile uint32_t 	rec;
+		volatile uint32_t rec;
+		volatile uint32_t int_counter; // increments when an interrupt happens.
 	
 private:
   byte    INT_pin;
 	int 	  bus_speed;
 	byte	  bus_freq;
+
+	//store filters and interrupts for reset
+	CANFilterOpt my_filters;
+	byte my_interrupts;
 
 	/*
 	 * Helper function for configuring the RX masks/filters.

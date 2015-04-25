@@ -89,7 +89,7 @@ public:
 	 * including read masks/filters. All types of interrupt
 	 * are enabled.
 	 */
-	void Setup(const CANFilterOpt& filters, byte interrupts = MERRE | RX0IE | RX1IE | ERRIE );
+	void Setup(const CANFilterOpt& filters, byte interrupts = RX0IE | RX1IE );
 
 	void ResetController();
 	

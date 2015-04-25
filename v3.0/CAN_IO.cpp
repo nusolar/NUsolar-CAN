@@ -76,9 +76,7 @@ void CAN_IO::Setup(const CANFilterOpt& filters, byte interrupts) {
 }
 
 void CAN_IO::ResetController() {
-	noInterrupts();
 	this->Setup(this->my_filters,this->my_interrupts);
-	interrupts();
 }
 
 void CAN_IO::Fetch() {
@@ -110,7 +108,7 @@ void CAN_IO::Fetch() {
 	}
 
 	if (interrupt & ERRIF) { // error interrupt
-		this->FecthErrors();
+		this->FetchErrors();
 	}
 
 	if (interrupt & TX2IF) { // transmit buffer 2 empty
@@ -170,6 +168,7 @@ void CAN_IO::Send(const Layout& layout, uint8_t buffer) {
 	controller.LoadBuffer(buffer, layout.generate_frame());
 	controller.SendBuffer(buffer);
 }
+
 void CAN_IO::Send(const Frame& frame, uint8_t buffer) {
 	controller.LoadBuffer(buffer, frame);
 	controller.SendBuffer(buffer);

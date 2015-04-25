@@ -56,6 +56,7 @@ public:
 	 * Adds a frame to the front of the queue.
 	 */
 	void enqueue(const Frame& f) {
+		noInterrupts();
 		if (!is_full()) {
 			//Add frame to head
 			buf[head++] = f;
@@ -73,12 +74,14 @@ public:
 		else { // If full, we overwrite the last added message.
 			buf[(head + RX_QUEUE_SIZE - 1) % RX_QUEUE_SIZE] = f;
 		}
+		interrupts();
 	}
 
 	/*
 	 * Returns a frame from the back of the queue.
 	 */
 	Frame dequeue_copy() {
+		noInterrupts();
 		if (!is_empty()) {
 			//Update tail location
 			uint8_t readloc = tail++;
@@ -92,7 +95,9 @@ public:
 			if (tail == head) {
 				isFull = false;
 			}
-			return buf[readloc];
+			Frame r = buf[readloc];
+			interrupts();
+			return r;
 		}
 		return Frame();
 	}

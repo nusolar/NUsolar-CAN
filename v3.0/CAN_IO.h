@@ -61,17 +61,17 @@ struct CANFilterOpt {
 
 /*
  * Define Extra can errors besides those defined in MCP2515_defs.
+ * Some of these only work if FetchErrors() is called periodically.
+ * See error data variables for details.
  */
  	#define CANERR_RX0FULL_OCCURED	0x0001 // RX0 buffer received valid message but RX0IF was set(this is cleared automatically, but the flag persists in errors until cleared by the user)
   #define CANERR_RX1FULL_OCCURED	0x0002 // RX1 buffer received valid message but RX1IF was set (this is cleared automatically, but the flag persists in errors until cleared by the user)
   #define CANERR_SETUP_BAUDFAIL   0x0100 // Failed to set baud rate properly during setup
   #define CANERR_SETUP_MODEFAIL   0x0200 // Failed to switch modes
   #define CANERR_BUFFER_FULL      0x0400 // Local buffer is full
-  #define CANERR_MCPBUF_FULL      0x0800 // MCP2515 is reporting buffer overflow errors
   #define CANERR_MESSAGE_ERROR	  0x1000 // Message transmission error 
   #define CANERR_BUSOFF_MODE	  	0x2000 // MCP2515 has entered Bus Off mode
   #define CANERR_HIGH_ERROR_COUNT	0x4000 // Triggered when TEC or REC exceeds 96
-
 /*
  * Class for handling CAN I/O operations using the
  * MCP2515 CAN controller.
@@ -110,8 +110,8 @@ public:
 	/*
 	 * Sends messages to the CAN bus via the controller.
 	 */
-	void Send(const Layout& layout, uint8_t buffer);
-	void Send(const Frame& frame, uint8_t buffer);
+	void Send(const Layout& layout, uint8_t buffer = 0);
+	void Send(const Frame& frame, uint8_t buffer = 0);
 	
 	/*
 	 * Returns a reference to the next available frame on the buffer
@@ -129,22 +129,25 @@ public:
 		return !RXbuffer.is_empty();
 	}
 
-	
-
         
     MCP2515 controller; // The MCP2515 object
    	RX_Queue<16> RXbuffer; //A queue for holding incoming messages
 
-    // Error data
+    // Error data 
+    // Note that these are only updated when FetchErrors() is called.
+    // You can make this automatic by enabling the ERRIE interrupt when setting up can
+    // but this can cause arduino to freeze, so you do so at your own risk.
 		volatile uint32_t	errors;
 		volatile uint32_t	tec;
 		volatile uint32_t rec;
-		volatile uint32_t int_counter; // increments when an interrupt happens.
+
+		volatile long int_counter; // increments when an interrupt happens (always updated)
 	
 private:
   byte    INT_pin;
 	int 	  bus_speed;
 	byte	  bus_freq;
+	volatile byte 		tx_open;	// Tracks which TX buffers are open.
 
 	//store filters and interrupts for reset
 	CANFilterOpt my_filters;
@@ -156,10 +159,19 @@ private:
 	 * otherwise sets the second.
 	 */
 	void write_rx_filter(uint8_t address, uint16_t);
+
+	/*
+	 * Helper function to select a TX buffer
+	 *
+	 */
+	inline uint8_t select_open_tx();
 };
 
 /*
- * Declare a pointer to the main can_io instance
+ * Declare a pointer to the main can_io instance. We need this because interrupt functions
+ * can't have arguments. We can't assign CAN_IO::Fetch() to the ISR because it has an implicit
+ * this* pointer which goes to the specific instance. If you want multiple can controllers,
+ * you will need to set up your own interrupts for them.
  */
 extern CAN_IO* main_CAN;
 #endif

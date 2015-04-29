@@ -42,7 +42,7 @@ void CAN_IO::Setup(const CANFilterOpt& filters, byte interrupts) {
 	attachInterrupt(INT_pin,CAN_ISR,LOW);
 
 	// init the controller
-	int baudRate = controller.Init(bus_speed, bus_freq);
+	int baudRate = controller.Init(bus_speed, bus_freq, 1);
 	if (baudRate <= 0) { // error
 		errors |= CANERR_SETUP_BAUDFAIL;
 		if (Serial) Serial.println("Baud ERROR");

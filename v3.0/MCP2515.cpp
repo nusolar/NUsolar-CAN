@@ -118,10 +118,29 @@ bool MCP2515::_init(int CAN_Bus_Speed, byte Freq, byte SJW, bool autoBaud) {
   byte PRSEG = (SPT - 1) / 2;
   byte PHSEG1 = SPT - PRSEG - 1;
   byte PHSEG2 = BT - PHSEG1 - PRSEG - 1;
+  
+if (Serial)
+{
+  Serial.print("BRP: ");
+  Serial.println(BRP);
+  Serial.print("TQ: ");
+  Serial.println(TQ);
+  Serial.print("BT: ");
+  Serial.println(BT);
+  Serial.println("---------");
+}
 
   // Programming requirements
-  if(PRSEG + PHSEG1 < PHSEG2) return false;
-  if(PHSEG2 <= SJW) return false;
+  if(PRSEG + PHSEG1 < PHSEG2) 
+  {
+    if (Serial) Serial.println("PRSEG + PHSEG1 >= PHSEG2. Invalid.");
+    return false;
+  }
+  if(PHSEG2 <= SJW) 
+  {
+    if (Serial) Serial.println("PHSEG2 > SJW. Invalid.");
+    return false;
+  }
   
   byte BTLMODE = 1;
   byte __SAM = 0;
@@ -145,6 +164,7 @@ bool MCP2515::_init(int CAN_Bus_Speed, byte Freq, byte SJW, bool autoBaud) {
   
   // Test that we can read back from the MCP2515 what we wrote to it
   byte rtn = Read(CNF1);
+
   return (rtn==data);
 }
 

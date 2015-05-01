@@ -396,15 +396,21 @@ public:
 
 	DC_Info(const Frame& frame)
 		{ 
+			//Byte 0 + 1
+			ignition_state = 		   frame.s0 & 0x0070;
+			brake_engaged = (bool)(frame.s0 & 0x0080);
+			fuel_door = 		(bool)(frame.s0 & 0x0100);
+			was_reset = 		(bool)(frame.s0 & 0x0200);
+			//Byte 2
 			accel_ratio = frame.data[2]/100.0f;
+			//Byte 3
 			regen_ratio = frame.data[3]/100.0f;
-			brake_engaged = (bool)frame.s0 & 0x0080;
+			//Byte 4 + 5
 			can_error_flags = frame.s2;
+			//Byte 6
 			dc_error_flags = frame.data[6];
-			was_reset = (bool)frame.s0 & 0x0200; 
-			gear = frame.s0 & 0x000F; 
-			ignition_state = frame.s0 & 0x0070;
-			fuel_door = (bool)frame.s0 & 0x0100;
+			//Byte 7
+			gear = frame.data[7]; //frame.s0 & 0x000F; (used to be here)
 
 			id = frame.id; }
 

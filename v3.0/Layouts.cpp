@@ -160,8 +160,8 @@ Frame DC_Drive::generate_frame() const {
 
 Frame DC_Power::generate_frame() const {
 	Frame f;
-	f.low_f = bus_current;
-	f.high_f = 0;
+	f.low_f = 0;
+	f.high_f = bus_current;
 	set_header(f);
 	return f;
 }

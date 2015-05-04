@@ -30,58 +30,81 @@ void CAN_IO::Setup(const CANFilterOpt& filters, byte interrupts) {
 	SPI.setBitOrder(MSBFIRST);
 	SPI.begin();
 
-	// Clear error counters
-	errors = 0;
-	tec = 0;
-	rec = 0;
-
 	// Set as main can
 	main_CAN = this;
 
 	pinMode(INT_pin,INPUT_PULLUP);	
 	attachInterrupt(INT_pin,CAN_ISR,LOW);
 
+	// Copy filters and interrupts to internal variables
+	this->my_interrupts = interrupts;
+	this->my_filters = filters;
+
 	// init the controller
-	int baudRate = controller.Init(bus_speed, bus_freq, 1); //SJW of 1
+	init_controller(); //private helper function
+	
+}
+
+inline void CAN_IO::init_controller() //private helper function
+{
+	// Clear error counters
+	this->errors = 0;
+	this->tec = 0;
+	this->rec = 0;
+
+	int baudRate = controller.Init(this->bus_speed, this->bus_freq, 1); //SJW of 1
 	if (baudRate <= 0) { // error
-		errors |= CANERR_SETUP_BAUDFAIL;
+		this->errors |= CANERR_SETUP_BAUDFAIL;
 		if (Serial) Serial.println("Baud ERROR");
 	}
 
 	// return controller to config mode
 	if (!controller.Mode(MODE_CONFIG)) { // error
-		errors |= CANERR_SETUP_MODEFAIL;
+		this->errors |= CANERR_SETUP_MODEFAIL;
 		if (Serial) Serial.println("Mode ERROR");
 	}
 
 	// disable interrupts we don't care about
-	controller.Write(CANINTE, interrupts);
-	this->my_interrupts = interrupts;
+	controller.Write(CANINTE, this->my_interrupts);
+
 
 	// config RX masks/filters
-	this->my_filters = filters;
-	write_rx_filter(RXM0SIDH, filters.RXM0);
-	write_rx_filter(RXM1SIDH, filters.RXM1);
-	write_rx_filter(RXF0SIDH, filters.RXF0);
-	write_rx_filter(RXF1SIDH, filters.RXF1);
-	write_rx_filter(RXF2SIDH, filters.RXF2);
-	write_rx_filter(RXF3SIDH, filters.RXF3);
-	write_rx_filter(RXF4SIDH, filters.RXF4);
-	write_rx_filter(RXF5SIDH, filters.RXF5);
+	write_rx_filter(RXM0SIDH, this->my_filters.RXM0);
+	write_rx_filter(RXM1SIDH, this->my_filters.RXM1);
+	write_rx_filter(RXF1SIDH, this->my_filters.RXF1);
+	write_rx_filter(RXF2SIDH, this->my_filters.RXF2);
+	write_rx_filter(RXF3SIDH, this->my_filters.RXF3);
+	write_rx_filter(RXF4SIDH, this->my_filters.RXF4);
+	write_rx_filter(RXF5SIDH, this->my_filters.RXF5);
+	write_rx_filter(RXF0SIDH, this->my_filters.RXF0);
 
 	// return controller to normal mode
 	if (!controller.Mode(MODE_NORMAL)) { // error
-			errors |= CANERR_SETUP_MODEFAIL;
+			this->errors |= CANERR_SETUP_MODEFAIL;
 	}
 }
 
+inline void CAN_IO::AbortTransmissions(byte timeout)
+{
+	controller.AbortTransmissions(timeout); 
+}
+
 void CAN_IO::ResetController() {
-	this->Setup(this->my_filters,this->my_interrupts);
+	//if (this->AbortTransmissions(100))
+	//{
+		this->init_controller(); // Re-initialize the controller.
+	//}
 }
 
 void CAN_IO::Fetch() {
 	// read status of CANINTF register
 	byte interrupt = controller.GetInterrupt();
+	if (interrupt = 0)
+	{
+		this->errors |= CANERR_EMPTY_INTERRUPT;
+	}
+	else
+		this->errors &= ~CANERR_EMPTY_INTERRUPT;
 
 	// Note: Not all interrupts may be enabled. We add all the important ones here in case
 	// you want to use them. Enabling interrupts other than the RXnIF interrupts may cause

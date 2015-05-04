@@ -380,6 +380,18 @@ byte MCP2515::GetInterrupt()
   return Read(CANINTF);
 }
 
+bool MCP2515::AbortTransmissions(byte timeout)
+{
+  BitModify(CANCTRL, 0x10, 0x10); // Set ABAT to 1 to cancel all pending transmissions
+  byte prev_millis = millis();
+  while (millis() < prev_millis+timeout)
+  {
+    if (Status() & 0b01010100 == 0) //if all TXREQ bits are now cleared.
+      return true;
+  }
+  return false;
+}
+
 bool MCP2515::Mode(byte mode) {
   /*
   mode can be one of the following:

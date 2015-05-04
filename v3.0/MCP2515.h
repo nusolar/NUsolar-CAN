@@ -46,6 +46,7 @@ class MCP2515
       byte GetInterrupt(); // Returns CANINTF Register
       bool ResetInterrupt(byte intSelect); // Resets the interrupt flags specified (use ORed combination of CANINTF flags)
       bool Mode(byte mode); // Returns TRUE if mode change successful
+      bool AbortTransmissions(byte timeout = 10); // Aborts any pending transmissions (may experience slight delay due to SPI). Returns false if it times out after timeout ms.
       
   private:
       bool _init(int baud, byte freq, byte sjw, bool autoBaud);

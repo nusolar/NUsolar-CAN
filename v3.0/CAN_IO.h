@@ -60,17 +60,19 @@ struct CANFilterOpt {
 
 
 /*
- * Define Extra can errors besides those defined in MCP2515_defs.
+ * Define CAN errors
  */
- 	#define CANERR_RX0FULL_OCCURED	0x0001 // RX0 buffer received valid message but RX0IF was set(this is cleared automatically, but the flag persists in errors until cleared by the user)
+ 	#define CANERR_RX0FULL_OCCURED	0x0001 // RX0 buffer received valid message but RX0IF was set (this is cleared automatically, but the flag persists in errors until cleared by the user)
   #define CANERR_RX1FULL_OCCURED	0x0002 // RX1 buffer received valid message but RX1IF was set (this is cleared automatically, but the flag persists in errors until cleared by the user)
-  #define CANERR_SETUP_BAUDFAIL   0x0100 // Failed to set baud rate properly during setup
-  #define CANERR_SETUP_MODEFAIL   0x0200 // Failed to switch modes
+  #define CANERR_EMPTY_INTERRUPT	0x0004 // Interrupt buffer came in empty (probably means SPI is not working, if it is constantly set).
+  #define CANERR_SETUP_BAUDFAIL   0x0100 // Failed to set baud rate properly during setup (can mean that SPI is wired incorrectly)
+  #define CANERR_SETUP_MODEFAIL   0x0200 // Failed to switch modes (can mean that SPI is wired incorrectly)
   #define CANERR_BUFFER_FULL      0x0400 // Local buffer is full
   #define CANERR_MCPBUF_FULL      0x0800 // MCP2515 is reporting buffer overflow errors
   #define CANERR_MESSAGE_ERROR	  0x1000 // Message transmission error 
   #define CANERR_BUSOFF_MODE	  	0x2000 // MCP2515 has entered Bus Off mode
   #define CANERR_HIGH_ERROR_COUNT	0x4000 // Triggered when TEC or REC exceeds 96
+
 
 /*
  * Class for handling CAN I/O operations using the
@@ -89,8 +91,9 @@ public:
 	 * including read masks/filters. All types of interrupt
 	 * are enabled.
 	 */
-	void Setup(const CANFilterOpt& filters, byte interrupts = MERRE | RX0IE | RX1IE | ERRIE );
+	void Setup(const CANFilterOpt& filters, byte interrupts = RX0IF | RX1IF ); // Previous default interrupts: MERRE | RX0IE | RX1IE | ERRIE 
 
+	inline void AbortTransmissions(byte timeout = 10);
 	void ResetController();
 	
 	/* Reconfigure the interrupts that are enabled on the MCP2515 */
@@ -156,6 +159,8 @@ private:
 	 * otherwise sets the second.
 	 */
 	void write_rx_filter(uint8_t address, uint16_t);
+
+	inline void init_controller();
 };
 
 /*

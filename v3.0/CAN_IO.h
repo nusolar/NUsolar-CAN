@@ -143,6 +143,7 @@ public:
 		volatile uint32_t	tec;
 		volatile uint32_t rec;
 		volatile uint32_t int_counter; // increments when an interrupt happens.
+		volatile uint8_t  last_interrupt;
 	
 private:
   byte    INT_pin;

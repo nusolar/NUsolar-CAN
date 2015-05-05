@@ -99,7 +99,11 @@ void CAN_IO::ResetController() {
 void CAN_IO::Fetch() {
 	// read status of CANINTF register
 	byte interrupt = controller.GetInterrupt();
-	if (interrupt = 0)
+	this->last_interrupt = interrupt;
+
+	byte to_clear = 0;
+
+	if (interrupt == 0)
 	{
 		this->errors |= CANERR_EMPTY_INTERRUPT;
 	}
@@ -114,36 +118,46 @@ void CAN_IO::Fetch() {
 
 	if (interrupt & RX1IF) { // receive buffer 1 full
 		RXbuffer.enqueue(controller.ReadBuffer(RXB1));
+		//Serial.println("RX1");
+		to_clear |= RX1IF;
 	}
 
 	if (interrupt & RX0IF) { // receive buffer 0 full
 		RXbuffer.enqueue(controller.ReadBuffer(RXB0));
+		//Serial.println("RX0");
+		to_clear |= RX0IF;
 	}
 
 	if (interrupt & MERRF) { // message error
 		this->errors |= CANERR_MESSAGE_ERROR;
+		to_clear |= MERRF;
 	}
 	else
-		this->errors &= (~CANERR_MESSAGE_ERROR);
+		this->errors |= (~CANERR_MESSAGE_ERROR);
 
 	if (interrupt & WAKIF) { // wake-up interrupt
 		// No Error implemented
+		to_clear |= WAKIF;
 	}
 
 	if (interrupt & ERRIF) { // error interrupt
 		this->FetchErrors();
+		to_clear |= ERRIF;
 	}
 
 	if (interrupt & TX2IF) { // transmit buffer 2 empty
 		// No Error implemented
+		to_clear |= TX2IF;
 	}
 
 	if (interrupt & TX1IF) { // transmit buffer 1 empty
 		// No Error implemented
+		to_clear |= TX1IF;
 	}
 
 	if (interrupt & TX0IF) { // transmit buffer 0 empty
 		// No Error implemented
+		to_clear |= TX0IF;
 	}
 
 	// clear interrupt

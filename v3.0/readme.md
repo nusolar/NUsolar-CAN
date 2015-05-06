@@ -27,9 +27,9 @@ Usage
 	.setRB1(m1, f2, f3, f4, f5)
 to configure the masks and filters for the two receive buffers on the MCP2515.
 
-3. Call can.Setup(filterOpts, errptr) to initialize the MCP2515.
+3. Call can.Setup(filterOpts, interrupts) to initialize the MCP2515.
 	- filterOpts is the object you created in step 2.
-	- errptr is the address of a uint16_t where the library will store error flags.
+	- interrupts is a byte containing the interrupt enable flags that you want to set (i.e. MERRIE, ERRIE, RX0IE, etc.)
 
 NOTE: Because of the way interrupt service routines work, only one CAN object can be used at a time. This may be fixed in future releases.
 
@@ -58,6 +58,11 @@ You can find the packet type of this frame using f.id.
 7. Access the data using the layout class variables:
 	receivedPacket.velocity;
 
+8. The CAN_IO object keeps track of errors that occur in an internal state variable "errors", as well as the TEC and REC counters of the 2515. To update these, call FetchErrors().
+
+9. The MCP2515 occasionally enters sleep mode for random reasons. Code to detect this will be written into the CAN_IO class in a future release, but for now the check and reset procedure if this occurs must be done by you.
+
+
 Example Code
 ------------
 #define CANINT 5
@@ -74,7 +79,7 @@ void setup()
 	filter.setRB0(MASK_Sxxx,DC_DRIVE_ID,0);
 	filter.setRB1(MASK_Sxxx,BMS_SOC_ID,0,0,0);
 
-	can.Setup(filter, &errors);
+	can.Setup(filter, RX0IE | RX1IE);
 }
 
 void loop()

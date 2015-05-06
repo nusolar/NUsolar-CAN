@@ -41,8 +41,7 @@ void CAN_IO::Setup(const CANFilterOpt& filters, byte interrupts) {
 	this->my_filters = filters;
 
 	// init the controller
-	init_controller(); //private helper function
-	
+	init_controller(); //private helper function	
 }
 
 inline void CAN_IO::init_controller() //private helper function
@@ -133,7 +132,7 @@ void CAN_IO::Fetch() {
 		to_clear |= MERRF;
 	}
 	else
-		this->errors |= (~CANERR_MESSAGE_ERROR);
+		this->errors &= (~CANERR_MESSAGE_ERROR);
 
 	if (interrupt & WAKIF) { // wake-up interrupt
 		// No Error implemented

@@ -98,8 +98,6 @@ void CAN_IO::ResetController() {
 void CAN_IO::Fetch() {
 	// read status of CANINTF register
 	byte interrupt = controller.GetInterrupt();
-	this->last_interrupt = interrupt;
-
 	byte to_clear = 0;
 
 	if (interrupt == 0)
@@ -107,56 +105,59 @@ void CAN_IO::Fetch() {
 		this->errors |= CANERR_EMPTY_INTERRUPT;
 	}
 	else
+	{
 		this->errors &= ~CANERR_EMPTY_INTERRUPT;
+		this->last_interrupt = interrupt;
 
-	// Note: Not all interrupts may be enabled. We add all the important ones here in case
-	// you want to use them. Enabling interrupts other than the RXnIF interrupts may cause
-	// certain microcontrollers *cough* arduino *cough* to freeze if a bus error happens.
-	// It is recommended that only the RXnIF interrupts be enabled and the rest of the can
-	// be read by periodically calling FetchErrors().
+		// Note: Not all interrupts may be enabled. We add all the important ones here in case
+		// you want to use them. Enabling interrupts other than the RXnIF interrupts may cause
+		// certain microcontrollers *cough* arduino *cough* to freeze if a bus error happens.
+		// It is recommended that only the RXnIF interrupts be enabled and the rest of the can
+		// be read by periodically calling FetchErrors().
 
-	if (interrupt & RX1IF) { // receive buffer 1 full
-		RXbuffer.enqueue(controller.ReadBuffer(RXB1));
-		//Serial.println("RX1");
-		to_clear |= RX1IF;
-	}
+		if (interrupt & RX1IF) { // receive buffer 1 full
+			RXbuffer.enqueue(controller.ReadBuffer(RXB1));
+			//Serial.println("RX1");
+			to_clear |= RX1IF;
+		}
 
-	if (interrupt & RX0IF) { // receive buffer 0 full
-		RXbuffer.enqueue(controller.ReadBuffer(RXB0));
-		//Serial.println("RX0");
-		to_clear |= RX0IF;
-	}
+		if (interrupt & RX0IF) { // receive buffer 0 full
+			RXbuffer.enqueue(controller.ReadBuffer(RXB0));
+			//Serial.println("RX0");
+			to_clear |= RX0IF;
+		}
 
-	if (interrupt & MERRF) { // message error
-		this->errors |= CANERR_MESSAGE_ERROR;
-		to_clear |= MERRF;
-	}
-	else
-		this->errors &= (~CANERR_MESSAGE_ERROR);
+		if (interrupt & MERRF) { // message error
+			this->errors |= CANERR_MESSAGE_ERROR;
+			to_clear |= MERRF;
+		}
+		else
+			this->errors &= (~CANERR_MESSAGE_ERROR);
 
-	if (interrupt & WAKIF) { // wake-up interrupt
-		// No Error implemented
-		to_clear |= WAKIF;
-	}
+		if (interrupt & WAKIF) { // wake-up interrupt
+			// No Error implemented
+			to_clear |= WAKIF;
+		}
 
-	if (interrupt & ERRIF) { // error interrupt
-		this->FetchErrors();
-		to_clear |= ERRIF;
-	}
+		if (interrupt & ERRIF) { // error interrupt
+			this->FetchErrors();
+			to_clear |= ERRIF;
+		}
 
-	if (interrupt & TX2IF) { // transmit buffer 2 empty
-		// No Error implemented
-		to_clear |= TX2IF;
-	}
+		if (interrupt & TX2IF) { // transmit buffer 2 empty
+			// No Error implemented
+			to_clear |= TX2IF;
+		}
 
-	if (interrupt & TX1IF) { // transmit buffer 1 empty
-		// No Error implemented
-		to_clear |= TX1IF;
-	}
+		if (interrupt & TX1IF) { // transmit buffer 1 empty
+			// No Error implemented
+			to_clear |= TX1IF;
+		}
 
-	if (interrupt & TX0IF) { // transmit buffer 0 empty
-		// No Error implemented
-		to_clear |= TX0IF;
+		if (interrupt & TX0IF) { // transmit buffer 0 empty
+			// No Error implemented
+			to_clear |= TX0IF;
+		}
 	}
 
 	// clear interrupt

@@ -336,7 +336,7 @@ public:
 class DC_Power : public Layout {
 public:
 	DC_Power(float bc) : bus_current(bc) { id = DC_POWER_ID; }
-	DC_Power(const Frame& frame) : bus_current(frame.low_f) { id = frame.id; }
+	DC_Power(const Frame& frame) : bus_current(frame.high_f) { id = frame.id; }
 
 	Frame generate_frame() const;
 

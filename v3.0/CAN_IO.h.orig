@@ -91,7 +91,11 @@ public:
 	 * including read masks/filters. All types of interrupt
 	 * are enabled.
 	 */
+<<<<<<< HEAD
 	void Setup(const CANFilterOpt& filters, byte interrupts = RX0IE | RX1IE );
+=======
+	void Setup(const CANFilterOpt& filters, byte interrupts = RX0IF | RX1IF ); // Previous default interrupts: MERRE | RX0IE | RX1IE | ERRIE 
+>>>>>>> origin/MayCANTesting
 
 	inline void AbortTransmissions(byte timeout = 10);
 	void ResetController();

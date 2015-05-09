@@ -93,7 +93,14 @@ public:
 	 */
 	void Setup(const CANFilterOpt& filters, byte interrupts = RX0IE | RX1IE );
 
-	inline void AbortTransmissions(byte timeout = 10);
+	//inline void AbortTransmissions(byte timeout = 10); not being used right now
+
+	/*
+	 * Methods to put the controller to sleep or wake it up again.
+	 */
+	bool Sleep();
+	bool Wake();
+
 	void ResetController();
 	
 	/* Reconfigure the interrupts that are enabled on the MCP2515 */
@@ -109,6 +116,11 @@ public:
 	 * Get and parse the error flag bit from the MCP2515 into my variables errors, tec, and rec.
 	 */
 	void FetchErrors();
+
+	/*
+	 * Get the contents of CANSTAT register, which can be used to tell the operational state of the device.
+	 */
+	void FetchStatus();
 
 	/*
 	 * Sends messages to the CAN bus via the controller.
@@ -138,7 +150,8 @@ public:
     MCP2515 controller; // The MCP2515 object
    	RX_Queue<16> RXbuffer; //A queue for holding incoming messages
 
-    // Error data
+    // Status data
+    volatile uint8_t  canstat_register;
 		volatile uint32_t	errors;
 		volatile uint32_t	tec;
 		volatile uint32_t rec;

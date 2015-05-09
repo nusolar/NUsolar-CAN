@@ -60,7 +60,7 @@ inline void CAN_IO::init_controller() //private helper function
 	// return controller to config mode
 	if (!controller.Mode(MODE_CONFIG)) { // error
 		this->errors |= CANERR_SETUP_MODEFAIL;
-		if (Serial) Serial.println("Mode ERROR");
+		if (Serial)Serial.println("Mode ERROR");
 	}
 
 	// disable interrupts we don't care about
@@ -83,9 +83,19 @@ inline void CAN_IO::init_controller() //private helper function
 	}
 }
 
-inline void CAN_IO::AbortTransmissions(byte timeout)
+bool CAN_IO::Sleep()
 {
-	controller.AbortTransmissions(timeout); 
+	return controller.Mode(MODE_SLEEP);
+}
+
+bool CAN_IO::Wake()
+{
+
+	controller.BitModify(CANINTF,WAKIF,WAKIF); // Set the WAKEIF bit to request that the controller wake up.
+	noInterrupts();
+	delayMicroseconds(5000); //Wait for it to run the start-up timer
+	interrupts();
+	return controller.Mode(MODE_NORMAL); // The device wakes up in listen-only mode. Put it back in normal (we may have to clear the TX registers)
 }
 
 void CAN_IO::ResetController() {
@@ -199,6 +209,11 @@ void CAN_IO::FetchErrors() {
 	}
 	else
 		errors &= ~(CANERR_HIGH_ERROR_COUNT & CANERR_BUSOFF_MODE & CANERR_RX0FULL_OCCURED & CANERR_RX1FULL_OCCURED);
+}
+
+void CAN_IO::FetchStatus()
+{
+	this->canstat_register = controller.Read(CANSTAT);
 }
 
 void CAN_IO::Send(const Layout& layout, uint8_t buffer) {

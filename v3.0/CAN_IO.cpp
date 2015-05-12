@@ -177,26 +177,32 @@ void CAN_IO::FetchErrors() {
 		errors &= ~(CANERR_HIGH_ERROR_COUNT & CANERR_BUSOFF_MODE & CANERR_RX0FULL_OCCURED & CANERR_RX1FULL_OCCURED);
 }
 
-void CAN_IO::Send(const Layout& layout, uint8_t buffer = 0) {
-	if (buffer == 0) { buffer = select_open_buffer();}
+void CAN_IO::Send(const Layout& layout, uint8_t buffer) {
+	// The TXBANY buffer can be specified to allow the program to choose which buffer to send from.
+	// The TXnIE interrupt flags should be enabled for this to work properly.
+	if (buffer == TXBANY) { buffer = select_open_buffer(); }
+
 	controller.LoadBuffer(buffer, layout.generate_frame());
 	controller.SendBuffer(buffer);
 
-	//set a flag ONLY if the interrupts for this buffer are enabled 
-	//(otherwise we would have a condition) where the flags don't reset and the program
-	//doesn't think any are open after sending 3 times.
-	if (my_interrupts & (buffer << 2)) { tx_open &= ~buffer; } 
+	//set a flag in the tx_open bitfield that this buffer is closed.
+	//It will clear on the first interrupt received after the buffer finishes sending
+	//For best performance, enable all TXnIE flags.
+	tx_open &= ~buffer;
 }
 
-void CAN_IO::Send(const Frame& frame, uint8_t buffer = 0) {
-	if (buffer == 0) { buffer = select_open_buffer(); tx_open &= ~buffer;}
+void CAN_IO::Send(const Frame& frame, uint8_t buffer) {
+	// The TXBANY buffer can be specified to allow the program to choose which buffer to send from.
+	// The TXnIE interrupt flags should be enabled for this to work properly.
+	if (buffer == TXBANY) { buffer = select_open_buffer(); }
+
 	controller.LoadBuffer(buffer, frame);
 	controller.SendBuffer(buffer);
 
-	//set a flag ONLY if the interrupts for this buffer are enabled 
-	//(otherwise we would have a condition) where the flags don't reset and the program
-	//doesn't think any are open after sending 3 times.
-	if (my_interrupts & (buffer << 2)) { tx_open &= ~buffer; } 
+	//set a flag in the tx_open bitfield that this buffer is closed.
+	//It will clear on the first interrupt received after the buffer finishes sending
+	//For best performance, enable all TXnIE flags.
+	tx_open &= ~buffer;
 }
 
 // Define two macros for the following function, to improve readability.
@@ -209,13 +215,11 @@ void CAN_IO::write_rx_filter(uint8_t address, uint16_t data) {
 }
 
 inline uint8_t select_open_buffer() {
-	if (this->tx_open & TX0B)
-		return TX0B;
-	else if (this->tx_open & TX1B)
-		return TX1B;
-	else if (this->tx_open & TX2B)
-		return TX2B;
-	else return TX0B; // Last Resort
+	if (this->tx_open & TXB0)
+		return TXB0;
+	else if (this->tx_open & TXB1)
+		return TXB1;
+	else return TX2B; // Last Resort
 }
 
 bool CAN_IO::ConfigureInterrupts(byte interrupts)

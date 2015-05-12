@@ -30,11 +30,6 @@ void CAN_IO::Setup(const CANFilterOpt& filters, byte interrupts) {
 	SPI.setBitOrder(MSBFIRST);
 	SPI.begin();
 
-	// Clear error counters
-	errors = 0;
-	tec = 0;
-	rec = 0;
-
 	// reset tx tracker
 	tx_open = 0x07;
 
@@ -44,63 +39,108 @@ void CAN_IO::Setup(const CANFilterOpt& filters, byte interrupts) {
 	pinMode(INT_pin,INPUT_PULLUP);	
 	attachInterrupt(INT_pin,CAN_ISR,LOW);
 
+	// Copy filters and interrupts to internal variables
+	this->my_interrupts = interrupts;
+	this->my_filters = filters;
+
 	// init the controller
-	int baudRate = controller.Init(bus_speed, bus_freq);
+	init_controller(); //private helper function	
+}
+
+inline void CAN_IO::init_controller() //private helper function
+{
+	// Clear error counters
+	this->errors = 0;
+	this->tec = 0;
+	this->rec = 0;
+
+	int baudRate = controller.Init(this->bus_speed, this->bus_freq, 1); //SJW of 1
 	if (baudRate <= 0) { // error
-		errors |= CANERR_SETUP_BAUDFAIL;
+		this->errors |= CANERR_SETUP_BAUDFAIL;
 		if (Serial) Serial.println("Baud ERROR");
 	}
 
 	// return controller to config mode
 	if (!controller.Mode(MODE_CONFIG)) { // error
-		errors |= CANERR_SETUP_MODEFAIL;
-		if (Serial) Serial.println("Mode ERROR");
+		this->errors |= CANERR_SETUP_MODEFAIL;
+		if (Serial)Serial.println("Mode ERROR");
 	}
 
 	// disable interrupts we don't care about
-	controller.Write(CANINTE, interrupts);
-	this->my_interrupts = interrupts;
+	controller.Write(CANINTE, this->my_interrupts);
+
 
 	// config RX masks/filters
-	this->my_filters = filters;
-	write_rx_filter(RXM0SIDH, filters.RXM0);
-	write_rx_filter(RXM1SIDH, filters.RXM1);
-	write_rx_filter(RXF0SIDH, filters.RXF0);
-	write_rx_filter(RXF1SIDH, filters.RXF1);
-	write_rx_filter(RXF2SIDH, filters.RXF2);
-	write_rx_filter(RXF3SIDH, filters.RXF3);
-	write_rx_filter(RXF4SIDH, filters.RXF4);
-	write_rx_filter(RXF5SIDH, filters.RXF5);
+	write_rx_filter(RXM0SIDH, this->my_filters.RXM0);
+	write_rx_filter(RXM1SIDH, this->my_filters.RXM1);
+	write_rx_filter(RXF1SIDH, this->my_filters.RXF1);
+	write_rx_filter(RXF2SIDH, this->my_filters.RXF2);
+	write_rx_filter(RXF3SIDH, this->my_filters.RXF3);
+	write_rx_filter(RXF4SIDH, this->my_filters.RXF4);
+	write_rx_filter(RXF5SIDH, this->my_filters.RXF5);
+	write_rx_filter(RXF0SIDH, this->my_filters.RXF0);
 
 	// return controller to normal mode
 	if (!controller.Mode(MODE_NORMAL)) { // error
-			errors |= CANERR_SETUP_MODEFAIL;
+			this->errors |= CANERR_SETUP_MODEFAIL;
 	}
 }
 
+bool CAN_IO::Sleep()
+{
+	return controller.Mode(MODE_SLEEP);
+}
+
+bool CAN_IO::Wake()
+{
+
+	controller.BitModify(CANINTF,WAKIF,WAKIF); // Set the WAKEIF bit to request that the controller wake up.
+	noInterrupts();
+	delayMicroseconds(5000); //Wait for it to run the start-up timer
+	interrupts();
+	return controller.Mode(MODE_NORMAL); // The device wakes up in listen-only mode. Put it back in normal (we may have to clear the TX registers)
+}
+
 void CAN_IO::ResetController() {
-	this->Setup(this->my_filters,this->my_interrupts);
+	//if (this->AbortTransmissions(100))
+	//{
+		this->init_controller(); // Re-initialize the controller.
+	//}
 }
 
 void CAN_IO::Fetch() {
 	// read status of CANINTF register
 	byte interrupt = controller.GetInterrupt();
+	byte to_clear = 0;
 
-	// Note: Not all interrupts may be enabled. We add all the important ones here in case
-	// you want to use them. Enabling interrupts other than the RXnIF interrupts may cause
-	// certain microcontrollers *cough* arduino *cough* to freeze if a bus error happens.
-	// It is recommended that only the RXnIF interrupts be enabled and the rest of the can
-	// be read by periodically calling FetchErrors().
+	if (interrupt == 0)
+	{
+		this->errors |= CANERR_EMPTY_INTERRUPT;
+	}
+	else
+	{
+		this->errors &= ~CANERR_EMPTY_INTERRUPT;
+		this->last_interrupt = interrupt;
+
+		// Note: Not all interrupts may be enabled. We add all the important ones here in case
+		// you want to use them. Enabling interrupts other than the RXnIF interrupts may cause
+		// certain microcontrollers *cough* arduino *cough* to freeze if a bus error happens.
+		// It is recommended that only the RXnIF interrupts be enabled and the rest of the can
+		// be read by periodically calling FetchErrors().
 
 	// Get Messages
 	if (interrupt & (RX0IF | RX1IF))
 	{
 		if (interrupt & RX1IF) { // receive buffer 1 full
 			RXbuffer.enqueue(controller.ReadBuffer(RXB1));
+			//Serial.println("RX1");
+			to_clear |= RX1IF;
 		}
 
 		if (interrupt & RX0IF) { // receive buffer 0 full
 			RXbuffer.enqueue(controller.ReadBuffer(RXB0));
+			//Serial.println("RX0");
+			to_clear |= RX0IF;
 		}
 
 	if (RXbuffer.isFull())
@@ -110,30 +150,37 @@ void CAN_IO::Fetch() {
 	}
 
 	// Handle any other interrupts that might be flagged.
-	if (interrupt & MERRF) { // message error
-		this->errors |= CANERR_MESSAGE_ERROR;
-	}
-	else
-		this->errors &= (~CANERR_MESSAGE_ERROR);
+		if (interrupt & MERRF) { // message error
+			this->errors |= CANERR_MESSAGE_ERROR;
+			to_clear |= MERRF;
+		}
+		else
+			this->errors &= (~CANERR_MESSAGE_ERROR);
 
-	if (interrupt & WAKIF) { // wake-up interrupt
-		// No Error implemented
-	}
+		if (interrupt & WAKIF) { // wake-up interrupt
+			// No Error implemented
+			to_clear |= WAKIF;
+		}
 
-	if (interrupt & ERRIF) { // error interrupt
-		this->FetchErrors();
-	}
+		if (interrupt & ERRIF) { // error interrupt
+			this->FetchErrors();
+			to_clear |= ERRIF;
+		}
 
-	if (interrupt & TX2IF) { // transmit buffer 2 empty
-		tx_open |= TX2B;
-	}
+		if (interrupt & TX2IF) { // transmit buffer 2 empty
+			tx_open |= TXB2;
+			to_clear |= TX2IF;
+		}
 
-	if (interrupt & TX1IF) { // transmit buffer 1 empty
-		tx_open |= TX1B;
-	}
+		if (interrupt & TX1IF) { // transmit buffer 1 empty
+			tx_open |= TXB1;
+			to_clear |= TX1IF;
+		}
 
-	if (interrupt & TX0IF) { // transmit buffer 0 empty
-		tx_open |= TX0B;
+		if (interrupt & TX0IF) { // transmit buffer 0 empty
+			tx_open |= TXB0;
+			to_clear |= TX0IF;
+		}
 	}
 
 	// clear interrupt
@@ -175,6 +222,11 @@ void CAN_IO::FetchErrors() {
 	}
 	else
 		errors &= ~(CANERR_HIGH_ERROR_COUNT & CANERR_BUSOFF_MODE & CANERR_RX0FULL_OCCURED & CANERR_RX1FULL_OCCURED);
+}
+
+void CAN_IO::FetchStatus()
+{
+	this->canstat_register = controller.Read(CANSTAT);
 }
 
 void CAN_IO::Send(const Layout& layout, uint8_t buffer) {

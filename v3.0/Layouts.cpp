@@ -160,8 +160,8 @@ Frame DC_Drive::generate_frame() const {
 
 Frame DC_Power::generate_frame() const {
 	Frame f;
-	f.low_f = bus_current;
-	f.high_f = 0;
+	f.low_f = 0;
+	f.high_f = bus_current;
 	set_header(f);
 	return f;
 }
@@ -186,25 +186,32 @@ Frame DC_Reset::generate_frame() const {
 
 Frame DC_Info::generate_frame() const {
 	Frame f;
-	f.s0 = 0;
 
-	f.data[2] = (uint8_t) (accel_ratio * 100); // convert to integer 0-100 so only two bytes required
-	f.data[3] = (uint8_t) (regen_ratio * 100);
-	f.s2 = can_error_flags;
-	f.data[6] = dc_error_flags;
+	//Byte 0 + 1
+	f.s0 = 0; //Clear bytes 1 and 2 (set any unused bits to 0, since this is a flag field)
+	f.s0 |= ignition_state; // These are in the right place already.
 	f.s0 |= brake_engaged << 7;
-	f.s0 |= fuel_door << 8;
+	f.s0 |= fuel_door << 8;	// This is currently what turns on the BMS, until we figure out how to get the ignition bits to work.
 	f.s0 |= was_reset << 9;
-	f.s0 |= gear;
-	f.s0 |= ignition_state;
-	set_header(f,7);
+	//Byte 2
+	f.data[2] = (uint8_t) (accel_ratio * 100); // convert to integer 0-100 so only one byte required
+	//Byte 3
+	f.data[3] = (uint8_t) (regen_ratio * 100);
+	//Byte 4 + 5
+	f.s2 = can_error_flags;
+	//Byte 6
+	f.data[6] = dc_error_flags;
+	//Byte 7
+	f.data[7] = gear;
+
+	set_header(f);
 	return f;
 }
 
 Frame SW_Data::generate_frame() const {
     Frame f;
     f.data[0] = flags;
-    set_header(f,1);
+    set_header(f,1); // Note: using a byte number other than 8 causes a packet to be rejected by the telemetry system.
     return f;
 }
 

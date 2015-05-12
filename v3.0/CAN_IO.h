@@ -69,7 +69,7 @@ struct CANFilterOpt {
   #define CANERR_EMPTY_INTERRUPT	0x0004 // Interrupt buffer came in empty (probably means SPI is not working, if it is constantly set).
   #define CANERR_SETUP_BAUDFAIL   0x0100 // Failed to set baud rate properly during setup (can mean that SPI is wired incorrectly)
   #define CANERR_SETUP_MODEFAIL   0x0200 // Failed to switch modes (can mean that SPI is wired incorrectly)
-  #define CANERR_BUFFER_FULL      0x0400 // Local buffer is full
+  #define CANERR_RXBUFFER_FULL    0x0400 // Local buffer is full
   #define CANERR_MESSAGE_ERROR	  0x1000 // Message transmission error 
   #define CANERR_BUSOFF_MODE	  	0x2000 // MCP2515 has entered Bus Off mode
   #define CANERR_HIGH_ERROR_COUNT	0x4000 // Triggered when TEC or REC exceeds 96
@@ -182,9 +182,8 @@ private:
 
 	/*
 	 * Helper function to select a TX buffer
-	 *
 	 */
-	inline uint8_t select_open_tx();
+	inline uint8_t select_open_buffer();
 };
 
 /*

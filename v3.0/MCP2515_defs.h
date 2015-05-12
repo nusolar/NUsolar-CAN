@@ -203,8 +203,8 @@ typedef struct
 #define TXB0            0x01
 #define TXB1            0x02
 #define TXB2            0x04
-#define TXB_ALL                  TXB0 | TXB1 | TXB2
-#define TXB_ANY         0x00
+#define TXBALL          TXB0 | TXB1 | TXB2
+#define TXBANY         0x00
 
 // Buffer Full Flags
 #define RXB0Full        0x01;

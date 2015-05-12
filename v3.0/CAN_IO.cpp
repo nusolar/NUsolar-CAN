@@ -143,10 +143,10 @@ void CAN_IO::Fetch() {
 			to_clear |= RX0IF;
 		}
 
-	if (RXbuffer.isFull())
-		errors |= CANERR_BUFFER_FULL
+	if (RXbuffer.is_full())
+		errors |= CANERR_RXBUFFER_FULL;
 	else
-		errors &= ~CANERR_BUFFER_FULL
+		errors &= ~CANERR_RXBUFFER_FULL;
 	}
 
 	// Handle any other interrupts that might be flagged.
@@ -266,12 +266,12 @@ void CAN_IO::write_rx_filter(uint8_t address, uint16_t data) {
 	controller.Write(address, bytes, 2);
 }
 
-inline uint8_t select_open_buffer() {
+inline uint8_t CAN_IO::select_open_buffer() {
 	if (this->tx_open & TXB0)
 		return TXB0;
 	else if (this->tx_open & TXB1)
 		return TXB1;
-	else return TX2B; // Last Resort
+	else return TXB2; // Last Resort
 }
 
 bool CAN_IO::ConfigureInterrupts(byte interrupts)

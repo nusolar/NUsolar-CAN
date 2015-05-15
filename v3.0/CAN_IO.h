@@ -84,7 +84,8 @@ public:
 	 * Constructor. Creates a MCP2515 object using
 	 * the given pins.
 	 */
-	CAN_IO(byte CS_pin, byte INT_pin, int baud, byte freq);
+	CAN_IO(byte CS_pin, byte INT_pin, int baud, byte freq); // Constructor for using interrupts
+	CAN_IO(byte CS_pin, int baud, byte freq);								// Constructor if interrupts are not used
 
 	/*
 	 * Initializes the CAN controller to desired settings,
@@ -170,6 +171,7 @@ private:
 	//store filters and interrupts for reset
 	CANFilterOpt my_filters;
 	byte my_interrupts;
+	bool enable_interrupts; // Sets (by constructor) whether interrupts are used to fetch messages.
 
 	/*
 	 * Helper function for configuring the RX masks/filters.

@@ -7,7 +7,11 @@
 #include <SPI.h>
 
 CAN_IO::CAN_IO(byte CS_pin, byte INT_p, int baud, byte freq) : INT_pin(INT_p), controller(CS_pin, INT_p), bus_speed(baud), bus_freq(freq),
-tec(0), rec(0), errors(0)  {}
+tec(0), rec(0), errors(0),
+enable_interrupts(true)  {}
+CAN_IO::CAN_IO(byte CS_pin, int baud, byte freq) :  controller(CS_pin, 0), bus_speed(baud), bus_freq(freq),
+tec(0), rec(0), errors(0),
+enable_interrupts(false)  {}
 
 /*
  * Define global interrupt function
@@ -33,11 +37,14 @@ void CAN_IO::Setup(const CANFilterOpt& filters, byte interrupts) { // default in
 	// reset tx tracker
 	tx_open = 0x07;
 
-	// Set as main can
-	main_CAN = this;
+	if (enable_interrupts)
+	{
+		// Set as main can
+		main_CAN = this;
 
-	pinMode(INT_pin,INPUT_PULLUP);	
-	attachInterrupt(INT_pin,CAN_ISR,LOW);
+		pinMode(INT_pin,INPUT_PULLUP);	
+		attachInterrupt(INT_pin,CAN_ISR,LOW);
+	}
 
 	// Copy filters and interrupts to internal variables
 	this->my_interrupts = interrupts;

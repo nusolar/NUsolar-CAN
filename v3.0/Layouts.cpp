@@ -103,41 +103,41 @@ Frame MC_Heartbeat::generate_frame() const {
 Frame MC_Status::generate_frame() const {
 	Frame f;
 	f.s0 = UNUSED;
-	f.s1 = active_motor;
+	f.s1 = limit_flags;
 	f.s2 = err_flags;
-	f.s3 = limit_flags;
+	f.s3 = active_motor;
 	set_header(f);
 	return f;
 }
 
 Frame MC_BusStatus::generate_frame() const {
 	Frame f;
-	f.low_f = bus_current;
-	f.high_f = bus_voltage;
+	f.low_f = bus_voltage;
+	f.high_f = bus_current;
 	set_header(f);
 	return f;
 }
 
 Frame MC_Velocity::generate_frame() const {
 	Frame f;
-	f.low_f = car_velocity;
-	f.high_f = motor_velocity;
+	f.low_f = motor_velocity;
+	f.high_f = car_velocity;
 	set_header(f);
 	return f;
 }
 
 Frame MC_PhaseCurrent::generate_frame() const {
 	Frame f;
-	f.low_f = phase_a;
-	f.high_f = phase_b;
+	f.low_f = phase_b;
+	f.high_f = phase_aphase_b;
 	set_header(f);
 	return f;
 }
 
 Frame MC_FanSpeed::generate_frame() const {
 	Frame f;
-	f.low_f = speed;
-	f.high_f = drive;
+	f.low_f = drive;
+	f.high_f = speed;
 	set_header(f);
 	return f;
 }

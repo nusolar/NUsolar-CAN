@@ -228,7 +228,7 @@ public:
 	MC_Status(uint16_t act_m, uint16_t err_f, uint16_t lim_f) : 
 		active_motor(act_m), err_flags(err_f), limit_flags(lim_f)
 		{ id = MC_STATUS_ID; }
-	MC_Status(const Frame& frame) : active_motor(frame.s1), err_flags(frame.s2), limit_flags(frame.s3)
+	MC_Status(const Frame& frame) : active_motor(frame.s3), err_flags(frame.s2), limit_flags(frame.s1)
 		{ id = frame.id; }
 
 	Frame generate_frame() const;
@@ -244,7 +244,7 @@ public:
 class MC_BusStatus : public Layout {
 public:
 	MC_BusStatus(float bc, float bv) : bus_current(bc), bus_voltage(bv) { id = MC_BUS_STATUS_ID; }
-	MC_BusStatus(const Frame& frame) : bus_current(frame.low_f), bus_voltage(frame.high_f) { id = frame.id; }
+	MC_BusStatus(const Frame& frame) : bus_current(frame.high_f), bus_voltage(frame.low_f) { id = frame.id; }
 
 	Frame generate_frame() const;
 
@@ -258,7 +258,7 @@ public:
 class MC_Velocity : public Layout {
 public:
 	MC_Velocity(float car_v, float motor_v) : car_velocity(car_v), motor_velocity(motor_v) { id = MC_VELOCITY_ID; }
-	MC_Velocity(const Frame& frame) : car_velocity(frame.low_f), motor_velocity(frame.high_f) { id = frame.id; }
+	MC_Velocity(const Frame& frame) : car_velocity(frame.high_f), motor_velocity(frame.low_f) { id = frame.id; }
 
 	Frame generate_frame() const;
 
@@ -272,7 +272,7 @@ public:
 class MC_PhaseCurrent : public Layout {
 public:
 	MC_PhaseCurrent(float a, float b) : phase_a(a), phase_b(b) { id = MC_PHASE_ID; }
-	MC_PhaseCurrent(const Frame& frame) : phase_a(frame.low_f), phase_b(frame.high_f) { id = frame.id; }
+	MC_PhaseCurrent(const Frame& frame) : phase_a(frame.high_f), phase_b(frame.low_f) { id = frame.id; }
 
 	Frame generate_frame() const;
 
@@ -283,7 +283,7 @@ public:
 class MC_FanSpeed : public Layout {
 public:
 	MC_FanSpeed(float rpm, float v) : speed(rpm), drive(v) {id = MC_FANSPEED_ID; }
-	MC_FanSpeed(const Frame& frame) : speed(frame.low_f), drive(frame.high_f) { id = frame.id; }
+	MC_FanSpeed(const Frame& frame) : speed(frame.high_f), drive(frame.low_f) { id = frame.id; }
 
 	Frame generate_frame() const;
 
@@ -294,7 +294,7 @@ public:
 class MC_OdoAmp : public Layout {
 public:
 	MC_OdoAmp(float Ah, float odom) : bus_amphours(Ah), odometer(odom) {id = MC_ODOAMP_ID; }
-	MC_OdoAmp(const Frame& frame) : bus_amphours(frame.low_f), odometer(frame.high_f) { id = frame.id; }
+	MC_OdoAmp(const Frame& frame) : bus_amphours(frame.high_f), odometer(frame.low_f) { id = frame.id; }
 
 	Frame generate_frame() const;
 

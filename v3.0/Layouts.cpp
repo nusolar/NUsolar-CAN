@@ -129,7 +129,7 @@ Frame MC_Velocity::generate_frame() const {
 Frame MC_PhaseCurrent::generate_frame() const {
 	Frame f;
 	f.low_f = phase_b;
-	f.high_f = phase_aphase_b;
+	f.high_f = phase_a;
 	set_header(f);
 	return f;
 }

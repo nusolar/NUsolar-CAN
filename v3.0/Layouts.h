@@ -44,7 +44,6 @@
 #define DC_DRIVE_ID			0x501
 #define DC_POWER_ID			0x502
 #define DC_RESET_ID			0x503
-//#define DC_SWITCHPOS_ID		0x505
 #define DC_INFO_ID			0x505
 
 // steering wheel TX

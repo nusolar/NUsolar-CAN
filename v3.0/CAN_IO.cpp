@@ -236,10 +236,11 @@ void CAN_IO::FetchStatus()
 	this->canstat_register = controller.Read(CANSTAT);
 }
 
-void CAN_IO::Send(const Layout& layout, uint8_t buffer) {
+bool CAN_IO::Send(const Layout& layout, uint8_t buffer) {
 	// The TXBANY buffer can be specified to allow the program to choose which buffer to send from.
 	// The TXnIE interrupt flags should be enabled for this to work properly.
 	if (buffer == TXBANY) { buffer = select_open_buffer(); }
+	if (buffer == 0x00) { return false; } // Fail
 
 	controller.LoadBuffer(buffer, layout.generate_frame());
 	controller.SendBuffer(buffer);
@@ -248,12 +249,14 @@ void CAN_IO::Send(const Layout& layout, uint8_t buffer) {
 	//It will clear on the first interrupt received after the buffer finishes sending
 	//For best performance, enable all TXnIE flags.
 	tx_open &= ~buffer;
+	return true;
 }
 
-void CAN_IO::Send(const Frame& frame, uint8_t buffer) {
+bool CAN_IO::Send(const Frame& frame, uint8_t buffer) {
 	// The TXBANY buffer can be specified to allow the program to choose which buffer to send from.
 	// The TXnIE interrupt flags should be enabled for this to work properly.
 	if (buffer == TXBANY) { buffer = select_open_buffer(); }
+	if (buffer == 0x00) { return false; } // Fail
 
 	controller.LoadBuffer(buffer, frame);
 	controller.SendBuffer(buffer);
@@ -262,6 +265,7 @@ void CAN_IO::Send(const Frame& frame, uint8_t buffer) {
 	//It will clear on the first interrupt received after the buffer finishes sending
 	//For best performance, enable all TXnIE flags.
 	tx_open &= ~buffer;
+	return true;
 }
 
 // Define two macros for the following function, to improve readability.
@@ -278,7 +282,10 @@ inline uint8_t CAN_IO::select_open_buffer() {
 		return TXB0;
 	else if (this->tx_open & TXB1)
 		return TXB1;
-	else return TXB2; // Last Resort
+	else if (this->tx_open & TXB2)
+		return TXB2;
+	else
+		return 0x00; //Failure
 }
 
 bool CAN_IO::ConfigureInterrupts(byte interrupts)

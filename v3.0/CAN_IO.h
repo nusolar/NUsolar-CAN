@@ -126,8 +126,8 @@ public:
 	/*
 	 * Sends messages to the CAN bus via the controller.
 	 */
-	void Send(const Layout& layout, uint8_t buffer);
-	void Send(const Frame& frame, uint8_t buffer);
+	bool Send(const Layout& layout, uint8_t buffer);
+	bool Send(const Frame& frame, uint8_t buffer);
 	
 	/*
 	 * Returns a reference to the next available frame on the buffer

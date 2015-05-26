@@ -16,6 +16,16 @@
 #include "MCP2515.h"
 #include "MCP2515_defs.h"
 
+String frameToString(const Frame& f)
+{
+  char fstring[64];
+  if (f.ide)
+    sprintf(fstring, "E%03X|%02X%02X%02X%02X%02X%02X%02X%02X", f.id, f.data[7], f.data[6], f.data[5], f.data[4], f.data[3], f.data[2], f.data[1], f.data[0]);
+  else
+    sprintf(fstring, "S%03X|%02X%02X%02X%02X%02X%02X%02X%02X", f.id, f.data[7], f.data[6], f.data[5], f.data[4], f.data[3], f.data[2], f.data[1], f.data[0]);
+  return String(fstring);
+}
+
 MCP2515::MCP2515(byte CS_Pin, byte INT_Pin) {
   pinMode(CS_Pin, OUTPUT);
   digitalWrite(CS_Pin,HIGH);

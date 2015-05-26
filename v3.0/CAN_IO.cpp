@@ -241,6 +241,7 @@ bool CAN_IO::Send(const Layout& layout, uint8_t buffer) {
 	// The TXnIE interrupt flags should be enabled for this to work properly.
 	if (buffer == TXBANY) { buffer = select_open_buffer(); }
 	if (buffer == 0x00) { return false; } // Fail
+	Frame f(layout.generate_frame());
 
 	controller.LoadBuffer(buffer, layout.generate_frame());
 	controller.SendBuffer(buffer);
@@ -278,6 +279,17 @@ void CAN_IO::write_rx_filter(uint8_t address, uint16_t data) {
 }
 
 inline uint8_t CAN_IO::select_open_buffer() {
+	byte status = controller.Status();
+	if (!(status & 0x04))
+		return TXB0;
+	else if (!(status & 0x10))
+		return TXB1;
+	else if (!(status & 0x40))
+		return TXB2;
+	else
+		return 0x00; //Failure
+
+	/*
 	if (this->tx_open & TXB0)
 		return TXB0;
 	else if (this->tx_open & TXB1)
@@ -285,7 +297,7 @@ inline uint8_t CAN_IO::select_open_buffer() {
 	else if (this->tx_open & TXB2)
 		return TXB2;
 	else
-		return 0x00; //Failure
+		return 0x00; //Failure*/
 }
 
 bool CAN_IO::ConfigureInterrupts(byte interrupts)

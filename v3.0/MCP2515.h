@@ -17,6 +17,8 @@
 #include "Arduino.h"
 #include "MCP2515_defs.h"
 
+String frameToString(const Frame&);
+
 class MCP2515
 {
   public:

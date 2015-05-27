@@ -243,7 +243,11 @@ bool CAN_IO::Send(const Layout& layout, uint8_t buffer) {
 	if (buffer == 0x00) { return false; } // Fail
 	Frame f(layout.generate_frame());
 
-	controller.LoadBuffer(buffer, layout.generate_frame());
+	if (!controller.LoadBuffer(buffer, layout.generate_frame()))
+		{
+			Serial.println("LOAD FAILED");
+			return false;
+		}
 	controller.SendBuffer(buffer);
 
 	//set a flag in the tx_open bitfield that this buffer is closed.
@@ -259,7 +263,11 @@ bool CAN_IO::Send(const Frame& frame, uint8_t buffer) {
 	if (buffer == TXBANY) { buffer = select_open_buffer(); }
 	if (buffer == 0x00) { return false; } // Fail
 
-	controller.LoadBuffer(buffer, frame);
+	if (!controller.LoadBuffer(buffer, frame))
+		{
+			Serial.println("LOAD FAILED");
+			return false;
+		}
 	controller.SendBuffer(buffer);
 
 	//set a flag in the tx_open bitfield that this buffer is closed.

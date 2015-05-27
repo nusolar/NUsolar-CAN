@@ -37,7 +37,7 @@ class MCP2515
       Frame ReadBuffer(byte buffer);
       void Write(byte address, byte data);
       void Write(byte address, byte data[], byte bytes);
-      bool LoadBuffer(byte buffer, Frame message);
+      bool LoadBuffer(byte buffer, Frame message, bool verify = false);
       void SendBuffer(byte buffers);
       byte Status();
       byte RXStatus();

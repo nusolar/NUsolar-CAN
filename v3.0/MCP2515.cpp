@@ -280,7 +280,7 @@ void MCP2515::SendBuffer(byte buffers) {
   digitalWrite(_CS,HIGH);
 }
 
-bool MCP2515::LoadBuffer(byte buffer, Frame message) {
+bool MCP2515::LoadBuffer(byte buffer, Frame message, bool verify) {
  
   // buffer should be one of TXB0, TXB1 or TXB2
   if(buffer==TXB0) buffer = 0;
@@ -322,40 +322,40 @@ bool MCP2515::LoadBuffer(byte buffer, Frame message) {
   }
   digitalWrite(_CS,HIGH);
 
-  /* DEBUG CODE */
-  /* Verify data in send buffer is correct */
-  switch (buffer)
+  if (verify)
   {
-    case 0x00: //TXB0
-      buffer = TXB0SIDH; break;
-    case TXB1:
-      buffer = TXB1SIDH; break;
-    case TXB2:
-      buffer = TXB2SIDH; break;
-  }
-  byte registers[13];
-  digitalWrite(_CS,LOW);
-    SPI.transfer(CAN_READ, buffer);
-    for (int i=0;i<5+message.dlc;i++)
-      registers[i] = SPI.transfer(0);
-    if (
-      byte1 != registers[0] or
-      byte2 != registers[1] or
-      byte3 != registers[2] or
-      byte4 != registers[3] or
-      byte5 != registers[4]
-      )
-      {
-        return false;
-      }
-    else 
+    /* Verify data in send buffer is correct */
+    switch (buffer)
     {
-      for(int i=0;i<message.dlc;i++) {
-        if (message.data[i] != registers[5+i])
-          return false;
-      }
-      return true;
+      case 0x00: //TXB0
+        buffer = TXB0SIDH; break;
+      case TXB1:
+        buffer = TXB1SIDH; break;
+      case TXB2:
+        buffer = TXB2SIDH; break;
     }
+    byte registers[13];
+    Read(buffer, registers, 5+message.dlc);
+      if (
+        byte1 != registers[0] or
+        byte2 != registers[1] or
+        byte3 != registers[2] or
+        byte4 != registers[3] or
+        byte5 != registers[4]
+        )
+        {
+          return false;
+        }
+      else 
+      {
+        for(int i=0;i<message.dlc;i++) {
+          if (message.data[i] != registers[5+i])
+            return false;
+        }
+        return true;
+      }
+  }
+  else return true; // If not verifying, always return true.
 }
 
 byte MCP2515::Status() {
@@ -422,6 +422,7 @@ bool MCP2515::ResetInterrupt(byte intSelect)
 
 byte MCP2515::GetInterrupt()
 {
+  digitalWrite(_CS, LOW); // Close all pending SPI transmissions
   return Read(CANINTF);
 }
 

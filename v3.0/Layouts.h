@@ -53,8 +53,15 @@
 #define SW_DATA_ID 			0x701
 
 
-
-// steering wheel data masks
+/*
+ * Mask ID that specifically work with our SIDs
+ * (packet ID's for f0-f5 can be found in Layouts.h)
+ */
+#define MASK_NONE			0x000000
+#define MASK_Sx00			0x000700
+#define MASK_Sxx0			0x0007F0
+#define MASK_Sxxx			0x0007FF
+#define MASK_EID			0x07FFFF
 
 /*
  * Abstract base packet.

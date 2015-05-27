@@ -87,6 +87,10 @@ inline void CAN_IO::init_controller() //private helper function
 	write_rx_filter(RXF5SIDH, this->my_filters.RXF5);
 	write_rx_filter(RXF0SIDH, this->my_filters.RXF0);
 
+	//Receive only standard frames
+	//controller.BitModify(RXB0CTRL, 0b01100000, 0b00100000);
+	//controller.BitModify(RXB1CTRL, 0b01100000, 0b00100000);
+
 	// return controller to normal mode
 	if (!controller.Mode(MODE_NORMAL)) { // error
 			this->errors |= CANERR_SETUP_MODEFAIL;
@@ -236,19 +240,19 @@ void CAN_IO::FetchStatus()
 	this->canstat_register = controller.Read(CANSTAT);
 }
 
-bool CAN_IO::Send(const Layout& layout, uint8_t buffer) {
+bool CAN_IO::Send(const Layout& layout, uint8_t buffer, bool verify) {
 	// The TXBANY buffer can be specified to allow the program to choose which buffer to send from.
 	// The TXnIE interrupt flags should be enabled for this to work properly.
 	if (buffer == TXBANY) { buffer = select_open_buffer(); }
 	if (buffer == 0x00) { return false; } // Fail
-	Frame f(layout.generate_frame());
 
-	if (!controller.LoadBuffer(buffer, layout.generate_frame()))
+	if (!controller.LoadBuffer(buffer, layout.generate_frame(), verify) && verify)
 		{
 			Serial.println("LOAD FAILED");
 			return false;
 		}
-	controller.SendBuffer(buffer);
+	else
+		controller.SendBuffer(buffer);
 
 	//set a flag in the tx_open bitfield that this buffer is closed.
 	//It will clear on the first interrupt received after the buffer finishes sending
@@ -257,18 +261,19 @@ bool CAN_IO::Send(const Layout& layout, uint8_t buffer) {
 	return true;
 }
 
-bool CAN_IO::Send(const Frame& frame, uint8_t buffer) {
+bool CAN_IO::Send(const Frame& frame, uint8_t buffer, bool verify) {
 	// The TXBANY buffer can be specified to allow the program to choose which buffer to send from.
 	// The TXnIE interrupt flags should be enabled for this to work properly.
 	if (buffer == TXBANY) { buffer = select_open_buffer(); }
 	if (buffer == 0x00) { return false; } // Fail
 
-	if (!controller.LoadBuffer(buffer, frame))
+	if (!controller.LoadBuffer(buffer, frame, verify) && verify)
 		{
 			Serial.println("LOAD FAILED");
 			return false;
 		}
-	controller.SendBuffer(buffer);
+	else
+		controller.SendBuffer(buffer);
 
 	//set a flag in the tx_open bitfield that this buffer is closed.
 	//It will clear on the first interrupt received after the buffer finishes sending

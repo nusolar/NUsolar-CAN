@@ -240,13 +240,13 @@ void CAN_IO::FetchStatus()
 	this->canstat_register = controller.Read(CANSTAT);
 }
 
-bool CAN_IO::Send(const Layout& layout, uint8_t buffer, bool verify) {
+bool CAN_IO::SendVerified(const Layout& layout, uint8_t buffer) {
 	// The TXBANY buffer can be specified to allow the program to choose which buffer to send from.
 	// The TXnIE interrupt flags should be enabled for this to work properly.
 	if (buffer == TXBANY) { buffer = select_open_buffer(); }
 	if (buffer == 0x00) { return false; } // Fail
 
-	if (!controller.LoadBuffer(buffer, layout.generate_frame(), verify) && verify)
+	if (!controller.LoadBuffer(buffer, layout.generate_frame(), true))
 		{
 			Serial.println("LOAD FAILED");
 			return false;
@@ -261,19 +261,51 @@ bool CAN_IO::Send(const Layout& layout, uint8_t buffer, bool verify) {
 	return true;
 }
 
-bool CAN_IO::Send(const Frame& frame, uint8_t buffer, bool verify) {
+bool CAN_IO::SendVerified(const Frame& frame, uint8_t buffer) {
 	// The TXBANY buffer can be specified to allow the program to choose which buffer to send from.
 	// The TXnIE interrupt flags should be enabled for this to work properly.
 	if (buffer == TXBANY) { buffer = select_open_buffer(); }
 	if (buffer == 0x00) { return false; } // Fail
 
-	if (!controller.LoadBuffer(buffer, frame, verify) && verify)
+	if (!controller.LoadBuffer(buffer, frame, true))
 		{
 			Serial.println("LOAD FAILED");
 			return false;
 		}
 	else
 		controller.SendBuffer(buffer);
+
+	//set a flag in the tx_open bitfield that this buffer is closed.
+	//It will clear on the first interrupt received after the buffer finishes sending
+	//For best performance, enable all TXnIE flags.
+	tx_open &= ~buffer;
+	return true;
+}
+
+bool CAN_IO::Send(const Layout& layout, uint8_t buffer) {
+	// The TXBANY buffer can be specified to allow the program to choose which buffer to send from.
+	// The TXnIE interrupt flags should be enabled for this to work properly.
+	if (buffer == TXBANY) { buffer = select_open_buffer(); }
+	if (buffer == 0x00) { return false; } // Fail
+
+	controller.LoadBuffer(buffer, layout.generate_frame());
+	controller.SendBuffer(buffer);
+
+	//set a flag in the tx_open bitfield that this buffer is closed.
+	//It will clear on the first interrupt received after the buffer finishes sending
+	//For best performance, enable all TXnIE flags.
+	tx_open &= ~buffer;
+	return true;
+}
+
+bool CAN_IO::Send(const Frame& frame, uint8_t buffer) {
+	// The TXBANY buffer can be specified to allow the program to choose which buffer to send from.
+	// The TXnIE interrupt flags should be enabled for this to work properly.
+	if (buffer == TXBANY) { buffer = select_open_buffer(); }
+	if (buffer == 0x00) { return false; } // Fail
+
+	controller.LoadBuffer(buffer, frame);
+	controller.SendBuffer(buffer);
 
 	//set a flag in the tx_open bitfield that this buffer is closed.
 	//It will clear on the first interrupt received after the buffer finishes sending

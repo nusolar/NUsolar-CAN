@@ -12,8 +12,6 @@
 #include "Layouts.h"
 #include "RX_Queue.h"
 
-#define VERIFY true // Optional argument to both CAN_IO::Send() forcing them to verify the data loaded on the MCP2515 is correct before sending, and fail if it isn't.
-
 /* 
  *Struct containing the filter info for the rx buffers.
  * Can specify mask and 2 filters for RXB0, and mask and
@@ -118,8 +116,10 @@ public:
 	/*
 	 * Sends messages to the CAN bus via the controller.
 	 */
-	bool Send(const Layout& layout, uint8_t buffer, bool verify = false);
-	bool Send(const Frame& frame, uint8_t buffer, bool verify = false);
+	bool Send(const Layout& layout, uint8_t buffer);
+	bool Send(const Frame& frame, uint8_t buffer);
+	bool SendVerified(const Layout& layout, uint8_t buffer);
+	bool SendVerified(const Frame& frame, uint8_t buffer);
 	
 	/*
 	 * Returns a reference to the next available frame on the buffer

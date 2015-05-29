@@ -23,7 +23,7 @@ CAN_IO* main_CAN = 0;
 /*
  * Setup function for CAN_IO. Arguments are a FilterInfo struct and a pointer to a place to raise error flags.
  */
-void CAN_IO::Setup(const CANFilterOpt& filters, byte interrupts) { // default interrupts are RX0IE | RX1IE | TX1IE | TX2IE | TX0IE.
+void CAN_IO::Setup(byte interrupts) { // default interrupts are RX0IE | RX1IE | TX1IE | TX2IE | TX0IE.
 	// SPI setup
 	SPI.setClockDivider(10);
 	SPI.setDataMode(SPI_MODE0);
@@ -40,7 +40,6 @@ void CAN_IO::Setup(const CANFilterOpt& filters, byte interrupts) { // default in
 
 	// Copy filters and interrupts to internal variables
 	this->my_interrupts = interrupts;
-	this->my_filters = filters;
 
 	// init the controller
 	init_controller(); //private helper function	
@@ -70,14 +69,14 @@ inline void CAN_IO::init_controller() //private helper function
 
 
 	// config RX masks/filters
-	write_rx_filter(RXM0SIDH, this->my_filters.RXM0);
-	write_rx_filter(RXM1SIDH, this->my_filters.RXM1);
-	write_rx_filter(RXF1SIDH, this->my_filters.RXF1);
-	write_rx_filter(RXF2SIDH, this->my_filters.RXF2);
-	write_rx_filter(RXF3SIDH, this->my_filters.RXF3);
-	write_rx_filter(RXF4SIDH, this->my_filters.RXF4);
-	write_rx_filter(RXF5SIDH, this->my_filters.RXF5);
-	write_rx_filter(RXF0SIDH, this->my_filters.RXF0);
+	write_rx_filter(RXM0SIDH, this->filters.RXM0);
+	write_rx_filter(RXM1SIDH, this->filters.RXM1);
+	write_rx_filter(RXF1SIDH, this->filters.RXF1);
+	write_rx_filter(RXF2SIDH, this->filters.RXF2);
+	write_rx_filter(RXF3SIDH, this->filters.RXF3);
+	write_rx_filter(RXF4SIDH, this->filters.RXF4);
+	write_rx_filter(RXF5SIDH, this->filters.RXF5);
+	write_rx_filter(RXF0SIDH, this->filters.RXF0);
 
 	// return controller to normal mode
 	if (!controller.Mode(MODE_NORMAL)) { // error

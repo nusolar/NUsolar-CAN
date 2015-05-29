@@ -82,7 +82,7 @@ public:
 	 * including read masks/filters. All types of interrupt
 	 * are enabled.
 	 */
-	void Setup(const CANFilterOpt& filters, byte interrupts = RX0IE | RX1IE | TX1IE | TX2IE | TX0IE );
+	void Setup(byte interrupts = RX0IE | RX1IE | TX1IE | TX2IE | TX0IE );
 
 	//inline void AbortTransmissions(byte timeout = 10); not being used right now
 
@@ -162,6 +162,9 @@ public:
 		volatile uint32_t rec;
 		volatile long int_counter; // increments when an interrupt happens (always updated)
 		volatile uint8_t  last_interrupt;
+
+	//store filters
+	CANFilterOpt filters;
 	
 private:
   byte    INT_pin;
@@ -169,10 +172,8 @@ private:
 	byte	  bus_freq;
 	volatile byte 		tx_open;	// Tracks which TX buffers are open.
 
-	//store filters and interrupts for reset
-	CANFilterOpt my_filters;
+	// Store interrupts in case we have to reset
 	byte my_interrupts;
-	bool enable_interrupts; // Sets (by constructor) whether interrupts are used to fetch messages.
 
 	/*
 	 * Helper function for configuring the RX masks/filters.

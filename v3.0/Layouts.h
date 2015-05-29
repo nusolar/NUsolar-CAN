@@ -74,6 +74,12 @@ public:
 	 * Creates a Frame object to represent this layout.
 	 */
 	virtual Frame generate_frame() const;
+
+	String toString() const
+	{
+		return generate_frame().toString();
+	}
+
 protected:
 	/*
 	 * Fill out the header info for a frame.

@@ -48,16 +48,6 @@ struct CANFilterOpt {
 	}
 };
 
-/*
- * Mask ID that specifically work with our SIDs
- * (packet ID's for f0-f5 can be found in Layouts.h)
- */
-#define MASK_NONE			0x000
-#define MASK_Sx00			0x700
-#define MASK_Sxx0			0x7F0
-#define MASK_Sxxx			0x7FF
-#define MASK_EID			0x7FFFF
-
 
 /*
  * Define CAN errors
@@ -104,8 +94,17 @@ public:
 
 	void ResetController();
 	
-	/* Reconfigure the interrupts that are enabled on the MCP2515 */
+	/* 
+	 * Reconfigure the interrupts that are enabled on the MCP2515 
+	 * Arguments: - interrupts (OR'd list of INTE flags)
+	 */
 	bool ConfigureInterrupts(byte interrupts);
+
+	/*
+	 * Attaches or detatches the automatic fetch interrupt (not recommended)
+	 * Arguments: set (true = attach interrupt pin to the CAN_ISR routine, false = detatch interrupt from the interrupt pin [default])
+	 */
+	void setAutoFetch(bool set);
 
 	/*
 	 * Invoked when the interrupt pin is pulled low. Handles
@@ -128,6 +127,8 @@ public:
 	 */
 	bool Send(const Layout& layout, uint8_t buffer);
 	bool Send(const Frame& frame, uint8_t buffer);
+	bool SendVerified(const Layout& layout, uint8_t buffer);
+	bool SendVerified(const Frame& frame, uint8_t buffer);
 	
 	/*
 	 * Returns a reference to the next available frame on the buffer

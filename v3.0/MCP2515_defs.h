@@ -62,7 +62,6 @@ typedef struct
         uint8_t data[8];
       };
 } Frame;
-      
 
 // MCP2515 SPI Commands
 #define CAN_RESET       0xC0

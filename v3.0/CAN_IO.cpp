@@ -7,11 +7,7 @@
 #include <SPI.h>
 
 CAN_IO::CAN_IO(byte CS_pin, byte INT_p, int baud, byte freq) : INT_pin(INT_p), controller(CS_pin, INT_p), bus_speed(baud), bus_freq(freq),
-tec(0), rec(0), errors(0),
-enable_interrupts(true)  {}
-CAN_IO::CAN_IO(byte CS_pin, int baud, byte freq) :  controller(CS_pin, 0), bus_speed(baud), bus_freq(freq),
-tec(0), rec(0), errors(0),
-enable_interrupts(false)  {}
+tec(0), rec(0), errors(0) {}
 
 /*
  * Define global interrupt function
@@ -37,14 +33,10 @@ void CAN_IO::Setup(const CANFilterOpt& filters, byte interrupts) { // default in
 	// reset tx tracker
 	tx_open = 0x07;
 
-	if (enable_interrupts)
-	{
-		// Set as main can
-		main_CAN = this;
+	// Set as main can
+	main_CAN = this;
 
-		pinMode(INT_pin,INPUT_PULLUP);	
-		attachInterrupt(INT_pin,CAN_ISR,LOW);
-	}
+	pinMode(INT_pin,INPUT_PULLUP);	
 
 	// Copy filters and interrupts to internal variables
 	this->my_interrupts = interrupts;
@@ -87,10 +79,6 @@ inline void CAN_IO::init_controller() //private helper function
 	write_rx_filter(RXF5SIDH, this->my_filters.RXF5);
 	write_rx_filter(RXF0SIDH, this->my_filters.RXF0);
 
-	//Receive only standard frames
-	//controller.BitModify(RXB0CTRL, 0b01100000, 0b00100000);
-	//controller.BitModify(RXB1CTRL, 0b01100000, 0b00100000);
-
 	// return controller to normal mode
 	if (!controller.Mode(MODE_NORMAL)) { // error
 			this->errors |= CANERR_SETUP_MODEFAIL;
@@ -113,16 +101,17 @@ bool CAN_IO::Wake()
 }
 
 void CAN_IO::ResetController() {
-	//if (this->AbortTransmissions(100))
-	//{
 		this->init_controller(); // Re-initialize the controller.
-	//}
 }
 
 void CAN_IO::Fetch() {
 	// read status of CANINTF register
-	byte interrupt = controller.GetInterrupt();
+	if (!controller.Interrupt()) return; // Do nothing if there is not an interrupt
+
+	byte interrupt = controller.GetInterrupt(); // Otherwise get the interrupt from the controller and process it.
 	byte to_clear = 0;
+	Serial.print("FETCH ");
+	Serial.println(interrupt,BIN);
 
 	if (interrupt == 0)
 	{
@@ -144,13 +133,11 @@ void CAN_IO::Fetch() {
 	{
 		if (interrupt & RX1IF) { // receive buffer 1 full
 			RXbuffer.enqueue(controller.ReadBuffer(RXB1));
-			//Serial.println("RX1");
 			to_clear |= RX1IF;
 		}
 
 		if (interrupt & RX0IF) { // receive buffer 0 full
 			RXbuffer.enqueue(controller.ReadBuffer(RXB0));
-			//Serial.println("RX0");
 			to_clear |= RX0IF;
 		}
 
@@ -195,7 +182,7 @@ void CAN_IO::Fetch() {
 	}
 
 	// clear interrupt
-	controller.ResetInterrupt(INTALL); // reset all interrupts
+	controller.ResetInterrupt(to_clear); // reset all interrupts
 }
 
 void CAN_IO::FetchErrors() {
@@ -324,17 +311,6 @@ void CAN_IO::write_rx_filter(uint8_t address, uint16_t data) {
 }
 
 inline uint8_t CAN_IO::select_open_buffer() {
-	byte status = controller.Status();
-	if (!(status & 0x04))
-		return TXB0;
-	else if (!(status & 0x10))
-		return TXB1;
-	else if (!(status & 0x40))
-		return TXB2;
-	else
-		return 0x00; //Failure
-
-	/*
 	if (this->tx_open & TXB0)
 		return TXB0;
 	else if (this->tx_open & TXB1)
@@ -342,11 +318,12 @@ inline uint8_t CAN_IO::select_open_buffer() {
 	else if (this->tx_open & TXB2)
 		return TXB2;
 	else
-		return 0x00; //Failure*/
+		return 0x00; //Failure
 }
 
 bool CAN_IO::ConfigureInterrupts(byte interrupts)
 {
+
 	if (controller.Mode(MODE_CONFIG))
 	{
 		controller.Write(CANINTE,interrupts);
@@ -359,6 +336,14 @@ bool CAN_IO::ConfigureInterrupts(byte interrupts)
 	}
 	else return false;
 
+}
+
+void CAN_IO::setAutoFetch(bool set)
+{
+	if (set)
+		attachInterrupt(INT_pin,CAN_ISR,LOW);
+	else
+		detachInterrupt(INT_pin);
 }
 
 #undef first_byte

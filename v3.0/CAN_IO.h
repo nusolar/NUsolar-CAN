@@ -94,8 +94,17 @@ public:
 
 	void ResetController();
 	
-	/* Reconfigure the interrupts that are enabled on the MCP2515 */
+	/* 
+	 * Reconfigure the interrupts that are enabled on the MCP2515 
+	 * Arguments: - interrupts (OR'd list of INTE flags)
+	 */
 	bool ConfigureInterrupts(byte interrupts);
+
+	/*
+	 * Attaches or detatches the automatic fetch interrupt (not recommended)
+	 * Arguments: set (true = attach interrupt pin to the CAN_ISR routine, false = detatch interrupt from the interrupt pin [default])
+	 */
+	void setAutoFetch(bool set);
 
 	/*
 	 * Invoked when the interrupt pin is pulled low. Handles

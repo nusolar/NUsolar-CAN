@@ -1,4 +1,4 @@
-NUsolar MCP2515 CAN_IO Library (v2.0)
+NUsolar MCP2515 CAN_IO Library (v3.0)
 ==================================
 Author: 	Alexander Martin
 Date:		1/16/2015
@@ -10,7 +10,7 @@ This library is intended to simplify CAN bus communication for Arduino MCUs in N
 
 Installation
 -----
-To use the library, simply install the files in <C:/NUsolar/sc7-can/v2.0/> and copy the two libinclude files into your arduino sketch folder. 
+To use the library, simply install the files in <C:/NUsolar/sc7-can/v3.0/> and copy the two libinclude files into your arduino sketch folder. 
 
 #include sc7-can-libinclude.h
 at the top of every code file which will use the CAN_IO library.
@@ -40,6 +40,9 @@ Call
 where TXB0 specifies one of the three transmission buffers to send the message out over (alternate buffers to send messages in quicker succession).
 You can also use an anonymous packet object:
 	can.Send(DC_Drive(velocity, current), TXB0);
+
+If you want the system to automatically select a TX buffer for you, pass the buffer TXBANY.
+	can.Send(DC_Drive(velocity, current), TXBANY);
 
 NOTE: Currently, the library does not wait for a buffer to become open before attempting to load it. If the buffer you are trying to send from is still waiting to send, your packet will not be sent.
 

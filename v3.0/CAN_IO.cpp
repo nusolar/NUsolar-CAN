@@ -109,8 +109,8 @@ void CAN_IO::Fetch() {
 
 	byte interrupt = controller.GetInterrupt(); // Otherwise get the interrupt from the controller and process it.
 	byte to_clear = 0;
-	Serial.print("FETCH ");
-	Serial.println(interrupt,BIN);
+	//Serial.print("FETCH ");
+	//Serial.println(interrupt,BIN);
 
 	if (interrupt == 0)
 	{

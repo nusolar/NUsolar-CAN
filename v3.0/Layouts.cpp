@@ -215,6 +215,14 @@ Frame SW_Data::generate_frame() const {
     return f;
 }
 
+Frame Telm_Heartbeat::generate_frame() const {
+    Frame f;
+    f.data[0] = TCP_connected;
+    f.data[1] = paused;
+    set_header(f);
+    return f;
+}
+
 Frame BMShub_VoltageCurrent::generate_frame() const {
 	Frame f;
 	f.low_f = voltage;

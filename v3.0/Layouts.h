@@ -47,10 +47,13 @@
 #define DC_RESET_ID			0x503
 #define DC_INFO_ID			0x505
 
-// steering wheel TX
+// steering wheel TX (700 - 7F0)
 #define SW_BASEADDRESS		0x700
 #define SW_HEARTBEAT_ID		SW_BASEADDRESS
 #define SW_DATA_ID 			0x701
+
+ // telemetry TX (7F0 - 7FF)
+ #define TELM_HEARTBEAT_ID 0x7F0
 
 
 /*
@@ -475,6 +478,20 @@ private:
 		lts 	 	= (flags >> 6) & 1u;
 		rts 	 	= (flags >> 7) & 1u;
 	}
+};
+
+/*
+ * Telemetry Heartbeat packet
+ */
+class Telm_Heartbeat : public Layout {
+public:
+	Telm_Heartbeat(bool _paused, bool _TCP_connected) : TCP_connected(_TCP_connected), paused(_paused) { id = TELM_HEARTBEAT_ID; }
+	Telm_Heartbeat(const Frame& frame) : TCP_connected(frame.data[0]), paused(frame.data[1]) { id = frame.id; }
+
+	Frame generate_frame() const;
+
+	float paused;
+	float TCP_connected;
 };
 
 /*

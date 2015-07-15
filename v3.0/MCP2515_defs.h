@@ -61,6 +61,17 @@ typedef struct
         // 1 byte
         uint8_t data[8];
       };
+
+  String toString()
+  {
+    char fstring[64];
+    if (ide)
+      sprintf(fstring, "E%03X|%02X%02X%02X%02X%02X%02X%02X%02X", id, data[7], data[6], data[5], data[4], data[3], data[2], data[1], data[0]);
+    else
+      sprintf(fstring, "S%03X|%02X%02X%02X%02X%02X%02X%02X%02X", id, data[7], data[6], data[5], data[4], data[3], data[2], data[1], data[0]);
+    return String(fstring);
+  }
+
 } Frame;
 
 // MCP2515 SPI Commands

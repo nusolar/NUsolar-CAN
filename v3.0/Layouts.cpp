@@ -205,7 +205,7 @@ Frame DC_Info::generate_frame() const {
 Frame SW_Data::generate_frame() const {
     Frame f;
     f.data[0] = flags;
-    set_header(f,1); // Note: using a byte number other than 8 causes a packet to be rejected by the telemetry system.
+    set_header(f);
     return f;
 }
 

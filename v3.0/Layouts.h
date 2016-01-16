@@ -430,6 +430,7 @@ public:
 		id = SW_DATA_ID; 
 		populate_fields();
 	}
+
 	SW_Data(byte _gear, bool _headlights, bool _hazards, bool _cruisectrl, bool _horn, bool _lts, bool _rts) { 
 		id = SW_DATA_ID;
 		flags = 0;
@@ -443,6 +444,7 @@ public:
 
 		populate_fields();
 	}
+	
 	SW_Data(const Frame& frame) : flags(frame.data[0]) { 
 		id = frame.id; 
 		populate_fields();

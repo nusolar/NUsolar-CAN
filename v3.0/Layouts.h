@@ -19,15 +19,11 @@
 #define BMS_HEARTBEAT_ID	BMS_BASEADDRESS
 #define BMS_SOC_ID	        0x6F4
 #define BMS_BAL_SOC_ID		0x6F5
-//#define BMS_CHARGE_CTRL_ID 0x6F6
 #define BMS_PRECHARGE_ID	0x6F7
 #define BMS_VOLT_CURR_ID	0x6FA
 #define BMS_STATUS_ID		0x6FB
 #define BMS_FAN_STATUS_ID	0x6FC
 #define BMS_STATUS_EXT_ID	0x6FD
-
-//BMShub TX
-#define BMSHUB_VOLT_CURR_ID 0x6FE // Reserved by Tritium, but we'll use it now.
 
 // motor controller TX
 #define MC_BASEADDRESS		0x400
@@ -36,11 +32,11 @@
 #define MC_BUS_STATUS_ID	0x402
 #define MC_VELOCITY_ID		0x403
 #define MC_PHASE_ID			0x404
-#define MC_FANSPEED_ID		0x410
-#define MC_ODOAMP_ID			0x414
+#define MC_FANSPEED_ID		0x40A
+#define MC_ODOAMP_ID		0x40E
 
 // driver controls TX
-#define DC_BASEADDRESS	0x500
+#define DC_BASEADDRESS		0x500
 #define DC_HEARTBEAT_ID		DC_BASEADDRESS
 #define DC_DRIVE_ID			0x501
 #define DC_POWER_ID			0x502
@@ -216,13 +212,6 @@ public:
 };
 
 /*
- * BMS extended status packet.
- */
-class BMS_StatusExt : public Layout {
-	// Implement! Need specs.
-};
-
-/*
  * Motor controller heartbeat packet.
  */
 class MC_Heartbeat : public Layout {
@@ -371,64 +360,57 @@ public:
 };
 
 /*
- * Driver controls switch position packet.
- */
-/*class DC_SwitchPos : public Layout {
-public:
-	DC_SwitchPos(uint16_t _state) : state(_state) { id = DC_SWITCHPOS_ID; }
-	DC_SwitchPos(const Frame& frame) : state(uint16_t(frame.s0)) { id = frame.id; }
-
-  uint16_t state;
-
-        Frame generate_frame() const;
-};*/
-
-/*
- * Driver controls information packet (this is really really messy code, I'm sorry. I'll clean it up later)
+ * Driver controls information packet.
  */
 class DC_Info : public Layout {
 public:
 	DC_Info(float accel, 
-					float regen,
-					bool brake,
-					uint16_t can_errors,
-					byte dc_errors,
-					bool reset,
-					bool fuel,
-					byte current_gear,
-					uint16_t ignition) { 
+			float regen,
+			bool brake,
+			uint16_t can_errors,
+			byte dc_errors,
+			bool reset,
+			bool fuel,
+			byte current_gear,
+			uint16_t ignition) { 
 
-			accel_ratio = accel;
-			regen_ratio = regen;
-			brake_engaged = brake;
-			can_error_flags = can_errors;
-			dc_error_flags = dc_errors;
-			was_reset = reset;
-			gear = current_gear;
-			ignition_state = ignition;
-			fuel_door = fuel;
+		accel_ratio = accel;
+		regen_ratio = regen;
+		brake_engaged = brake;
+		can_error_flags = can_errors;
+		dc_error_flags = dc_errors;
+		was_reset = reset;
+		gear = current_gear;
+		ignition_state = ignition;
+		fuel_door = fuel;
 
-			id = DC_INFO_ID; }
+		id = DC_INFO_ID; 
+	}
 
-	DC_Info(const Frame& frame)
-		{ 
-			//Byte 0 + 1
-			ignition_state = 		   frame.s0 & 0x0070;
-			brake_engaged = (bool)(frame.s0 & 0x0080);
-			fuel_door = 		(bool)(frame.s0 & 0x0100);
-			was_reset = 		(bool)(frame.s0 & 0x0200);
-			//Byte 2
-			accel_ratio = frame.data[2]/100.0f;
-			//Byte 3
-			regen_ratio = frame.data[3]/100.0f;
-			//Byte 4 + 5
-			can_error_flags = frame.s2;
-			//Byte 6
-			dc_error_flags = frame.data[6];
-			//Byte 7
-			gear = frame.data[7]; //frame.s0 & 0x000F; (used to be here)
+	DC_Info(const Frame& frame) { 
+		// bytes 0, 1 (ignition switch, fuel door)
+		ignition_state = frame.s0 & 0x0070;
+		fuel_door = (bool)(frame.s0 & 0x0100);
+		
+		// byte 2
+		accel_ratio = frame.data[2]/100.0f;
 
-			id = frame.id; }
+		// byte 3
+		regen_ratio = frame.data[3]/100.0f;
+
+		// byte 4 + 5
+		can_error_flags = frame.s2;
+
+		// byte 6
+		dc_error_flags = frame.data[6];
+
+		// byte 7 (status flags)
+		gear = frame.data[7] & 0x0F;
+		brake_engaged = (bool)(frame.data[7] & 0x10);
+		was_reset = (bool)(frame.data[7] & 0x20);
+
+		id = frame.id; 
+	}
 
 	float accel_ratio, regen_ratio; // these will be stored as integers 0-100 in frame 
 	uint16_t can_error_flags;
@@ -500,17 +482,4 @@ public:
 	float TCP_connected;
 };
 
-/*
- * BMShub voltage and current packet.
- */
-class BMShub_VoltageCurrent : public Layout {
-public:
-	BMShub_VoltageCurrent(float v, float c) : voltage(v), current(c) { id = BMSHUB_VOLT_CURR_ID; }
-	BMShub_VoltageCurrent(const Frame& frame) : voltage(frame.low_f), current(frame.high_f) { id = frame.id; }
-
-	Frame generate_frame() const;
-
-	float voltage;
-	float current;
-};
 #endif

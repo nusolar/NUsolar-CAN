@@ -49,8 +49,6 @@ Frame BMS_BalanceSOC::generate_frame() const {
 	return f;
 }
 
-//BMS_PrechargeStatus::BMS_PrechargeStatus(const Frame& frame)
-
 Frame BMS_PrechargeStatus::generate_frame() const {
 	Frame f;
 	f.data[0] = driver_status;
@@ -174,35 +172,31 @@ Frame DC_Reset::generate_frame() const {
 	return f;
 }
 
-/*Frame DC_SwitchPos::generate_frame() const {
-	Frame f;
-	f.s0 = (state == 0x0040) ? 0x0100 : 0x0000;// | 0x0100; //Switches don't seem to work, so we use the fuel door bit.
-	f.s1 = UNUSED;
-	f.s2 = UNUSED;
-	f.s3 = UNUSED;
-	set_header(f);
-	return f;
-}*/
-
 Frame DC_Info::generate_frame() const {
 	Frame f;
 
-	//Byte 0 + 1
-	f.s0 = 0; //Clear bytes 1 and 2 (set any unused bits to 0, since this is a flag field)
-	f.s0 |= ignition_state; // These are in the right place already.
-	f.s0 |= brake_engaged << 7;
-	f.s0 |= fuel_door << 8;	// This is currently what turns on the BMS, until we figure out how to get the ignition bits to work.
-	f.s0 |= was_reset << 9;
-	//Byte 2
+	// bytes 0, 1 (ingition swith, fuel door)
+	f.s0 = 0; // clear bytes 1 and 2 (set any unused bits to 0, since this is a flag field)
+	f.s0 |= ignition_state; // these are in the right place already.
+	f.s0 |= fuel_door << 8;	// this is currently what turns on the BMS, until we figure out how to get the ignition bits to work.
+
+	// byte 2
 	f.data[2] = (uint8_t) (accel_ratio * 100); // convert to integer 0-100 so only one byte required
-	//Byte 3
+
+	// byte 3
 	f.data[3] = (uint8_t) (regen_ratio * 100);
-	//Byte 4 + 5
+
+	// bytes 4, 5
 	f.s2 = can_error_flags;
-	//Byte 6
+
+	// byte 6
 	f.data[6] = dc_error_flags;
-	//Byte 7
-	f.data[7] = gear;
+
+	// byte 7 (status flags)
+	f.data[7] = 0;
+	f.data[7] |= gear;
+	f.data[7] |= brake_engaged << 4;
+	f.data[7] |= was_reset << 5;
 
 	set_header(f);
 	return f;
@@ -221,12 +215,4 @@ Frame Telm_Heartbeat::generate_frame() const {
     f.data[1] = paused;
     set_header(f);
     return f;
-}
-
-Frame BMShub_VoltageCurrent::generate_frame() const {
-	Frame f;
-	f.low_f = voltage;
-	f.high_f = current; //store in high_f (float)
-	set_header(f);
-	return f;
 }

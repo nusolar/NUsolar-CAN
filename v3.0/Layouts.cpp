@@ -204,7 +204,8 @@ Frame DC_Info::generate_frame() const {
 
 Frame SW_Data::generate_frame() const {
     Frame f;
-    f.data[0] = flags;
+    f.data[0] = byte0;
+    f.data[1] = byte1;
     set_header(f);
     return f;
 }

@@ -9,11 +9,6 @@
 #include <stdint.h>
 #include "MCP2515_defs.h"
 
-/*
- * Packet_IDs.h
- * Constant definitions for CAN packet IDs.
- */
-
 // BMS TX
 #define BMS_BASEADDRESS 	0x600
 #define BMS_HEARTBEAT_ID	BMS_BASEADDRESS
@@ -74,8 +69,7 @@ public:
 	 */
 	virtual Frame generate_frame() const;
 
-	String toString() const
-	{
+	String toString() const {
 		return generate_frame().toString();
 	}
 
@@ -426,47 +420,53 @@ public:
  */
 class SW_Data : public Layout {
 public:
-	SW_Data(byte data) : flags(data) { 
+	byte byte0;
+	byte byte1;
+	bool headlights, hazards, lts, rts, horn, cruiseon, cruiseoff;
+	byte gear;
+
+	SW_Data(byte data0, byte, data1) : byte0(data0), byte1(data1) { 
 		id = SW_DATA_ID; 
 		populate_fields();
 	}
 
-	SW_Data(byte _gear, bool _headlights, bool _hazards, bool _cruisectrl, bool _horn, bool _lts, bool _rts) { 
+	SW_Data(byte _gear, bool _headlights, bool _hazards, bool _horn, bool _lts, bool _rts,
+		bool _cruiseon, bool _cruiseoff) { 
 		id = SW_DATA_ID;
-		flags = 0;
-		flags |= _gear;
-		flags |= _headlights << 2;
-		flags |= _hazards << 3;
-		flags |= _cruisectrl << 4;
-		flags |= _horn << 5;
-		flags |= _lts << 6;
-		flags |= _rts << 7;
+
+		byte0 = 0;
+		byte0 |= _gear;
+		byte0 |= _headlights << 2;
+		byte0 |= _hazards << 3;
+		byte0 |= _horn << 5;
+		byte0 |= _lts << 6;
+		byte0 |= _rts << 7;
+
+		byte1 = 0;
+		byte1 |= _cruiseon;
+		byte1 |= _cruiseoff << 1;
 
 		populate_fields();
 	}
 	
-	SW_Data(const Frame& frame) : flags(frame.data[0]) { 
+	SW_Data(const Frame& frame) : byte0(frame.data[0]), byte1(frame.data[1]) { 
 		id = frame.id; 
 		populate_fields();
 	}
-
-	byte flags;
-
-	//data members
-	bool headlights, hazards, lts, rts, cruisectrl, horn;
-	byte gear;
 
 	Frame generate_frame() const;
 
 private:
 	void populate_fields() { 
-		gear 		= (flags)      & 3u; //Get first two bits. 0 = off, 1 = fwd, 2 = rev, 4 = undefined
-		headlights 	= (flags >> 2) & 1u;
-		hazards 	= (flags >> 3) & 1u;
-		cruisectrl  = (flags >> 4) & 1u;
-		horn 		= (flags >> 5) & 1u;
-		lts 	 	= (flags >> 6) & 1u;
-		rts 	 	= (flags >> 7) & 1u;
+		gear 		= (byte0)      & 3u; // 0 = off, 1 = fwd, 2 = rev, 4 = undefined
+		headlights 	= (btye0 >> 2) & 1u;
+		hazards 	= (byte0 >> 3) & 1u;
+		horn 		= (byte0 >> 5) & 1u;
+		lts 	 	= (byte0 >> 6) & 1u;
+		rts 	 	= (byte0 >> 7) & 1u;
+
+		cruiseon 	= (byte1)	   & 1u;
+		cruiseoff 	= (byte1 >> 1) & 1u;
 	}
 };
 

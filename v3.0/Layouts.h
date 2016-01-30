@@ -38,13 +38,15 @@
 #define DC_RESET_ID			0x503
 #define DC_INFO_ID			0x505
 
-// steering wheel TX (700 - 7F0)
+// steering wheel TX
 #define SW_BASEADDRESS		0x700
 #define SW_HEARTBEAT_ID		SW_BASEADDRESS
 #define SW_DATA_ID 			0x701
 
-// telemetry TX (7F0 - 7FF)
-#define TELM_HEARTBEAT_ID 	0x7F0
+// telemetry TX
+#define TEL_BASEADDRESS		0x300
+#define TEL_HEARTBEAT_ID 	TEL_BASEADDRESS
+#define TEL_STATUS_ID		0x301
 
 // masks
 #define MASK_NONE			0x000000
@@ -464,15 +466,21 @@ private:
 /*
  * Telemetry Heartbeat packet
  */
-class Telm_Heartbeat : public Layout {
+class TEL_Status : public Layout {
 public:
-	Telm_Heartbeat(bool _paused, bool _TCP_connected) : TCP_connected(_TCP_connected), paused(_paused) { id = TELM_HEARTBEAT_ID; }
-	Telm_Heartbeat(const Frame& frame) : TCP_connected(frame.data[0]), paused(frame.data[1]) { id = frame.id; }
+	TEL_Status(bool sql_conn, bool com_conn) : sql_connected(sql_conn), com_connected(com_conn) { id = TEL_STATUS_ID; }
+
+	TEL_Status(const Frame& frame) {
+		id = frame.id; 
+
+		sql_connected = (bool) (frame.data[0] & 0x01);
+		com_connected = (bool) (frame.data[0] & 0x02);
+	}
 
 	Frame generate_frame() const;
 
-	float paused;
-	float TCP_connected;
+	bool sql_connected;
+	bool com_connected;
 };
 
 #endif

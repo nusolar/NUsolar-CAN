@@ -211,10 +211,11 @@ Frame SW_Data::generate_frame() const {
     return f;
 }
 
-Frame Telm_Heartbeat::generate_frame() const {
+Frame TEL_Status::generate_frame() const {
     Frame f;
-    f.data[0] = TCP_connected;
-    f.data[1] = paused;
+    f.data[0] = 0;
+    f.data[0] |= sql_connected;
+    f.data[0] |= com_connected << 1;
     set_header(f);
     return f;
 }

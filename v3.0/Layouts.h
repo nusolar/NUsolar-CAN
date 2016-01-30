@@ -43,14 +43,10 @@
 #define SW_HEARTBEAT_ID		SW_BASEADDRESS
 #define SW_DATA_ID 			0x701
 
- // telemetry TX (7F0 - 7FF)
- #define TELM_HEARTBEAT_ID 0x7F0
+// telemetry TX (7F0 - 7FF)
+#define TELM_HEARTBEAT_ID 	0x7F0
 
-
-/*
- * Mask ID that specifically work with our SIDs
- * (packet ID's for f0-f5 can be found in Layouts.h)
- */
+// masks
 #define MASK_NONE			0x000000
 #define MASK_Sx00			0x000700
 #define MASK_Sxx0			0x0007F0
@@ -358,15 +354,8 @@ public:
  */
 class DC_Info : public Layout {
 public:
-	DC_Info(float accel, 
-			float regen,
-			bool brake,
-			uint16_t can_errors,
-			byte dc_errors,
-			bool reset,
-			bool fuel,
-			byte current_gear,
-			uint16_t ignition) { 
+	DC_Info(float accel, float regen, bool brake, uint16_t can_errors, byte dc_errors,
+		bool reset, bool fuel, byte current_gear, uint16_t ignition, bool cruise) { 
 
 		accel_ratio = accel;
 		regen_ratio = regen;
@@ -377,6 +366,7 @@ public:
 		gear = current_gear;
 		ignition_state = ignition;
 		fuel_door = fuel;
+		cruise_on = cruise;
 
 		id = DC_INFO_ID; 
 	}
@@ -402,6 +392,7 @@ public:
 		gear = frame.data[7] & 0x0F;
 		brake_engaged = (bool)(frame.data[7] & 0x10);
 		was_reset = (bool)(frame.data[7] & 0x20);
+		cruise_on = (bool)(frame.data[7] & 0x40);
 
 		id = frame.id; 
 	}
@@ -409,7 +400,7 @@ public:
 	float accel_ratio, regen_ratio; // these will be stored as integers 0-100 in frame 
 	uint16_t can_error_flags;
 	byte dc_error_flags, gear;
-	bool brake_engaged, was_reset, fuel_door;
+	bool brake_engaged, was_reset, fuel_door, cruise_on;
 	uint16_t ignition_state;
 
 	Frame generate_frame() const;

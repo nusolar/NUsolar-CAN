@@ -425,7 +425,7 @@ public:
 	bool headlights, hazards, lts, rts, horn, cruiseon, cruiseoff;
 	byte gear;
 
-	SW_Data(byte data0, byte, data1) : byte0(data0), byte1(data1) { 
+	SW_Data(byte data0, byte data1) : byte0(data0), byte1(data1) { 
 		id = SW_DATA_ID; 
 		populate_fields();
 	}

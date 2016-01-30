@@ -459,7 +459,7 @@ public:
 private:
 	void populate_fields() { 
 		gear 		= (byte0)      & 3u; // 0 = off, 1 = fwd, 2 = rev, 4 = undefined
-		headlights 	= (btye0 >> 2) & 1u;
+		headlights 	= (byte0 >> 2) & 1u;
 		hazards 	= (byte0 >> 3) & 1u;
 		horn 		= (byte0 >> 5) & 1u;
 		lts 	 	= (byte0 >> 6) & 1u;

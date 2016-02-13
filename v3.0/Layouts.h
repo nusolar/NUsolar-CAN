@@ -37,6 +37,7 @@
 #define DC_POWER_ID			0x502
 #define DC_RESET_ID			0x503
 #define DC_INFO_ID			0x505
+#define DC_STATUS_ID		0x506
 
 // steering wheel TX
 #define SW_BASEADDRESS		0x700
@@ -356,26 +357,22 @@ public:
  */
 class DC_Info : public Layout {
 public:
-	DC_Info(float accel, float regen, bool brake, uint16_t can_errors, byte dc_errors,
-		bool reset, bool fuel, byte current_gear, uint16_t ignition, bool cruise) { 
+	DC_Info(uint16_t ignition, bool fuel_door, float accel, float regen,
+		uint8_t overcurr_count, uint8_t gear) { 
 
-		accel_ratio = accel;
-		regen_ratio = regen;
-		brake_engaged = brake;
-		can_error_flags = can_errors;
-		dc_error_flags = dc_errors;
-		was_reset = reset;
-		gear = current_gear;
-		ignition_state = ignition;
-		fuel_door = fuel;
-		cruise_on = cruise;
+		this->ignition = ignition;
+		this->fuel_door = fuel_door;
+		this->accel_ratio = accel;
+		this->regen_ratio = regen;
+		this->overcurr_count = overcurr_count;
+		this->gear = gear;
 
 		id = DC_INFO_ID; 
 	}
 
 	DC_Info(const Frame& frame) { 
 		// bytes 0, 1 (ignition switch, fuel door)
-		ignition_state = frame.s0 & 0x0070;
+		ignition  = frame.s0 & 0x0070;
 		fuel_door = (bool)(frame.s0 & 0x0100);
 		
 		// byte 2
@@ -384,27 +381,62 @@ public:
 		// byte 3
 		regen_ratio = frame.data[3]/100.0f;
 
-		// byte 4 + 5
-		can_error_flags = frame.s2;
+		// byte 4
+		overcurr_count = frame.data[4];
 
-		// byte 6
-		dc_error_flags = frame.data[6];
-
-		// byte 7 (status flags)
-		gear = frame.data[7] & 0x0F;
-		brake_engaged = (bool)(frame.data[7] & 0x10);
-		was_reset = (bool)(frame.data[7] & 0x20);
-		cruise_on = (bool)(frame.data[7] & 0x40);
+		// byte 5
+		gear = frame.data[5];
 
 		id = frame.id; 
 	}
 
 	float accel_ratio, regen_ratio; // these will be stored as integers 0-100 in frame 
-	uint16_t can_error_flags;
-	byte dc_error_flags, gear;
-	bool brake_engaged, was_reset, fuel_door, cruise_on;
-	uint16_t ignition_state;
+	uint8_t overcurr_count, gear;
+	uint16_t ignition;
+	bool fuel_door;
 
+	Frame generate_frame() const;
+};
+
+/*
+ * Driver controls status packet.
+ */
+class DC_Status : public Layout {
+public:
+	DC_Status(uint16_t can_error, uint8_t error1, uint8_t error2,
+		uint8_t status1, uint8_t status2) { 
+
+		this->can_error = can_error;
+		this->error1 = error1;
+		this->error2 = error2;
+		this->status1 = status1;
+		this->status2 = status2;
+
+		id = DC_STATUS_ID; 
+	}
+
+	DC_Status(const Frame& frame) { 
+		// bytes 0, 1
+		can_error  = frame.s0;
+		
+		// byte 2
+		error1 = frame.data[2];
+
+		// byte 3
+		error2 = frame.data[3];
+
+		// byte 4
+		status1 = frame.data[4];
+
+		// byte 5
+		status2 = frame.data[5];
+
+		id = frame.id; 
+	}
+
+	uint8_t error1, error2, status1, status2;
+	uint16_t can_error;
+	
 	Frame generate_frame() const;
 };
 

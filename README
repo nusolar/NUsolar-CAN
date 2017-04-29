@@ -1,4 +1,13 @@
 #################################################
+
+!!!!!! IMPORTANT !!!!!
+
+THIS LIBRARY IS DEPRECATED AND WILL NOT BE UPDATED. PLEASE USE THE "SC7-CAN-ARDUINO" PROJECT WHICH 
+IMPLEMENTS THE SAME FUNCTIONS AS A STANDARD ARDUINO LIBRARY (i.e. THERE IS NO LONGER A NEED TO INSTALL THE LIBRARY IN C:/NUsolar/sc7-can)
+
+#################################################
+
+#################################################
   NUsolar MCP2515-based CAN library for Arduino
   Latest Version: 	v0.1
   Updated: 			12-16-2014 by Alexander Martin

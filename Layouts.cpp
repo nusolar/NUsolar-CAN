@@ -177,7 +177,7 @@ Frame DC_Info::generate_frame() const {
 
 	// bytes 0, 1 (ingition swith, fuel door)
 	f.s0 = 0; // clear bytes 1 and 2 (set any unused bits to 0, since this is a flag field)
-	f.s0 |= ignition_state; // these are in the right place already.
+	f.s0 |= ignition; // these are in the right place already.
 	f.s0 |= fuel_door << 8;	// this is currently what turns on the BMS, until we figure out how to get the ignition bits to work.
 
 	// byte 2
@@ -186,17 +186,33 @@ Frame DC_Info::generate_frame() const {
 	// byte 3
 	f.data[3] = (uint8_t) (regen_ratio * 100);
 
-	// bytes 4, 5
-	f.s2 = can_error_flags;
+	// bytes 4
+	f.data[4] = overcurr_count;
 
-	// byte 6
-	f.data[6] = dc_error_flags;
+	// byte 5
+	f.data[5] = gear;
 
-	// byte 7 (status flags)
-	f.data[7] = 0;
-	f.data[7] |= gear;
-	f.data[7] |= brake_engaged << 4;
-	f.data[7] |= was_reset << 5;
+	set_header(f);
+	return f;
+}
+
+Frame DC_Status::generate_frame() const {
+	Frame f;
+
+	// bytes 0, 1 (ingition swith, fuel door)
+	f.s0 = can_error;
+
+	// byte 2
+	f.data[2] = error1;
+
+	// byte 3
+	f.data[3] = error2;
+
+	// bytes 4
+	f.data[4] = status1;
+
+	// byte 5
+	f.data[5] = status2;
 
 	set_header(f);
 	return f;
@@ -204,15 +220,17 @@ Frame DC_Info::generate_frame() const {
 
 Frame SW_Data::generate_frame() const {
     Frame f;
-    f.data[0] = flags;
+    f.data[0] = byte0;
+    f.data[1] = byte1;
     set_header(f);
     return f;
 }
 
-Frame Telm_Heartbeat::generate_frame() const {
+Frame TEL_Status::generate_frame() const {
     Frame f;
-    f.data[0] = TCP_connected;
-    f.data[1] = paused;
+    f.data[0] = 0;
+    f.data[0] |= sql_connected;
+    f.data[0] |= com_connected << 1;
     set_header(f);
     return f;
 }

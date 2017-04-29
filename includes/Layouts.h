@@ -9,11 +9,6 @@
 #include <stdint.h>
 #include "MCP2515_defs.h"
 
-/*
- * Packet_IDs.h
- * Constant definitions for CAN packet IDs.
- */
-
 // BMS TX
 #define BMS_BASEADDRESS 	0x600
 #define BMS_HEARTBEAT_ID	BMS_BASEADDRESS
@@ -42,20 +37,19 @@
 #define DC_POWER_ID			0x502
 #define DC_RESET_ID			0x503
 #define DC_INFO_ID			0x505
+#define DC_STATUS_ID		0x506
 
-// steering wheel TX (700 - 7F0)
+// steering wheel TX
 #define SW_BASEADDRESS		0x700
 #define SW_HEARTBEAT_ID		SW_BASEADDRESS
 #define SW_DATA_ID 			0x701
 
- // telemetry TX (7F0 - 7FF)
- #define TELM_HEARTBEAT_ID 0x7F0
+// telemetry TX
+#define TEL_BASEADDRESS		0x300
+#define TEL_HEARTBEAT_ID 	TEL_BASEADDRESS
+#define TEL_STATUS_ID		0x301
 
-
-/*
- * Mask ID that specifically work with our SIDs
- * (packet ID's for f0-f5 can be found in Layouts.h)
- */
+// masks
 #define MASK_NONE			0x000000
 #define MASK_Sx00			0x000700
 #define MASK_Sxx0			0x0007F0
@@ -74,8 +68,7 @@ public:
 	 */
 	virtual Frame generate_frame() const;
 
-	String toString() const
-	{
+	String toString() const {
 		return generate_frame().toString();
 	}
 
@@ -364,32 +357,22 @@ public:
  */
 class DC_Info : public Layout {
 public:
-	DC_Info(float accel, 
-			float regen,
-			bool brake,
-			uint16_t can_errors,
-			byte dc_errors,
-			bool reset,
-			bool fuel,
-			byte current_gear,
-			uint16_t ignition) { 
+	DC_Info(uint16_t ignition, bool fuel_door, float accel, float regen,
+		uint8_t overcurr_count, uint8_t gear) { 
 
-		accel_ratio = accel;
-		regen_ratio = regen;
-		brake_engaged = brake;
-		can_error_flags = can_errors;
-		dc_error_flags = dc_errors;
-		was_reset = reset;
-		gear = current_gear;
-		ignition_state = ignition;
-		fuel_door = fuel;
+		this->ignition = ignition;
+		this->fuel_door = fuel_door;
+		this->accel_ratio = accel;
+		this->regen_ratio = regen;
+		this->overcurr_count = overcurr_count;
+		this->gear = gear;
 
 		id = DC_INFO_ID; 
 	}
 
 	DC_Info(const Frame& frame) { 
 		// bytes 0, 1 (ignition switch, fuel door)
-		ignition_state = frame.s0 & 0x0070;
+		ignition  = frame.s0 & 0x0070;
 		fuel_door = (bool)(frame.s0 & 0x0100);
 		
 		// byte 2
@@ -398,26 +381,62 @@ public:
 		// byte 3
 		regen_ratio = frame.data[3]/100.0f;
 
-		// byte 4 + 5
-		can_error_flags = frame.s2;
+		// byte 4
+		overcurr_count = frame.data[4];
 
-		// byte 6
-		dc_error_flags = frame.data[6];
-
-		// byte 7 (status flags)
-		gear = frame.data[7] & 0x0F;
-		brake_engaged = (bool)(frame.data[7] & 0x10);
-		was_reset = (bool)(frame.data[7] & 0x20);
+		// byte 5
+		gear = frame.data[5];
 
 		id = frame.id; 
 	}
 
 	float accel_ratio, regen_ratio; // these will be stored as integers 0-100 in frame 
-	uint16_t can_error_flags;
-	byte dc_error_flags, gear;
-	bool brake_engaged, was_reset, fuel_door;
-	uint16_t ignition_state;
+	uint8_t overcurr_count, gear;
+	uint16_t ignition;
+	bool fuel_door;
 
+	Frame generate_frame() const;
+};
+
+/*
+ * Driver controls status packet.
+ */
+class DC_Status : public Layout {
+public:
+	DC_Status(uint16_t can_error, uint8_t error1, uint8_t error2,
+		uint8_t status1, uint8_t status2) { 
+
+		this->can_error = can_error;
+		this->error1 = error1;
+		this->error2 = error2;
+		this->status1 = status1;
+		this->status2 = status2;
+
+		id = DC_STATUS_ID; 
+	}
+
+	DC_Status(const Frame& frame) { 
+		// bytes 0, 1
+		can_error  = frame.s0;
+		
+		// byte 2
+		error1 = frame.data[2];
+
+		// byte 3
+		error2 = frame.data[3];
+
+		// byte 4
+		status1 = frame.data[4];
+
+		// byte 5
+		status2 = frame.data[5];
+
+		id = frame.id; 
+	}
+
+	uint8_t error1, error2, status1, status2;
+	uint16_t can_error;
+	
 	Frame generate_frame() const;
 };
 
@@ -426,62 +445,74 @@ public:
  */
 class SW_Data : public Layout {
 public:
-	SW_Data(byte data) : flags(data) { 
+	byte byte0;
+	byte byte1;
+	bool headlights, hazards, lts, rts, horn, cruiseon, cruiseoff;
+	byte gear;
+
+	SW_Data(byte data0, byte data1) : byte0(data0), byte1(data1) { 
 		id = SW_DATA_ID; 
 		populate_fields();
 	}
 
-	SW_Data(byte _gear, bool _headlights, bool _hazards, bool _cruisectrl, bool _horn, bool _lts, bool _rts) { 
+	SW_Data(byte _gear, bool _headlights, bool _hazards, bool _horn, bool _lts, bool _rts,
+		bool _cruiseon, bool _cruiseoff) { 
 		id = SW_DATA_ID;
-		flags = 0;
-		flags |= _gear;
-		flags |= _headlights << 2;
-		flags |= _hazards << 3;
-		flags |= _cruisectrl << 4;
-		flags |= _horn << 5;
-		flags |= _lts << 6;
-		flags |= _rts << 7;
+
+		byte0 = 0;
+		byte0 |= _gear;
+		byte0 |= _headlights << 2;
+		byte0 |= _hazards << 3;
+		byte0 |= _horn << 5;
+		byte0 |= _lts << 6;
+		byte0 |= _rts << 7;
+
+		byte1 = 0;
+		byte1 |= _cruiseon;
+		byte1 |= _cruiseoff << 1;
 
 		populate_fields();
 	}
 	
-	SW_Data(const Frame& frame) : flags(frame.data[0]) { 
+	SW_Data(const Frame& frame) : byte0(frame.data[0]), byte1(frame.data[1]) { 
 		id = frame.id; 
 		populate_fields();
 	}
-
-	byte flags;
-
-	//data members
-	bool headlights, hazards, lts, rts, cruisectrl, horn;
-	byte gear;
 
 	Frame generate_frame() const;
 
 private:
 	void populate_fields() { 
-		gear 		= (flags)      & 3u; //Get first two bits. 0 = off, 1 = fwd, 2 = rev, 4 = undefined
-		headlights 	= (flags >> 2) & 1u;
-		hazards 	= (flags >> 3) & 1u;
-		cruisectrl  = (flags >> 4) & 1u;
-		horn 		= (flags >> 5) & 1u;
-		lts 	 	= (flags >> 6) & 1u;
-		rts 	 	= (flags >> 7) & 1u;
+		gear 		= (byte0)      & 3u; // 0 = off, 1 = fwd, 2 = rev, 4 = undefined
+		headlights 	= (byte0 >> 2) & 1u;
+		hazards 	= (byte0 >> 3) & 1u;
+		horn 		= (byte0 >> 5) & 1u;
+		lts 	 	= (byte0 >> 6) & 1u;
+		rts 	 	= (byte0 >> 7) & 1u;
+
+		cruiseon 	= (byte1)	   & 1u;
+		cruiseoff 	= (byte1 >> 1) & 1u;
 	}
 };
 
 /*
  * Telemetry Heartbeat packet
  */
-class Telm_Heartbeat : public Layout {
+class TEL_Status : public Layout {
 public:
-	Telm_Heartbeat(bool _paused, bool _TCP_connected) : TCP_connected(_TCP_connected), paused(_paused) { id = TELM_HEARTBEAT_ID; }
-	Telm_Heartbeat(const Frame& frame) : TCP_connected(frame.data[0]), paused(frame.data[1]) { id = frame.id; }
+	TEL_Status(bool sql_conn, bool com_conn) : sql_connected(sql_conn), com_connected(com_conn) { id = TEL_STATUS_ID; }
+
+	TEL_Status(const Frame& frame) {
+		id = frame.id; 
+
+		sql_connected = (bool) (frame.data[0] & 0x01);
+		com_connected = (bool) (frame.data[0] & 0x02);
+	}
 
 	Frame generate_frame() const;
 
-	float paused;
-	float TCP_connected;
+	bool sql_connected;
+	bool com_connected;
 };
 
 #endif

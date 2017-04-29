@@ -7,6 +7,7 @@
 #######################################
 
 MCP2515      KEYWORD1
+CAN_IO     KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
@@ -16,6 +17,7 @@ Reset      KEYWORD2
 Read      KEYWORD2
 ReadBuffer      KEYWORD2
 Write      KEYWORD2
+FetchErrors      KEYWORD2
 LoadBuffer      KEYWORD2
 SendBuffer      KEYWORD2
 Status      KEYWORD2
@@ -57,3 +59,13 @@ TX2IF      LITERAL1
 ERRIF      LITERAL1
 WAKIF      LITERAL1
 MERRF      LITERAL1
+
+CANERR_RX0FULL_OCCURED      LITERAL1
+CANERR_RX1FULL_OCCURED      LITERAL1
+CANERR_SETUP_BAUDFAIL        LITERAL1
+CANERR_SETUP_MODEFAIL        LITERAL1
+CANERR_BUFFER_FULL           LITERAL1
+CANERR_MCPBUF_FULL           LITERAL1
+CANERR_MESSAGE_ERROR	       LITERAL1
+CANERR_BUSOFF_MODE	        LITERAL1
+CANERR_HIGH_ERROR_COUNT      LITERAL1

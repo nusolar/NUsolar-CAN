@@ -7,10 +7,10 @@
 #define CAN_IO_h
 
 #include <stdint.h>
-#include "MCP2515.h"
-#include "MCP2515_defs.h"
-#include "Layouts.h"
-#include "RX_Queue.h"
+#include "includes/MCP2515.h"
+#include "includes/MCP2515_defs.h"
+#include "includes/Layouts.h"
+#include "includes/RX_Queue.h"
 
 /* 
  *Struct containing the filter info for the rx buffers.

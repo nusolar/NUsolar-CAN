@@ -10,10 +10,7 @@ This library is intended to simplify CAN bus communication for Arduino MCUs in N
 
 Installation
 -----
-To use the library, simply install the files in <C:/NUsolar/sc7-can/v3.0/> and copy the two libinclude files into your arduino sketch folder. 
-
-#include sc7-can-libinclude.h
-at the top of every code file which will use the CAN_IO library.
+To use the library, simply download the zip file and use the library manager inside Aruduino to load the library into the Arduino IDE.
 
 
 Usage
@@ -30,11 +27,11 @@ to configure the masks and filters for the two receive buffers on the MCP2515.
 3. Call CAN_IO::Setup(<interrupts>) to initialize the MCP2515.
 	- interrupts is a byte containing the interrupt enable flags that you want to set (i.e. MERRIE, ERRIE, RX0IE, etc.)
 
-We recommend that you DO NOT attach this interrupt pin to an actual Arduino interrupt. Instead, check for messages calling CAN_IO::Fetch.
+We recommend that you DO NOT attach the interrupt pin INTpin to an actual Arduino interrupt. Instead, check for messages calling CAN_IO::Fetch, which will check the INTpin to see if messages are waiting to be transferred from the MCP2515 to the Arduino.
 
 4. To send a packet, create a layout object:
 	DC_Drive drivePacket(<velocity>, <current>);
-Call
+Then call
 	can.Send(drivePacket,TXB0);
 where TXB0 specifies one of the three transmission buffers to send the message out over (alternate buffers to send messages in quicker succession).
 You can also use an implicit packet object:
@@ -43,9 +40,9 @@ You can also use an implicit packet object:
 If you want the system to automatically select a TX buffer for you, pass the buffer TXBANY.
 	can.Send(DC_Drive(velocity, current), TXBANY);
 
-NOTE: Currently, the library does not wait for a buffer to become open before attempting to load it. If you try to send from a buffer that is currently being used, packet data may be corrupted. Use the TXBANY option to avoid this. Alternatively, you can call CAN_IO::Send_Verified(<packet>, <buffer>) to make sure the correct data was loaded.
+NOTE: Currently, the library does not wait for a buffer to become open before attempting to load it. If you try to send from a buffer that is currently being used, packet data may be corrupted. Use the TXBANY option to avoid this. Alternatively, you can call CAN_IO::Send_Verified(<packet>, <buffer>) to make sure the correct data was loaded onto the MCP2515.
 
-5. Call CAN_IO::Fetch() at least once per main control loop. This checks for any messages on the MCP2515 and loads them,
+5. Call CAN_IO::Fetch() at least once per main control loop. This checks for any messages on the MCP2515 and loads them. It is recommended that this function be used rather than attaching interrupts, as interrupts have been known to cause conflicts with serial communication that results in corrupted CAN data.
 
 5. Messages retrieved by CAN_IO::Fetch() are loaded into an internal frame FIFO buffer. To get the messages on this buffer, use
 	if (can.Available()) {
@@ -70,7 +67,7 @@ You can find the packet type of this frame using f.id, which will be a hexidecim
 Example Code
 ------------
 #include <SPI.h>
-#include "sc7-can-libinclude.h"
+#include <CAN_IO.h>
 
 //CAN parameters
 const byte     CAN_CS 	 		 = 10;
@@ -126,7 +123,7 @@ void loop() {
 Contact
 -------
 Alexander Martin -- a-martin@u.northwestern.edu
-Spencer Williams -- projectmanager@nusolar.org
+Spencer Williams -- project-manager@nusolar.org
 
 Licence
 -------

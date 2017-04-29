@@ -10,7 +10,15 @@ This library is intended to simplify CAN bus communication for Arduino MCUs in N
 
 Installation
 -----
-To use the library, simply download the zip file and use the library manager inside Aruduino to load the library into the Arduino IDE.
+To use the library, simply download the zip file of this repository from github and use the library manager inside Aruduino to load the library into the Arduino IDE.
+
+Cloning
+-----
+If you want to be able to use the library as well as push changes to it, you need to CLONE the git repository into your Arduino Libraries folder. This is typically located in C:/Users/<YOUR USERNAME>/Documents/Arduino/libraries. You should clone the SC7-can repo into this folder, so that the structure looks like: .../Documents/Arduino/libraries/sc7-can/
+
+Once this is done, restart arduino and the NUsolar CAN library should show up under the "Sketch->Include Libraries" menu.
+
+For more information on installing libraries, visit http://www.arduino.cc/en/Guide/Libraries.
 
 
 Usage

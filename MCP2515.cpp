@@ -13,8 +13,8 @@
 
 #include "Arduino.h"
 #include "SPI.h"
-#include "MCP2515.h"
-#include "MCP2515_defs.h"
+#include "includes/MCP2515.h"
+#include "includes/MCP2515_defs.h"
 
 String frameToString(const Frame& f)
 {

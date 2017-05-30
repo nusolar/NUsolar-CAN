@@ -177,7 +177,7 @@ Frame DC_Info::generate_frame() const {
 
 	// bytes 0, 1 (ingition swith, fuel door)
 	f.s0 = 0; // clear bytes 1 and 2 (set any unused bits to 0, since this is a flag field)
-	f.s0 |= ignition; // these are in the right place already.
+	f.s0 |= ignition_state; // these are in the right place already.
 	f.s0 |= fuel_door << 8;	// this is currently what turns on the BMS, until we figure out how to get the ignition bits to work.
 
 	// byte 2
@@ -186,11 +186,17 @@ Frame DC_Info::generate_frame() const {
 	// byte 3
 	f.data[3] = (uint8_t) (regen_ratio * 100);
 
-	// bytes 4
-	f.data[4] = overcurr_count;
+	// bytes 4, 5
+	f.s2 = can_error_flags;
 
-	// byte 5
-	f.data[5] = gear;
+	// byte 6
+	f.data[6] = dc_error_flags;
+
+	// byte 7 (status flags)
+	f.data[7] = 0;
+	f.data[7] |= gear;
+	f.data[7] |= brake_engaged << 4;
+	f.data[7] |= was_reset << 5;
 
 	set_header(f);
 	return f;

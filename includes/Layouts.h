@@ -193,6 +193,39 @@ public:
 };
 
 /*
+ * BMS Extended Status Packet.
+ */
+class BMS_Status_Ext : public Layout {
+public:
+	BMS_Status_Ext(uint32_t _flags, uint8_t _hardware_version, uint8_t _model) :
+		flags(_flags), hardware_version(_hardware_version), model(_model)
+		{ id = BMS_STATUS_EXT_ID; }
+	BMS_Status_Ext(const Frame& frame) : flags(frame.low), hardware_version(frame.data[4]), 
+		model(frame.data[5])
+		{ id = frame.id; }
+
+	Frame generate_frame() const;
+
+	uint32_t flags;
+	uint8_t  hardware_version;
+	uint8_t  model;
+
+	static const uint32_t F_OVERVOLTAGE 		= 0x00000001; // Cell Overvoltage Flag
+	static const uint32_t F_UNDERVOLTAGE 	    = 0x00000002; // Cell Undervoltage Flag
+												//0x00000004; // Cell Overtemp Flag (not implemented)
+	static const uint32_t F_UNTRUSTED			= 0x00000008; // Untrusted Measurement Flag (channel mismatch)
+	static const uint32_t F_CMULOST			    = 0x00000010; // Lost CMU Comm Fag
+	static const uint32_t F_DRVCTRLSLOST	    = 0x00000020; // Lost Driver Controls Comm Flag
+	static const uint32_t F_SETUPMODE		    = 0x00000040; // BMU in Setup Mode Flag
+	static const uint32_t F_CMUCANPOWERSTATUS   = 0x00000080; // Power Status of CMU CAN bus
+	static const uint32_t F_ISOLATIONFAIL       = 0x00000100; // Isolation Failure Flag
+												//0x00000200; // SOC Measurement Not Valid Flag (not used)
+	static const uint32_t F_12VLOW			    = 0x00000400; // Low 12V Supply on CAN bus Flag
+	static const uint32_t F_CONTACTOR		    = 0x00000800; // Contactor Error Flag
+	static const uint32_t F_EXTRACELL		    = 0x00001000; // Extra Cell Detected by CMU Flag
+};
+
+/*
  * BMS fan status packet.
  */
 class BMS_FanStatus : public Layout {

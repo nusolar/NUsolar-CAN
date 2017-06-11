@@ -80,6 +80,16 @@ Frame BMS_Status::generate_frame() const {
 	return f;
 }
 
+Frame BMS_Status_Ext::generate_frame() const {
+	Frame f;
+	f.low = flags;
+	f.data[4] = hardware_version;
+	f.data[5] = model;
+	f.s3 = UNUSED;
+	set_header(f);
+	return f;
+}
+
 Frame BMS_FanStatus::generate_frame() const {
 	Frame f;
 	f.s0 = fan0_speed;

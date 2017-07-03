@@ -406,7 +406,8 @@ public:
 			bool reset,
 			bool fuel,
 			byte current_gear,
-			uint16_t ignition) { 
+			uint16_t ignition,
+			bool tripcondition) { 
 
 		accel_ratio = accel;
 		regen_ratio = regen;
@@ -417,6 +418,7 @@ public:
 		gear = current_gear;
 		ignition_state = ignition;
 		fuel_door = fuel;
+		tripped = tripcondition;
 
 		id = DC_INFO_ID; 
 	}
@@ -442,6 +444,7 @@ public:
 		gear = frame.data[7] & 0x0F;
 		brake_engaged = (bool)(frame.data[7] & 0x10);
 		was_reset = (bool)(frame.data[7] & 0x20);
+		tripped = (bool)(frame.data[7] & 0x30);
 
 		id = frame.id; 
 	}

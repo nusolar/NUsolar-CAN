@@ -207,6 +207,7 @@ Frame DC_Info::generate_frame() const {
 	f.data[7] |= gear;
 	f.data[7] |= brake_engaged << 4;
 	f.data[7] |= was_reset << 5;
+	f.data[7] |= tripped << 6;
 
 	set_header(f);
 	return f;

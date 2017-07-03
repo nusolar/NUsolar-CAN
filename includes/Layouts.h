@@ -454,6 +454,7 @@ public:
 	byte dc_error_flags, gear;
 	bool brake_engaged, was_reset, fuel_door;
 	uint16_t ignition_state;
+	bool tripped;
 	
 	Frame generate_frame() const;
 };

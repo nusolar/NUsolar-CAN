@@ -444,7 +444,7 @@ public:
 		gear = frame.data[7] & 0x0F;
 		brake_engaged = (bool)(frame.data[7] & 0x10);
 		was_reset = (bool)(frame.data[7] & 0x20);
-		tripped = (bool)(frame.data[7] & 0x30);
+		tripped = (bool)(frame.data[7] & 0x40);
 
 		id = frame.id; 
 	}

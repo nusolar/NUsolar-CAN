@@ -43,6 +43,10 @@
 #define DC_RESET_ID			0x503
 #define DC_INFO_ID			0x505
 #define DC_STATUS_ID		0x506
+#define DC_TEMP_0_ID		0x5F0 // Max Temp, Min Temp, Module 1 - 6 Temp
+#define DC_TEMP_1_ID		0x5F1 // Module 7 - 14 Temp
+#define DC_TEMP_2_ID		0x5F2 // Module 15 - 22 Temp
+#define DC_TEMP_3_ID		0x5F3 // Module 23 - 26 Temp
 
 // steering wheel TX (700 - 7F0)
 #define SW_BASEADDRESS		0x700
@@ -501,6 +505,140 @@ public:
 	Frame generate_frame() const;
 };
 
+/* Temperature Sensor Data Packets 
+   Packet 1: Min, Max, and Modules 1 - 6
+   Packet 2: Modules 7 - 14
+   Packet 3: Modules 15 - 22
+   Packet 4: Modules 23 - 30 */
+
+class DC_Temp_1 : public Layout {
+public:
+	DC_Temp_1(uint8_t maxT, uint8_t minT, uint8_t T1, uint8_t T2, uint8_t T3, uint8_t T4, uint8_t T5, uint8_t T6) { 
+
+		max_temp = maxT;
+		min_temp = minT;
+		temp[1] = T1;
+		temp[2] = T2;
+		temp[3] = T3;
+		temp[4] = T4;
+		temp[5] = T5;
+		temp[6] = T6;
+
+		id = DC_TEMP_1_ID; 
+	}
+
+	DC_Temp_1(const Frame& frame) { 
+		max_temp = frame.data[0];
+		min_temp = frame.data[1];
+		temp[1]  = frame.data[2];
+		temp[2]  = frame.data[3];
+		temp[3]  = frame.data[4];
+		temp[4]  = frame.data[5];
+		temp[5]  = frame.data[6];
+		temp[6]  = frame.data[7];
+	}
+
+	uint8_t maxT, minT;
+	uint8_t temp[7];
+	
+	Frame generate_frame() const;
+};
+
+class DC_Temp_2 : public Layout {
+public:
+	DC_Temp_2(uint8_t T7, uint8_t T8, uint8_t T9, uint8_t T10, uint8_t T11, uint8_t T12, uint8_t T13, uint8_t T14) { 
+
+		temp[1] = T7;
+		temp[2] = T8;
+		temp[3] = T9;
+		temp[4] = T10;
+		temp[5] = T11;
+		temp[6] = T12;
+		temp[7] = T13;
+		temp[8] = T13;
+
+		id = DC_TEMP_2_ID; 
+	}
+
+	DC_Temp_2(const Frame& frame) { 
+		temp[1] = frame.data[0];
+		temp[2] = frame.data[1];
+		temp[3] = frame.data[2];
+		temp[4] = frame.data[3];
+		temp[5] = frame.data[4];
+		temp[6] = frame.data[5];
+		temp[7] = frame.data[6];
+		temp[8] = frame.data[7];
+	}
+
+	uint8_t temp[9];
+	
+	Frame generate_frame() const;
+};
+
+class DC_Temp_3 : public Layout {
+public:
+	DC_Temp_3(uint8_t T15, uint8_t T16, uint8_t T17, uint8_t T18, uint8_t T19, uint8_t T20, uint8_t T21, uint8_t T22) { 
+
+		temp[1] = T15;
+		temp[2] = T16;
+		temp[3] = T17;
+		temp[4] = T18;
+		temp[5] = T19;
+		temp[6] = T20;
+		temp[7] = T21;
+		temp[8] = T22;
+
+		id = DC_TEMP_3_ID; 
+	}
+
+	DC_Temp_3(const Frame& frame) { 
+		temp[1] = frame.data[0];
+		temp[2] = frame.data[1];
+		temp[3] = frame.data[2];
+		temp[4] = frame.data[3];
+		temp[5] = frame.data[4];
+		temp[6] = frame.data[5];
+		temp[7] = frame.data[6];
+		temp[8] = frame.data[7];
+	}
+
+	uint8_t temp[9];
+	
+	Frame generate_frame() const;
+};
+
+class DC_Temp_4 : public Layout {
+public:
+	DC_Temp_4(uint8_t T23, uint8_t T24, uint8_t T25, uint8_t T26, uint8_t T27, uint8_t T28, uint8_t T29, uint8_t T30) { 
+
+		temp[1] = T23;
+		temp[2] = T24;
+		temp[3] = T25;
+		temp[4] = T26;
+		temp[5] = T27;
+		temp[6] = T28;
+		temp[7] = T29;
+		temp[8] = T30;
+
+		id = DC_TEMP_4_ID; 
+	}
+
+	DC_Temp_4(const Frame& frame) { 
+		temp[1] = frame.data[0];
+		temp[2] = frame.data[1];
+		temp[3] = frame.data[2];
+		temp[4] = frame.data[3];
+		temp[5] = frame.data[4];
+		temp[6] = frame.data[5];
+		temp[7] = frame.data[6];
+		temp[8] = frame.data[7];
+	}
+
+	uint8_t temp[9];
+	
+	Frame generate_frame() const;
+};
 
 /* 
  * Steering wheel data packet, sent to the driver controls.

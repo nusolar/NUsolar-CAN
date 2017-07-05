@@ -527,6 +527,15 @@ public:
 		id = DC_TEMP_0_ID; 
 	}
 
+	DC_Temp_0(uint8_t maxT, uint8_t minT, uint8_t *_temps) { 
+
+		max_temp = maxT;
+		min_temp = minT;
+		memcpy(temp+1,_temps, 6);
+
+		id = DC_TEMP_0_ID; 
+	}
+
 	DC_Temp_0(const Frame& frame) { 
 		max_temp = frame.data[0];
 		min_temp = frame.data[1];
@@ -558,6 +567,13 @@ public:
 		temp[8] = T13;
 
 		id = DC_TEMP_1_ID; 
+	}
+
+	DC_Temp_1(uint8_t *_temps) { 
+
+		memcpy(temp+1,_temps, 8);
+
+		id = DC_TEMP_0_ID; 
 	}
 
 	DC_Temp_1(const Frame& frame) { 
@@ -592,6 +608,13 @@ public:
 		id = DC_TEMP_2_ID; 
 	}
 
+	DC_Temp_2(uint8_t *_temps) { 
+
+		memcpy(temp+1,_temps, 8);
+
+		id = DC_TEMP_0_ID; 
+	}
+
 	DC_Temp_2(const Frame& frame) { 
 		temp[1] = frame.data[0];
 		temp[2] = frame.data[1];
@@ -622,6 +645,13 @@ public:
 		temp[8] = T30;
 
 		id = DC_TEMP_3_ID; 
+	}
+
+	DC_Temp_3(uint8_t *_temps) { 
+
+		memcpy(temp+1,_temps, 8);
+
+		id = DC_TEMP_0_ID; 
 	}
 
 	DC_Temp_3(const Frame& frame) { 

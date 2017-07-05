@@ -235,7 +235,7 @@ Frame DC_Status::generate_frame() const {
 	return f;
 }
 
-Frame DC_Temp_1::generate_frame() const {
+Frame DC_Temp_0::generate_frame() const {
     Frame f;
     f.data[0] = max_temp;
     f.data[1] = min_temp;
@@ -245,6 +245,20 @@ Frame DC_Temp_1::generate_frame() const {
     f.data[5] = temp[4];
     f.data[6] = temp[5];
     f.data[7] = temp[6];
+    set_header(f);
+    return f;
+}
+
+Frame DC_Temp_1::generate_frame() const {
+    Frame f;
+	f.data[0] = temp[1];
+	f.data[1] = temp[2];
+	f.data[2] = temp[3];
+	f.data[3] = temp[4];
+	f.data[4] = temp[5];
+	f.data[5] = temp[6];
+	f.data[6] = temp[7];
+	f.data[7] = temp[8];
     set_header(f);
     return f;
 }
@@ -264,20 +278,6 @@ Frame DC_Temp_2::generate_frame() const {
 }
 
 Frame DC_Temp_3::generate_frame() const {
-    Frame f;
-	f.data[0] = temp[1];
-	f.data[1] = temp[2];
-	f.data[2] = temp[3];
-	f.data[3] = temp[4];
-	f.data[4] = temp[5];
-	f.data[5] = temp[6];
-	f.data[6] = temp[7];
-	f.data[7] = temp[8];
-    set_header(f);
-    return f;
-}
-
-Frame DC_Temp_4::generate_frame() const {
     Frame f;
 	f.data[0] = temp[1];
 	f.data[1] = temp[2];

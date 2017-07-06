@@ -468,39 +468,21 @@ public:
  */
 class DC_Status : public Layout {
 public:
-	DC_Status(uint16_t can_error, uint8_t error1, uint8_t error2,
-		uint8_t status1, uint8_t status2) { 
+	DC_Status(uint32_t flags) { 
 
-		this->can_error = can_error;
-		this->error1 = error1;
-		this->error2 = error2;
-		this->status1 = status1;
-		this->status2 = status2;
+		this->flags = flags;
 
 		id = DC_STATUS_ID; 
 	}
 
 	DC_Status(const Frame& frame) { 
 		// bytes 0, 1
-		can_error  = frame.s0;
-		
-		// byte 2
-		error1 = frame.data[2];
-
-		// byte 3
-		error2 = frame.data[3];
-
-		// byte 4
-		status1 = frame.data[4];
-
-		// byte 5
-		status2 = frame.data[5];
+		flags  = frame.low;
 
 		id = frame.id; 
 	}
 
-	uint8_t error1, error2, status1, status2;
-	uint16_t can_error;
+	uint32_t flags;
 	
 	Frame generate_frame() const;
 };
@@ -573,7 +555,7 @@ public:
 
 		memcpy(temp+1,_temps, 8);
 
-		id = DC_TEMP_0_ID; 
+		id = DC_TEMP_1_ID; 
 	}
 
 	DC_Temp_1(const Frame& frame) { 
@@ -612,7 +594,7 @@ public:
 
 		memcpy(temp+1,_temps, 8);
 
-		id = DC_TEMP_0_ID; 
+		id = DC_TEMP_2_ID; 
 	}
 
 	DC_Temp_2(const Frame& frame) { 
@@ -651,7 +633,7 @@ public:
 
 		memcpy(temp+1,_temps, 8);
 
-		id = DC_TEMP_0_ID; 
+		id = DC_TEMP_3_ID; 
 	}
 
 	DC_Temp_3(const Frame& frame) { 

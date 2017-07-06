@@ -216,20 +216,8 @@ Frame DC_Info::generate_frame() const {
 Frame DC_Status::generate_frame() const {
 	Frame f;
 
-	// bytes 0, 1 (ingition swith, fuel door)
-	f.s0 = can_error;
-
-	// byte 2
-	f.data[2] = error1;
-
-	// byte 3
-	f.data[3] = error2;
-
-	// bytes 4
-	f.data[4] = status1;
-
-	// byte 5
-	f.data[5] = status2;
+	// bytes 0 - 3
+	f.low = flags;
 
 	set_header(f);
 	return f;

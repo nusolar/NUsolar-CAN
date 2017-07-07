@@ -489,6 +489,8 @@ public:
 	static const uint8_t F_CHARGING_OVER_CURRENT    = 0x04;
 	static const uint8_t F_DISCHARGING_OVER_CURRENT = 0x08;
 	static const uint8_t F_NO_TRIP					= 0x00;
+
+	// 0x80 also defined by driver controls as the flag for a BMS-controlled trip
 	
 	Frame generate_frame() const;
 };

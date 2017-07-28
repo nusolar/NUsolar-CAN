@@ -218,6 +218,7 @@ Frame DC_Status::generate_frame() const {
 
 	// bytes 0 - 3
 	f.low = flags;
+	f.high = 0;
 
 	set_header(f);
 	return f;

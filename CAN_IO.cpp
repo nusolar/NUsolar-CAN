@@ -1,6 +1,6 @@
-/*
- * CAN_IO.cpp
- * Implementation of CAN_IO class.
+/**
+ ** \file CAN_IO.cpp
+ ** \brief Implementation of CAN_IO class.
  */
 
 #include "CAN_IO.h"

@@ -1,6 +1,5 @@
-/*
- * CAN_IO.h
- * Contains class definition for CAN_IO library.
+/** \file CAN_IO.h
+ *  \brief Contains class definition for CAN_IO library.
  */
 
 #ifndef CAN_IO_h
@@ -13,22 +12,36 @@
 #include "includes/RX_Queue.h"
 
 /* 
- *Struct containing the filter info for the rx buffers.
- * Can specify mask and 2 filters for RXB0, and mask and
+ * \brief Struct containing the filter info for the rx buffers.
+ *
+ * The user can specify 1 mask and 2 filters for RXB0, and 1 mask and
  * 5 filters for RXB1.
+ *
+ * Any message which matches any of the filters on all of the bits where their respective mask contains 
+ * a 1 will be accepted. e.g. If 
+ * 		RXM0 = 010b
+ *		RXF0 = 000b
+ * Then messages with IDs matching x0xb will be accepted, where x is either a 0 or a 1.
  */
 struct CANFilterOpt {
-	uint16_t RXM0; // mask 0 (RXB0)
-	uint16_t RXM1; // mask 1 (RXB1)
-	uint16_t RXF0; // filter 0 (RXB0)
-	uint16_t RXF1; // filter 1 (RXB0)
-	uint16_t RXF2; // filter 2 (RXB1)
-	uint16_t RXF3; // filter 3 (RXB1)
-	uint16_t RXF4; // filter 4 (RXB1)
-	uint16_t RXF5; // filter 5 (RXB1)
+	uint16_t RXM0; /** mask 0 (RXB0) */
+	uint16_t RXM1; /** mask 1 (RXB1) */
+	uint16_t RXF0; /** filter 0 (RXB0) */
+	uint16_t RXF1; /** filter 1 (RXB0) */
+	uint16_t RXF2; /** filter 2 (RXB1) */
+	uint16_t RXF3; /** filter 3 (RXB1) */
+	uint16_t RXF4; /** filter 4 (RXB1) */
+	uint16_t RXF5; /** filter 5 (RXB1) */
 
-	CANFilterOpt() : RXM0(0), RXM1(0) {} // Initialize to no masking
+	/** Default Constructor. Initialize to No Masking or Filtering */
+	CANFilterOpt() : RXM0(0), RXM1(0) {}
 
+	/** Specify the masks and filters for the first read buffer (RB0) 
+	 *  \param m0 - binary mask to use
+	 *  \param f0 - 1st binary filter to check against
+	 *  \param f1 - 2nd binary filter to check against
+	 *  \return a reference to the calling object, allowing the setRB0 and setRB1 commands to be chained.
+	 */
 	CANFilterOpt& setRB0(uint16_t m0, uint16_t f0, uint16_t f1)
 	{
 	  RXM0 = m0;
@@ -37,6 +50,15 @@ struct CANFilterOpt {
 	  return *(this); //Allow chaining
 	}
 	
+	/** Specify the masks and filters for the second read buffer (RB1) 
+	 *  \param m1 - binary mask to use
+	 *  \param f2 - 1st binary filter to check against
+	 *  \param f3 - 2nd binary filter to check against
+	 *  \param f4 - 3rd binary filter to check against
+	 *  \param f5 - 4th binary filter to check against
+	 *  \param f6 - 5th binary filter to check against
+	 *  \return a reference to the calling object, allowing the setRB0 and setRB1 commands to be chained.
+	 */
 	CANFilterOpt& setRB1(uint16_t m1, uint16_t f2, uint16_t f3, uint16_t f4, uint16_t f5)
 	{
 	  RXM1 = m1;
@@ -49,33 +71,36 @@ struct CANFilterOpt {
 };
 
 
-/*
- * Define CAN errors
- * Some of these only work if FetchErrors() is called periodically.
- * See error data variables for details.
+/** \defgroup CANERRORS_GROUP Standard CAN errors 
+ ** Some of these only work if FetchErrors() is called periodically.
+ ** \TODO where are these found
+ **  
+ **  @{
  */
- 	#define CANERR_RX0FULL_OCCURED	0x0001 // RX0 buffer received valid message but RX0IF was set (this is cleared automatically, but the flag persists in errors until cleared by the user)
-  #define CANERR_RX1FULL_OCCURED	0x0002 // RX1 buffer received valid message but RX1IF was set (this is cleared automatically, but the flag persists in errors until cleared by the user)
-  #define CANERR_EMPTY_INTERRUPT	0x0004 // Interrupt buffer came in empty (probably means SPI is not working, if it is constantly set).
-  #define CANERR_SETUP_BAUDFAIL   0x0100 // Failed to set baud rate properly during setup (can mean that SPI is wired incorrectly)
-  #define CANERR_SETUP_MODEFAIL   0x0200 // Failed to switch modes (can mean that SPI is wired incorrectly)
-  #define CANERR_RXBUFFER_FULL    0x0400 // Local buffer is full
-  #define CANERR_MESSAGE_ERROR	  0x1000 // Message transmission error 
-  #define CANERR_BUSOFF_MODE	  	0x2000 // MCP2515 has entered Bus Off mode
-  #define CANERR_HIGH_ERROR_COUNT	0x4000 // Triggered when TEC or REC exceeds 96
+  #define CANERR_RX0FULL_OCCURED	0x0001 //!< RX0 buffer received valid message but RX0IF was set (this is cleared automatically, but the flag persists in errors until cleared by the user)
+  #define CANERR_RX1FULL_OCCURED	0x0002 //!< RX1 buffer received valid message but RX1IF was set (this is cleared automatically, but the flag persists in errors until cleared by the user)
+  #define CANERR_EMPTY_INTERRUPT	0x0004 //!< Interrupt buffer came in empty (probably means SPI is not working, if it is constantly set).
+  #define CANERR_SETUP_BAUDFAIL   0x0100 //!< Failed to set baud rate properly during setup (can mean that SPI is wired incorrectly)
+  #define CANERR_SETUP_MODEFAIL   0x0200 //!< Failed to switch modes (can mean that SPI is wired incorrectly)
+  #define CANERR_RXBUFFER_FULL    0x0400 //!< Local buffer is full
+  #define CANERR_MESSAGE_ERROR	  0x1000 //!< Message transmission error 
+  #define CANERR_BUSOFF_MODE	  	0x2000 //!< MCP2515 has entered Bus Off mode
+  #define CANERR_HIGH_ERROR_COUNT	0x4000 //!< Triggered when TEC or REC exceeds 96
+/** @} */
 
-/*
- * Class for handling CAN I/O operations using the
- * MCP2515 CAN controller.
+/**
+ * \brief Class for handling CAN I/O operations using the MCP2515 CAN controller.
+ * 
+ * You must create an instance of this object within your Arduino Setup() function, and then 
  */
 class CAN_IO {
 public:
 	/*
-	 * Constructor. Creates a MCP2515 object using
-	 * the given pins.
+	 * Main Constructor. Creates 
 	 */
+    CAN_IO(byte CS_pin, int baud, byte freq);			    // Constructor if interrupts are not used
 	CAN_IO(byte CS_pin, byte INT_pin, int baud, byte freq); // Constructor for using interrupts
-	CAN_IO(byte CS_pin, int baud, byte freq);								// Constructor if interrupts are not used
+
 
 	/*
 	 * Initializes the CAN controller to desired settings,
@@ -190,11 +215,11 @@ private:
 	inline uint8_t select_open_buffer();
 };
 
-/*
- * Declare a pointer to the main can_io instance. We need this because interrupt functions
- * can't have arguments. We can't assign CAN_IO::Fetch() to the ISR because it has an implicit
- * this* pointer which goes to the specific instance. If you want multiple can controllers,
- * you will need to set up your own interrupts for them.
+/**
+ ** Declare a pointer to the main can_io instance. We need this because interrupt functions
+ ** can't have arguments. We can't assign CAN_IO::Fetch() to the ISR because it has an implicit
+ ** this* pointer which goes to the specific instance. If you want multiple can controllers,
+ ** you wll need to set up your own interrupts for them.
  */
 extern CAN_IO* main_CAN;
 #endif

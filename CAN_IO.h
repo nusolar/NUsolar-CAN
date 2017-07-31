@@ -56,7 +56,6 @@ struct CANFilterOpt {
 	 *  \param f3 - 2nd binary filter to check against
 	 *  \param f4 - 3rd binary filter to check against
 	 *  \param f5 - 4th binary filter to check against
-	 *  \param f6 - 5th binary filter to check against
 	 *  \return a reference to the calling object, allowing the setRB0 and setRB1 commands to be chained.
 	 */
 	CANFilterOpt& setRB1(uint16_t m1, uint16_t f2, uint16_t f3, uint16_t f4, uint16_t f5)
@@ -89,82 +88,129 @@ struct CANFilterOpt {
 /** @} */
 
 /**
- * \brief Class for handling CAN I/O operations using the MCP2515 CAN controller.
- * 
- * You must create an instance of this object within your Arduino Setup() function, and then 
+ ** \brief Class for handling CAN I/O operations using the MCP2515 CAN controller.
+ ** 
+ ** You must create an instance of this object within your Arduino Setup() function, and then call its \ref CAN_IO::Setup() "Setup()" function to
+ ** initialize the MCP2515 controller to the proper settings.
  */
 class CAN_IO {
 public:
-	/*
-	 * Main Constructor. Creates 
-	 */
-    CAN_IO(byte CS_pin, int baud, byte freq);			    // Constructor if interrupts are not used
-	CAN_IO(byte CS_pin, byte INT_pin, int baud, byte freq); // Constructor for using interrupts
+	/**
+	 ** \brief Constructor
+	 ** \param CS_pin 	The arduino pin # to which the MCP2515 chip select pin is attached.
+	 ** \param INT_pin	The arduino pin # to which the MCP2515 interrupt pin is attached. This should be specified
+	 ** 				even if \ref _____ "AutoFetch" is disabled, as the CAN_IO::Fetch() routine uses this pin to check whether
+	 **					there are incoming messages.)
+	 ** \param baud 	Baud rate of the CAN bus, in kbps. SC6 runs at 1mbps, or baud = 1000.
+	 ** \param freq 	Frequency of the MCP2515 external resonator, in Mhz. For NUsolar boards on SC6, this is 16Mhz or freq = 16.
+	 **/
+	CAN_IO(byte CS_pin, byte INT_pin, int baud, byte freq); // Constructor
 
 
-	/*
-	 * Initializes the CAN controller to desired settings,
-	 * including read masks/filters. All types of interrupt
-	 * are enabled.
+	/** \brief Initialization method for the can controller.
+	 **
+	 ** Initializes the CAN controller to desired settings,
+	 ** including read masks/filters. All types of interrupt
+	 ** are enabled by default.
+	 **
+	 ** \param interrupts - binary interrupt enable flags. The flags can be combined by ORing them together
+	 **                     using the | operator. By default, the following interrupts are enabled: RX0IE, RX1IE, TX0IE, TX1IE, TX2IE.
 	 */
 	void Setup(byte interrupts = RX0IE | RX1IE | TX1IE | TX2IE | TX0IE );
 
-	//inline void AbortTransmissions(byte timeout = 10); not being used right now
 
-	/*
-	 * Methods to put the controller to sleep or wake it up again.
+	/**
+	 ** \brief Methods to put the controller to sleep or wake it up again.
 	 */
 	bool Sleep();
 	bool Wake();
 
 	void ResetController();
 	
-	/* 
-	 * Reconfigure the interrupts that are enabled on the MCP2515 
-	 * Arguments: - interrupts (OR'd list of INTE flags)
+	/** 
+	 ** \brief Reconfigure the interrupts that are enabled on the MCP2515 
+	 ** \param interrupts 	binary interrupt enable flags (see CAN_IO::Setup())
+	 ** \return 			true if successful
 	 */
 	bool ConfigureInterrupts(byte interrupts);
 
-	/*
-	 * Attaches or detatches the automatic fetch interrupt (not recommended)
-	 * Arguments: set (true = attach interrupt pin to the CAN_ISR routine, false = detatch interrupt from the interrupt pin [default])
+	/**
+	 ** \brief Attaches or detatches the automatic fetch interrupt (not recommended)
+	 ** \param set 			true = attach interrupt pin to the CAN_ISR routine, 
+	 						false = detatch interrupt from the interrupt pin [default]
 	 */
 	void setAutoFetch(bool set);
 
-	/*
-	 * Invoked when the interrupt pin is pulled low. Handles
-	 * errors or reads messages, determined by the type of interrupt.
+	/**
+	 ** \brief Fetch any available messages from the MCP2515 and store them in the RX_Queue.
 	 */
 	void Fetch();
 
-	/*
-	 * Get and parse the error flag bit from the MCP2515 into my variables errors, tec, and rec.
+	/**
+	 ** \brief Get and parse the error flag bit from the MCP2515 into my variables errors, tec, and rec.
 	 */
 	void FetchErrors();
 
-	/*
-	 * Get the contents of CANSTAT register, which can be used to tell the operational state of the device.
+	/**
+	 ** \brief Get the contents of CANSTAT register, which can be used to tell the operational state of the device.
 	 */
 	void FetchStatus();
 
-	/*
-	 * Sends messages to the CAN bus via the controller.
+	/** \brief Sends messages to the CAN bus via the controller. 
+	 ** \param[in] layout 		Constant reference to a Layout object.
+	 ** \param[in] buffer 		Specify the transmit buffer to use on the MCP2515. Possible values are: TXB0, TXB1, TXB2, TXBANY (i.e. automatically chosen)
+	 ** \return 				True if successful
+	 ** 
+	 ** Sample sending a DC_Heartbeat packet using a right-hand constant reference through any TX buffer:
+	 ** \code{.cpp} CAN_IO::Send(DC_Heartbeat(0x1234,0x5678), TXANY); \endcode
+	 **
+	 ** Sample sending a DC_Heartbeat packet using a standard object reference through any TX buffer:
+	 ** \code{.cpp} DC_Heartbeat p = DC_Heartbeat(0x1234,0x5678); CAN_IO::Send(p, TXANY); 
+	    \endcode
 	 */
 	bool Send(const Layout& layout, uint8_t buffer);
+
+	/** \brief Sends messages to the CAN bus via the controller. 
+	 ** \param[in] frame 		Constant reference to a Frame object
+	 ** \param[in] buffer  		Specify the transmit buffer to use on the MCP2515. Possible values are: TXB0, TXB1, TXB2, TXBANY (i.e. automatically chosen)
+	 ** \return 				True if successful
+	 ** 
+	 ** Similar to the Layout-based send function but accepts Frame object instead.
+	 */
 	bool Send(const Frame& frame, uint8_t buffer);
+
+	/** \brief Sends messages to the CAN bus via the controller, confirming correct SPI transmission.
+	 ** \param[in] layout 		Constant reference to a Layout object.
+	 ** \param[in] buffer 		Specify the transmit buffer to use on the MCP2515. Possible values are: TXB0, TXB1, TXB2, TXBANY (i.e. automatically chosen)
+	 ** \return 				True if successful
+	 ** 
+	 ** Same usage as the corresponding Send() function. However, after loading a message into the MCP2515 TX buffers, 
+	 ** this function reads the loaded message back to confirm that it is not corrupted.
+	 */
 	bool SendVerified(const Layout& layout, uint8_t buffer);
+
+	/** \brief Sends messages to the CAN bus via the controller, confirming correct SPI transmission.
+	 ** \param[in] frame 		Constant reference to a Frame object
+	 ** \param[in] buffer  		Specify the transmit buffer to use on the MCP2515. Possible values are: TXB0, TXB1, TXB2, TXBANY (i.e. automatically chosen)
+	 ** \return 				True if successful
+	 ** 
+	 ** Same usage as the corresponding Send() function. However, after loading a message into the MCP2515 TX buffers, 
+	 ** this function reads the loaded message back to confirm that it is not corrupted.
+	 */
 	bool SendVerified(const Frame& frame, uint8_t buffer);
 	
-	/*
-	 * Returns a reference to the next available frame on the buffer
+	/**
+	 ** \brief Reads the next packet received from the CAN bus.
+	 ** \return A Frame& object which can be used to access the next object in the internal RX_Queue.
 	 */
 	inline Frame& Read()
 	{
 		return RXbuffer.dequeue();
 	}
       
-	/*
-	 * Returns true if the RX buffer is not empty.
+	/**
+	 ** \brief Check if any incoming CAN packets are available.
+	 ** \return True if the internal RX_Queue which holds incoming packets is not empty.
 	 */
 	inline bool Available()
 	{
@@ -172,54 +218,52 @@ public:
 	}
 
         
-    MCP2515 controller; // The MCP2515 object
-   	RX_Queue<16> RXbuffer; //A queue for holding incoming messages
+    MCP2515 controller; 	//!< An instance of the MCP2515 class allowing easy access of MCP2515 functions over SPI.
+   	RX_Queue<16> RXbuffer;	//!< A local queue for holding incoming message frames as they are retreived by the Fetch function. Can hold up to 16 frames at a time.
 
     // Status data
     volatile uint8_t  canstat_register;
     
-    // Error data 
-    // Note that these are only updated when FetchErrors() is called.
-    // You can make this automatic by enabling the ERRIE interrupt when setting up can
-    // but this can cause arduino to freeze, so you do so at your own risk.
-		volatile uint32_t	errors;
+		volatile uint32_t	errors;			//!< Bitmap of the errors on the CAN bus. Bits correspond to the \ref CANERRORS_GROUP "Standard CAN errors". Updated when FetchErrors() is called.
 		volatile uint32_t	tec;
-		volatile uint32_t rec;
-		volatile long int_counter; // increments when an interrupt happens (always updated)
-		volatile uint8_t  last_interrupt;
+		volatile uint32_t 	rec;
+		volatile long 		int_counter; 	//!< Increments when the 
+		volatile uint8_t  	last_interrupt;
 
-	//store filters
-	CANFilterOpt filters;
+	CANFilterOpt filters;			//!< A CANFilterOpt object which stores the filters currently in use by the MCP2515
 	
 private:
-  byte    INT_pin;
-	int 	  bus_speed;
-	byte	  bus_freq;
-	volatile byte 		tx_open;	// Tracks which TX buffers are open.
+    byte     INT_pin;				//!< Pin which is attached to the MCP2515 interrupt pin
+	int 	 bus_speed;				//!< Configured bus speed (e.g. 500 kbps, 1mbps, ...)
+	byte	 bus_freq;				//!< MCP2515 oscillator frequency (16MHz on all NUsolar boards)
+	volatile byte 		tx_open;	//!< Tracks which TX buffers are open.
 
 	// Store interrupts in case we have to reset
-	byte my_interrupts;
+	byte my_interrupts;				//!< Stores the currently-active interrupts enable flags.
 
-	/*
-	 * Helper function for configuring the RX masks/filters.
-	 * If first is true, sets the mask/filter for the first buffer;
-	 * otherwise sets the second.
+	/** 
+	 ** \brief Helper function for configuring the RX masks/filters.
+	 ** If first is true, sets the mask/filter for the first buffer;
+	 ** otherwise sets the second.
 	 */
 	void write_rx_filter(uint8_t address, uint16_t);
 	
 	inline void init_controller();
 
-	/*
-	 * Helper function to select a TX buffer
+	/**
+	 ** \brief Helper function to select a TX buffer
 	 */
 	inline uint8_t select_open_buffer();
 };
 
-/**
- ** Declare a pointer to the main can_io instance. We need this because interrupt functions
- ** can't have arguments. We can't assign CAN_IO::Fetch() to the ISR because it has an implicit
+/** 
+ ** \brief A pointer to the main can_io instance used for calling the CAN_IO instance when AutoFetch is enabled.
+ **
+ ** We need this because interrupt functions can't have arguments. We can't assign CAN_IO::Fetch() to the ISR because it has an implicit
  ** this* pointer which goes to the specific instance. If you want multiple can controllers,
  ** you wll need to set up your own interrupts for them.
+ **
+ ** Note that interrupts are not currently enabled by default, so this pointer is useless. See \ref CAN_ISR()
  */
 extern CAN_IO* main_CAN;
 #endif

@@ -1,6 +1,6 @@
-/*
- * Layouts.h
- * Definition for CAN layouts.
+/**
+ ** \file Layouts.h
+ ** Declarations for NUsolar specific CAN packet layouts.
  */
 
 #ifndef Layouts_h
@@ -9,10 +9,7 @@
 #include <stdint.h>
 #include "MCP2515_defs.h"
 
-/*
- * Packet_IDs.h
- * Constant definitions for CAN packet IDs.
- */
+/** \page ids Layout Packet IDs */
 
 // BMS TX
 #define BMS_BASEADDRESS 	0x600
@@ -55,8 +52,7 @@
 #define TEL_STATUS_ID		0x301
 
 /*
- * Mask ID that specifically work with our SIDs
- * (packet ID's for f0-f5 can be found in Layouts.h)
+ * Some useful mask IDs to use with the MCP2515 filtering function.
  */
 #define MASK_NONE			0x000000
 #define MASK_Sx00			0x000700
@@ -64,32 +60,42 @@
 #define MASK_Sxxx			0x0007FF
 #define MASK_EID			0x07FFFF
 
-/*
- * Abstract base packet.
+/**
+ ** \brief Abstract base Layout packet,
+ **
+ ** Each Layout object contains an ID representing the Frame ID, a virtual function  Children of the Layout class contain named variables specific to their application. 
+ ** For example, the DC_Drive packet contains two variables. 
  */
 class Layout {
 public:
 	uint16_t id;
 	
-	/*
-	 * Creates a Frame object to represent this layout.
+	/**
+	 ** \brief Creates a Frame object to represent this layout.
 	 */
 	virtual Frame generate_frame() const;
 
+	/**
+	 ** \brief Generate a string representing the packet data
+	 */
 	String toString() const {
 		return generate_frame().toString();
 	}
 
 protected:
-	/*
-	 * Fill out the header info for a frame.
+	/**
+	 ** \brief Fill out the header info for a frame.
 	 */
 	 inline void set_header(Frame& f, byte size = 8) const;
 };
 
+/** \defgroup LAYOUTS NUsolar CAN packet layouts 
+ ** \todo Add Detailed Description
+ ** @{
+ */
 
-/*
- * BMS heartbeaat packet.
+/**
+ ** \brief BMS heartbeaat packet.
  */
 class BMS_Heartbeat : public Layout {
 public:
@@ -102,8 +108,8 @@ public:
 	uint32_t serial_no;
 };
 
-/*
- * BMS state of charging packet.
+/**
+ ** \brief BMS state of charging packet.
  */
 class BMS_SOC : public Layout {
 public:
@@ -116,8 +122,8 @@ public:
 	float percent_SOC;
 };
 
-/*
- * BMS state of charging during balancing packet.
+/**
+ ** \brief BMS state of charging during balancing packet.
  */
 class BMS_BalanceSOC : public Layout {
 public:
@@ -132,8 +138,8 @@ public:
 	float SOC_mismatch;
 };
 
-/*
- * BMS precharge status packet.
+/**
+ ** \brief BMS precharge status packet.
  */
 class BMS_PrechargeStatus : public Layout {
 public:
@@ -156,8 +162,8 @@ public:
 	uint8_t precharge_timer;
 };
 
-/*
- * BMS voltage and current packet.
+/**
+ ** \brief BMS voltage and current packet.
  */
 class BMS_VoltageCurrent : public Layout {
 public:
@@ -170,8 +176,8 @@ public:
 	int32_t current;
 };
 
-/*
- * BMS status packet.
+/**
+ ** \brief BMS status packet.
  */
 class BMS_Status : public Layout {
 public:
@@ -192,8 +198,8 @@ public:
 
 };
 
-/*
- * BMS Extended Status Packet.
+/**
+ ** \brief BMS Extended Status Packet.
  */
 class BMS_Status_Ext : public Layout {
 public:
@@ -225,8 +231,8 @@ public:
 	static const uint32_t F_EXTRACELL		    = 0x00001000; // Extra Cell Detected by CMU Flag
 };
 
-/*
- * BMS fan status packet.
+/**
+ ** \brief BMS fan status packet.
  */
 class BMS_FanStatus : public Layout {
 public:
@@ -245,8 +251,8 @@ public:
 	uint16_t cmu_consumption;
 };
 
-/*
- * Motor controller heartbeat packet.
+/**
+ ** \brief Motor controller heartbeat packet.
  */
 class MC_Heartbeat : public Layout {
 public:
@@ -259,8 +265,8 @@ public:
 	uint32_t serial_no;
 };
 
-/*
- * Motor controller status packet.
+/**
+ ** \brief Motor controller status packet.
  */
 class MC_Status : public Layout {
 public:
@@ -277,8 +283,8 @@ public:
 	uint16_t limit_flags;
 };
 
-/*
- * Motor controller bus status packet.
+/**
+ ** \brief Motor controller bus status packet.
  */
 class MC_BusStatus : public Layout {
 public:
@@ -291,8 +297,8 @@ public:
 	float bus_voltage;
 };
 
-/*
- * Motor controller velocity packet.
+/**
+ ** \brief Motor controller velocity packet.
  */
 class MC_Velocity : public Layout {
 public:
@@ -305,8 +311,8 @@ public:
 	float motor_velocity;
 };
 
-/*
- * Motor controller motor phase current packet.
+/**
+ ** \brief Motor controller motor phase current packet.
  */
 class MC_PhaseCurrent : public Layout {
 public:
@@ -319,6 +325,9 @@ public:
 	float phase_b;
 };
 
+/**
+ ** \brief Motor controller fan speed packet.
+ */
 class MC_FanSpeed : public Layout {
 public:
 	MC_FanSpeed(float rpm, float v) : speed(rpm), drive(v) {id = MC_FANSPEED_ID; }
@@ -330,6 +339,9 @@ public:
 	float drive;
 };
 
+/**
+ ** \brief Motor controller odometer and amp-hours packet.
+ */
 class MC_OdoAmp : public Layout {
 public:
 	MC_OdoAmp(float Ah, float odom) : bus_amphours(Ah), odometer(odom) {id = MC_ODOAMP_ID; }
@@ -341,8 +353,8 @@ public:
 	float odometer;
 };
 
-/*
- * Driver controls heartbeat packet.
+/**
+ ** \brief Driver controls heartbeat packet.
  */
 class DC_Heartbeat : public Layout {
 public:
@@ -355,8 +367,8 @@ public:
 	uint32_t serial_no;
 };
 
-/*
- * Driver controls drive command packet.
+/**
+ ** \brief Driver controls drive command packet.
  */
 class DC_Drive : public Layout {
 public:
@@ -369,8 +381,8 @@ public:
 	float current;
 };
 
-/*
- * Driver controls power command packet.
+/**
+ ** \brief Driver controls power command packet.
  */
 class DC_Power : public Layout {
 public:
@@ -382,8 +394,8 @@ public:
 	float bus_current;
 };
 
-/*
- * Driver controls reset packet.
+/**
+ ** \brief Driver controls reset packet.
  */
 class DC_Reset : public Layout {
 public:
@@ -393,8 +405,8 @@ public:
 	Frame generate_frame() const;
 };
 
-/*
- * Driver controls information packet.
+/**
+ ** \brief Driver controls information packet.
  */
 class DC_Info : public Layout {
 public:
@@ -455,8 +467,8 @@ public:
 	Frame generate_frame() const;
 };
 
-/*
- * Driver controls status packet.
+/**
+ ** \brief Driver controls status packet.
  */
 class DC_Status : public Layout {
 public:
@@ -498,8 +510,8 @@ public:
 };
 
 
-/* 
- * Steering wheel data packet, sent to the driver controls.
+/** 
+ ** \brief Steering wheel data packet, sent to the driver controls.
  */
 class SW_Data : public Layout {
 public:
@@ -553,8 +565,8 @@ private:
 	}
 };
 
-/*
- * Telemetry Heartbeat packet
+/**
+ ** \brief Telemetry Heartbeat packet
  */
 class TEL_Status : public Layout {
 public:
@@ -572,5 +584,7 @@ public:
 	bool sql_connected;
 	bool com_connected;
 };
+
+/**@} End LAYOUTS group*/
 
 #endif

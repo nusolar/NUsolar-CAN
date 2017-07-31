@@ -9,19 +9,28 @@
 CAN_IO::CAN_IO(byte CS_pin, byte INT_p, int baud, byte freq) : INT_pin(INT_p), controller(CS_pin, INT_p), bus_speed(baud), bus_freq(freq),
 tec(0), rec(0), errors(0) {}
 
-/*
- * Define global interrupt function
+/**
+ ** /brief The global interrupt function which can be attached to the interrupt pin INT_p in order to Fetch messages every 
+ ** an interrupt is raised by the microcontroller. 
+ **
+ ** This is referred to as AutoFetch.
+ ** Unfortunately, using actual interrupts in the current version of the code is not advised becuase of negative interractions between
+ ** the triggered interrupts and the SPI communications with the MCP2515. Initial testing of this CAN library with AutoFetch indicated
+ ** that using interrupts can corrupt the data being sent to the MCP2515 for transmission (see \ref reference). For this reason, AutoFetch
+ ** is disabled by default; the user is instead encouraged to poll the MCP2515 using the CAN_IO::Fetch() and CAN_IO::FetchErrors() methods. 
+ ** Interrupt-based fetching can be enabled thru the CAN_IO::setAutoFetch() method.
  */
 void CAN_ISR()
 {
   main_CAN->Fetch();
   main_CAN->int_counter++;
 }
-// Make sure to initialize the mainCAN pointer to 0 here.
+
+// Make sure to initialize the mainCAN pointer to 0 here, even though it is declared as an extern variable in CAN_IO.h
 CAN_IO* main_CAN = 0;
 
 /*
- * Setup function for CAN_IO. Arguments are a FilterInfo struct and a pointer to a place to raise error flags.
+ * Setup function for CAN_IO.
  */
 void CAN_IO::Setup(byte interrupts) { // default interrupts are RX0IE | RX1IE | TX1IE | TX2IE | TX0IE.
 	// SPI setup
@@ -45,7 +54,7 @@ void CAN_IO::Setup(byte interrupts) { // default interrupts are RX0IE | RX1IE | 
 	init_controller(); //private helper function	
 }
 
-inline void CAN_IO::init_controller() //private helper function
+inline void CAN_IO::init_controller() //private helper function for CAN_IO::Setup()
 {
 	// Clear error counters
 	this->errors = 0;
@@ -103,9 +112,14 @@ void CAN_IO::ResetController() {
 		this->init_controller(); // Re-initialize the controller.
 }
 
+/** 
+ ** This method checks and stash them in a local RX_Queue object so that the user can later read the data
+ ** using the CAN_IO::Read() function.
+ */
+
 void CAN_IO::Fetch() {
 	// read status of CANINTF register
-	if (!controller.Interrupt()) return; // Do nothing if there is not an interrupt
+	if (!controller.Interrupt()) return; //!< Do nothing if there is not an interrupt. Comment out this line if not using the \ref CAN_IO::Setup() "RX0IE and RX1IE interrupt enable flags".
 
 	byte interrupt = controller.GetInterrupt(); // Otherwise get the interrupt from the controller and process it.
 	byte to_clear = 0;

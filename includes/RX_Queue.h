@@ -1,6 +1,6 @@
-/*
- * RX_Queue.h
- * Contains definition for the RX_Queue class.
+/**
+ ** \file RX_Queue.h
+ ** \brief Contains definition for the RX_Queue buffer to hold incoming frames that are Fetched from the MCP2515. 
  */
 
 #ifndef RX_Queue_h
@@ -10,36 +10,39 @@
 #include "MCP2515_defs.h"
 
 
-/*
- * Static receiving deque for CAN_IO class. Holds frames that
- * have come in over the CAN bus.
- */
-template<int Tsize>
-class RX_Queue {
-	/*Usage:
+/**
+ ** \brief Static receiving deque for CAN_IO class. 
+ **
+ ** Incoming frame objects are storred in this object by the CAN_IO::Fetch() method and then can be retreived in a FIFO manner
+ ** by the user by calling the CAN_IO:Read() method.
+ ** Usage:
 		- void	enqueue(Frame)	 -- Adds Frame to the head of the queue
 		- Frame dequeue()		 -- Returns a Frame from the tail of the queue
 		- bool	is_full()		 -- Returns true if the queue is full
 		- bool	is_empty()		 -- Returns true if there are no elements in the queue
 		- int	size()			 -- Returns the number of elements in the queue
-		*/
+ */
+template<int Tsize>
+class RX_Queue {
+
 public:
 	static const int RX_QUEUE_SIZE = Tsize;
 
-	/*
-	 * Constructor. Initializes the queue.
+	/**
+	 ** \brief Constructor. 
+	 ** Initializes the queue.
 	 */
 	RX_Queue() : head(0), tail(0), isFull(0) {}
 
-	/*
-	 * Returns true if the queue is full.
+	/**
+	 ** \brief Returns true if the queue is full.
 	 */
 	bool is_full() {
 		return isFull && head == tail;
 	}
 
-	/*
-	 * Returns true if the queue is empty.
+	/**
+	 ** \brief Returns true if the queue is empty.
 	 */
 	bool is_empty() {
 		return (!isFull) && head == tail;
@@ -52,8 +55,8 @@ public:
 		else
 			return (head - tail + RX_QUEUE_SIZE) % RX_QUEUE_SIZE;
 	}
-	/*
-	 * Adds a frame to the front of the queue.
+	/**
+	 ** \brief Adds a frame to the front of the queue.
 	 */
 	void enqueue(const Frame& f) {
 		noInterrupts();
@@ -77,8 +80,8 @@ public:
 		interrupts();
 	}
 
-	/*
-	 * Returns a frame from the back of the queue.
+	/**
+	 ** \brief Returns a frame from the back of the queue.
 	 */
 	Frame dequeue_copy() {
 		noInterrupts();
@@ -101,8 +104,8 @@ public:
 		}
 		return Frame();
 	}
-	/*
-	 * Returns a frame reference from the back of the queue.
+	/**
+	 ** \brief Returns a frame reference from the back of the queue.
 	 */
 	Frame& dequeue() {
 		if (!is_empty()) {
@@ -130,7 +133,7 @@ private:
 	bool	isFull;
 };
 
-/* Frame Deque */
+/** \brief Similar to RX_Queue but not used currently. It's just a slightly different type of data structure from a queue. */
 template <int Tsize>
 class RX_Deque {
 public:

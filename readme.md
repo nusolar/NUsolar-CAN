@@ -1,8 +1,11 @@
-\mainpage NUsolar MCP2515 CAN Library for Arduino
+NUsolar MCP2515 CAN Library for Arduino
+=====================
 
-\author   Alexander Martin
-\date		  6/13/2015
-\version	3.0
+Author:   Alexander Martin
+
+Date:		  6/13/2015
+
+Version:	3.0
 
 Goals
 -----

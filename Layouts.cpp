@@ -1,6 +1,8 @@
-/*
- * Layouts.cpp
- * Implementation of CAN packet layouts.
+/**
+ ** \file Layouts.cpp
+ ** \brief Implementation of CAN packet layouts.
+ ** \todo Explain what the generate_frame() method does.
+ ** \todo Describe how to program the generate_frame() method for a new CAN packet.
  */
 
  /* Note: Uninitialized packets in frames must be set to UNUSED. They are not automatically initialized */

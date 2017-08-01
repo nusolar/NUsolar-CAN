@@ -9,9 +9,9 @@
 #include <stdint.h>
 #include "MCP2515_defs.h"
 
-/** \page ids Layout Packet IDs */
-
-// BMS TX
+//! \name BMS Packet IDs
+//! See http://www.tritium.com.au/source/TRI67.010v2_BMS_BMU_Communications_Protocol.pdf
+/**@{*/
 #define BMS_BASEADDRESS 	0x600
 #define BMS_HEARTBEAT_ID	BMS_BASEADDRESS
 #define BMS_SOC_ID	        0x6F4
@@ -21,8 +21,11 @@
 #define BMS_STATUS_ID		0x6FB
 #define BMS_FAN_STATUS_ID	0x6FC
 #define BMS_STATUS_EXT_ID	0x6FD
+/**@}*/
 
-// motor controller TX
+//! \name Motor Controller Packet IDs
+//! See http://www.tritium.com.au/wp-content/uploads/2017/06/TRI50.008_Communications_Specification_v5.pdf
+/**@{*/
 #define MC_BASEADDRESS		0x400
 #define MC_HEARTBEAT_ID		MC_BASEADDRESS
 #define MC_STATUS_ID 		0x401
@@ -31,8 +34,10 @@
 #define MC_PHASE_ID			0x404
 #define MC_FANSPEED_ID		0x40A
 #define MC_ODOAMP_ID		0x40E
+/**@}*/
 
-// driver controls TX
+//! \name Driver Controlls Packet IDs
+/**@{*/
 #define DC_BASEADDRESS		0x500
 #define DC_HEARTBEAT_ID		DC_BASEADDRESS
 #define DC_DRIVE_ID			0x501
@@ -40,31 +45,39 @@
 #define DC_RESET_ID			0x503
 #define DC_INFO_ID			0x505
 #define DC_STATUS_ID		0x506
+/**@}*/
 
-// steering wheel TX (700 - 7F0)
+//! \name Steering Wheel Packet IDs
+//! Note: May only go up to 0x7F0 because Tritium has reserved addressses after that for their other products
+/**@{*/
 #define SW_BASEADDRESS		0x700
 #define SW_HEARTBEAT_ID		SW_BASEADDRESS
 #define SW_DATA_ID 			0x701
+/**@}*/
 
-// telemetry TX
+//! \name Telemetry Packet IDs
+/**@{*/
 #define TEL_BASEADDRESS		0x300
 #define TEL_HEARTBEAT_ID 	TEL_BASEADDRESS
 #define TEL_STATUS_ID		0x301
+/**@}*/
 
-/*
- * Some useful mask IDs to use with the MCP2515 filtering function.
- */
-#define MASK_NONE			0x000000
-#define MASK_Sx00			0x000700
-#define MASK_Sxx0			0x0007F0
-#define MASK_Sxxx			0x0007FF
-#define MASK_EID			0x07FFFF
+//! \name Packet ID Masks
+//! Some useful mask IDs to use with the MCP2515 filtering function.
+/**@{*/
+#define MASK_NONE			0x000000 	//!< Matches nothing. Honestly I don't see a use for this.
+#define MASK_Sx00			0x000700	//!< Matches only the first hex value of packet IDs.
+#define MASK_Sxx0			0x0007F0	//!< Matches the first two hex values of packet IDs.
+#define MASK_Sxxx			0x0007FF	//!< Matches the first three hex values of packet IDs.
+#define MASK_EID			0x07FFFF	//!< Matches all four values of an extended packet ID (untested).
+/**@}*/
 
 /**
- ** \brief Abstract base Layout packet,
+ ** \brief Abstract Layout Packet Base Class
  **
  ** Each Layout object contains an ID representing the Frame ID, a virtual function  Children of the Layout class contain named variables specific to their application. 
  ** For example, the DC_Drive packet contains two variables. 
+ ** \todo Finish describing the parent-child relationship between individual layouts and this class.
  */
 class Layout {
 public:
@@ -585,6 +598,6 @@ public:
 	bool com_connected;
 };
 
-/**@} End LAYOUTS group*/
+/**@} End LAYOUTS group */
 
 #endif

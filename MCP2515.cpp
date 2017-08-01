@@ -16,6 +16,10 @@
 #include "includes/MCP2515.h"
 #include "includes/MCP2515_defs.h"
 
+/** \brief Converts a frame object to a string
+ **
+ ** Deprecated since frame objects now have their own built in Frame::toString() method.
+ */
 String frameToString(const Frame& f)
 {
   char fstring[64];
@@ -26,15 +30,15 @@ String frameToString(const Frame& f)
   return String(fstring);
 }
 
-MCP2515::MCP2515(byte CS_Pin, byte INT_Pin) {
-  pinMode(CS_Pin, OUTPUT);
-  digitalWrite(CS_Pin,HIGH);
+MCP2515::MCP2515(byte CS_pin, byte INT_pin) {
+  pinMode(CS_pin, OUTPUT);
+  digitalWrite(CS_pin,HIGH);
 
-  pinMode(INT_Pin,INPUT);
-  digitalWrite(INT_Pin,HIGH);
+  pinMode(INT_pin,INPUT);
+  digitalWrite(INT_pin,HIGH);
   
-  _CS = CS_Pin;
-  _INT = INT_Pin;
+  _CS = CS_pin;
+  _INT = INT_pin;
 }
 
 /*

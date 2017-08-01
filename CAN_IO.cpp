@@ -6,9 +6,6 @@
 #include "CAN_IO.h"
 #include <SPI.h>
 
-CAN_IO::CAN_IO(byte CS_pin, byte INT_p, int baud, byte freq) : INT_pin(INT_p), controller(CS_pin, INT_p), bus_speed(baud), bus_freq(freq),
-tec(0), rec(0), errors(0) {}
-
 /**
  ** /brief The global interrupt function which can be attached to the interrupt pin INT_p in order to Fetch messages every 
  ** an interrupt is raised by the microcontroller. 
@@ -26,12 +23,16 @@ void CAN_ISR()
   main_CAN->int_counter++;
 }
 
-// Make sure to initialize the mainCAN pointer to 0 here, even though it is declared as an extern variable in CAN_IO.h
+/** The main_CAN variable is declared as "external" in CAN_IO.h, so we can define it here and 
+ ** it will be visible to all parts of the program.
+ */
 CAN_IO* main_CAN = 0;
 
-/*
- * Setup function for CAN_IO.
- */
+/* **** CAN_IO Function definitions **** */
+
+CAN_IO::CAN_IO(byte CS_pin, byte INT_p, int baud, byte freq) : INT_pin(INT_p), controller(CS_pin, INT_p), bus_speed(baud), bus_freq(freq),
+tec(0), rec(0), errors(0) {}
+
 void CAN_IO::Setup(byte interrupts) { // default interrupts are RX0IE | RX1IE | TX1IE | TX2IE | TX0IE.
 	// SPI setup
 	SPI.setClockDivider(10);
@@ -119,7 +120,7 @@ void CAN_IO::ResetController() {
 
 void CAN_IO::Fetch() {
 	// read status of CANINTF register
-	if (!controller.Interrupt()) return; //!< Do nothing if there is not an interrupt. Comment out this line if not using the \ref CAN_IO::Setup() "RX0IE and RX1IE interrupt enable flags".
+	if (!controller.Interrupt()) return; //! Comment out the first line of this function if not using the \ref CAN_IO::Setup() "RX0IE and RX1IE interrupt enable flags".
 
 	byte interrupt = controller.GetInterrupt(); // Otherwise get the interrupt from the controller and process it.
 	byte to_clear = 0;

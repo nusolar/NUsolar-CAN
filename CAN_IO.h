@@ -72,7 +72,7 @@ struct CANFilterOpt {
 
 /** \defgroup CANERRORS_GROUP Standard CAN errors 
  ** Some of these only work if FetchErrors() is called periodically.
- ** \TODO where are these found
+ ** \todo where are these found
  **  
  **  @{
  */
@@ -97,62 +97,77 @@ class CAN_IO {
 public:
 	/**
 	 ** \brief Constructor
-	 ** \param CS_pin 	The arduino pin # to which the MCP2515 chip select pin is attached.
-	 ** \param INT_pin	The arduino pin # to which the MCP2515 interrupt pin is attached. This should be specified
+	 ** \param[in] CS_pin 	The arduino pin # to which the MCP2515 chip select pin is attached.
+	 ** \param[in] INT_pin	The arduino pin # to which the MCP2515 interrupt pin is attached. This should be specified
 	 ** 				even if \ref _____ "AutoFetch" is disabled, as the CAN_IO::Fetch() routine uses this pin to check whether
 	 **					there are incoming messages.)
-	 ** \param baud 	Baud rate of the CAN bus, in kbps. SC6 runs at 1mbps, or baud = 1000.
-	 ** \param freq 	Frequency of the MCP2515 external resonator, in Mhz. For NUsolar boards on SC6, this is 16Mhz or freq = 16.
+	 ** \param[in] baud 	Baud rate of the CAN bus, in kbps. SC6 runs at 1mbps, or baud = 1000.
+	 ** \param[in] freq 	Frequency of the MCP2515 external resonator, in Mhz. For NUsolar boards on SC6, this is 16Mhz or freq = 16.
 	 **/
 	CAN_IO(byte CS_pin, byte INT_pin, int baud, byte freq); // Constructor
 
 
-	/** \brief Initialization method for the can controller.
+	/** \brief Initialization method for the can controller
 	 **
 	 ** Initializes the CAN controller to desired settings,
 	 ** including read masks/filters. All types of interrupt
 	 ** are enabled by default.
 	 **
-	 ** \param interrupts - binary interrupt enable flags. The flags can be combined by ORing them together
-	 **                     using the | operator. By default, the following interrupts are enabled: RX0IE, RX1IE, TX0IE, TX1IE, TX2IE.
+	 ** \param[in] interrupts   Binary interrupt enable flags. The flags can be combined by ORing them together
+	 **                     	using the | operator. By default, the following interrupts are enabled: RX0IE, RX1IE, TX0IE, TX1IE, TX2IE.
 	 */
 	void Setup(byte interrupts = RX0IE | RX1IE | TX1IE | TX2IE | TX0IE );
 
-
-	/**
-	 ** \brief Methods to put the controller to sleep or wake it up again.
-	 */
-	bool Sleep();
-	bool Wake();
-
-	void ResetController();
+	bool Sleep(); 				//!< Put the controller to sleep
+	bool Wake();  				//!< Wake the controller up from sleep.
+	void ResetController();		//!< Reinitialize the controller
 	
 	/** 
 	 ** \brief Reconfigure the interrupts that are enabled on the MCP2515 
-	 ** \param interrupts 	binary interrupt enable flags (see CAN_IO::Setup())
-	 ** \return 			true if successful
+	 ** \param[in] interrupts 	Binary interrupt enable flags (see CAN_IO::Setup())
+	 ** \return 				True if successful
 	 */
 	bool ConfigureInterrupts(byte interrupts);
 
 	/**
-	 ** \brief Attaches or detatches the automatic fetch interrupt (not recommended)
-	 ** \param set 			true = attach interrupt pin to the CAN_ISR routine, 
+	 ** \brief Toggles AutoFetch on and off.
+	 ** \param[in] set 		true = attach interrupt pin to the CAN_ISR routine, 
 	 						false = detatch interrupt from the interrupt pin [default]
+
+	 ** AutoFetch is off by default because the interrupt feature it uses causes problems when
+	 ** running at the same time as SPI. We were observing corrupted CAN packets being sent when 
+	 ** AutoFetch was enabled.
 	 */
 	void setAutoFetch(bool set);
 
 	/**
-	 ** \brief Fetch any available messages from the MCP2515 and store them in the RX_Queue.
+	 ** \brief Fetch any available messages from the MCP2515
+	 **
+	 ** Reads messages from the MCP2515 over SPI and stores them in the internal RX_Queue buffer as Frame
+	 ** objects until the user calls CAN_IO::Read().
 	 */
 	void Fetch();
 
 	/**
-	 ** \brief Get and parse the error flag bit from the MCP2515 into my variables errors, tec, and rec.
+	 ** \brief Fetch the error status of the MCP2515 over SPI and update internal variables.
+	 **
+	 ** Makes reads the contents of the TEC, REC, and EFLG registers on the MCP2515.
+	 **
+	 ** TEC and REC each represent an integer count of the number of transmission and receive errors
+	 ** and get stored directly in the tec and rec local variables.
+	 **
+	 ** EFLG is used to set the appropriate error flags in the local errors variable.
 	 */
 	void FetchErrors();
 
 	/**
-	 ** \brief Get the contents of CANSTAT register, which can be used to tell the operational state of the device.
+	 ** \brief Fetch the contents of \ref CANSTAT register
+	 **
+	 ** A copy of the register is storred in canstat_register. This can be used to determine
+	 **   - The current mode of the MCP2515
+	 **   - 
+	 **
+	 ** \todo Finish documenting \ref CANSTAT register.
 	 */
 	void FetchStatus();
 
@@ -221,28 +236,42 @@ public:
     MCP2515 controller; 	//!< An instance of the MCP2515 class allowing easy access of MCP2515 functions over SPI.
    	RX_Queue<16> RXbuffer;	//!< A local queue for holding incoming message frames as they are retreived by the Fetch function. Can hold up to 16 frames at a time.
 
-    // Status data
-    volatile uint8_t  canstat_register;
-    
-		volatile uint32_t	errors;			//!< Bitmap of the errors on the CAN bus. Bits correspond to the \ref CANERRORS_GROUP "Standard CAN errors". Updated when FetchErrors() is called.
-		volatile uint32_t	tec;
-		volatile uint32_t 	rec;
-		volatile long 		int_counter; 	//!< Increments when the 
-		volatile uint8_t  	last_interrupt;
+    // Status variables
+    volatile uint8_t    canstat_register;	//!< Holds a copy of the \ref CANSTAT register.
+    										/**< Updated when FetchErrors() is called.
+    										     \todo Rename this to be consistent with the errors variable. */
 
-	CANFilterOpt filters;			//!< A CANFilterOpt object which stores the filters currently in use by the MCP2515
+	volatile uint32_t	errors;				//!< Bitmap of the errors on the CAN bus. 
+											/**< Bits correspond to the \ref CANERRORS_GROUP "Standard CAN errors". Updated when FetchErrors() is called. */
+
+	volatile uint32_t	tec;				//!< Transmission Error Counter
+											/**< Integer value corresponding to the # of failed transmission attempts. The MCP2515 goes into BUS PASSIVE mode when
+											 **  this value exceeds 127, and goes into BUS OFF mode when it exceeds 255. */
+
+	volatile uint32_t 	rec;				//!< Receive Error Counter
+											/**< Integer value corresponding to the # of message errors (when receiving). The MCP2515 goes into BUS PASSIVE mode when
+											 **  this value exceeds 127, and goes into BUS OFF mode when it exceeds 255. */
+
+	volatile long 		int_counter; 		//!< Increments every time an interrupt from the MCP2515 comes in
+											/*!< Does nothing when AutoFetch is disabled (default behavior). */
+
+	volatile uint8_t  	last_interrupt;		//!< Stores the return value of GetInterrupt() every time Fetch() is called.
+											/**< This allows the user to see what the interrupt status was even after Fetch() clears
+											 **  the register */
+
+	CANFilterOpt filters;					//!< Stores the filters currently in use by the MCP2515
 	
 private:
-    byte     INT_pin;				//!< Pin which is attached to the MCP2515 interrupt pin
-	int 	 bus_speed;				//!< Configured bus speed (e.g. 500 kbps, 1mbps, ...)
-	byte	 bus_freq;				//!< MCP2515 oscillator frequency (16MHz on all NUsolar boards)
-	volatile byte 		tx_open;	//!< Tracks which TX buffers are open.
+    byte     		INT_pin;				//!< Pin which is attached to the MCP2515 interrupt pin
+	int 	 		bus_speed;				//!< Configured bus speed (e.g. 500 kbps, 1mbps, ...)
+	byte	 		bus_freq;				//!< MCP2515 oscillator frequency (16MHz on all NUsolar boards)
+	volatile byte 	tx_open;				//!< Tracks which TX buffers are open.
 
-	// Store interrupts in case we have to reset
-	byte my_interrupts;				//!< Stores the currently-active interrupts enable flags.
+	byte     my_interrupts;					//!< Stores the currently-active interrupts enable flags.
 
 	/** 
 	 ** \brief Helper function for configuring the RX masks/filters.
+	 **
 	 ** If first is true, sets the mask/filter for the first buffer;
 	 ** otherwise sets the second.
 	 */
@@ -251,7 +280,9 @@ private:
 	inline void init_controller();
 
 	/**
-	 ** \brief Helper function to select a TX buffer
+	 ** \brief Helper function to select a TX buffer automatically.
+	 **
+	 ** This method is called by Send() or SendVerified() whenever the user specifies TXANY as the transmission buffer argument.
 	 */
 	inline uint8_t select_open_buffer();
 };

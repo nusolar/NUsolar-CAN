@@ -209,6 +209,7 @@ Frame DC_Info::generate_frame() const {
 	f.data[7] |= gear;
 	f.data[7] |= brake_engaged << 4;
 	f.data[7] |= was_reset << 5;
+	f.data[7] |= tripped << 6;
 
 	set_header(f);
 	return f;
@@ -217,23 +218,69 @@ Frame DC_Info::generate_frame() const {
 Frame DC_Status::generate_frame() const {
 	Frame f;
 
-	// bytes 0, 1 (ingition swith, fuel door)
-	f.s0 = can_error;
-
-	// byte 2
-	f.data[2] = error1;
-
-	// byte 3
-	f.data[3] = error2;
-
-	// bytes 4
-	f.data[4] = status1;
-
-	// byte 5
-	f.data[5] = status2;
+	// bytes 0 - 3
+	f.low = flags;
+	f.high = 0;
 
 	set_header(f);
 	return f;
+}
+
+Frame DC_Temp_0::generate_frame() const {
+    Frame f;
+    f.data[0] = max_temp;
+    f.data[1] = min_temp;
+    f.data[2] = temp[1];
+    f.data[3] = temp[2];
+    f.data[4] = temp[3];
+    f.data[5] = temp[4];
+    f.data[6] = temp[5];
+    f.data[7] = temp[6];
+    set_header(f);
+    return f;
+}
+
+Frame DC_Temp_1::generate_frame() const {
+    Frame f;
+	f.data[0] = temp[1];
+	f.data[1] = temp[2];
+	f.data[2] = temp[3];
+	f.data[3] = temp[4];
+	f.data[4] = temp[5];
+	f.data[5] = temp[6];
+	f.data[6] = temp[7];
+	f.data[7] = temp[8];
+    set_header(f);
+    return f;
+}
+
+Frame DC_Temp_2::generate_frame() const {
+    Frame f;
+	f.data[0] = temp[1];
+	f.data[1] = temp[2];
+	f.data[2] = temp[3];
+	f.data[3] = temp[4];
+	f.data[4] = temp[5];
+	f.data[5] = temp[6];
+	f.data[6] = temp[7];
+	f.data[7] = temp[8];
+    set_header(f);
+    return f;
+}
+
+Frame DC_Temp_3::generate_frame() const {
+    Frame f;
+	f.data[0] = temp[1];
+	f.data[1] = temp[2];
+	f.data[2] = temp[3];
+	f.data[3] = temp[4];
+	f.data[4] = temp[5];
+	f.data[5] = temp[6];
+	f.data[6] = temp[7];
+	f.data[7] = temp[8];
+	f.s1 = 0;
+    set_header(f);
+    return f;
 }
 
 Frame SW_Data::generate_frame() const {

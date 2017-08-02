@@ -31,7 +31,7 @@
 #define MC_STATUS_ID 		0x401
 #define MC_BUS_STATUS_ID	0x402
 #define MC_VELOCITY_ID		0x403
-#define MC_PHASE_ID			0x404
+#define MC_PHASE_ID		0x404
 #define MC_FANSPEED_ID		0x40A
 #define MC_ODOAMP_ID		0x40E
 /**@}*/
@@ -40,11 +40,15 @@
 /**@{*/
 #define DC_BASEADDRESS		0x500
 #define DC_HEARTBEAT_ID		DC_BASEADDRESS
-#define DC_DRIVE_ID			0x501
-#define DC_POWER_ID			0x502
-#define DC_RESET_ID			0x503
-#define DC_INFO_ID			0x505
+#define DC_DRIVE_ID		0x501
+#define DC_POWER_ID		0x502
+#define DC_RESET_ID		0x503
+#define DC_INFO_ID		0x505
 #define DC_STATUS_ID		0x506
+#define DC_TEMP_0_ID		0x5F0 // Max Temp, Min Temp, Module 1 - 6 Temp
+#define DC_TEMP_1_ID		0x5F1 // Module 7 - 14 Temp
+#define DC_TEMP_2_ID		0x5F2 // Module 15 - 22 Temp
+#define DC_TEMP_3_ID		0x5F3 // Module 23 - 26 Temp
 /**@}*/
 
 //! \name Steering Wheel Packet IDs
@@ -431,7 +435,8 @@ public:
 			bool reset,
 			bool fuel,
 			byte current_gear,
-			uint16_t ignition) { 
+			uint16_t ignition,
+			bool tripcondition) { 
 
 		accel_ratio = accel;
 		regen_ratio = regen;
@@ -442,6 +447,7 @@ public:
 		gear = current_gear;
 		ignition_state = ignition;
 		fuel_door = fuel;
+		tripped = tripcondition;
 
 		id = DC_INFO_ID; 
 	}
@@ -467,6 +473,7 @@ public:
 		gear = frame.data[7] & 0x0F;
 		brake_engaged = (bool)(frame.data[7] & 0x10);
 		was_reset = (bool)(frame.data[7] & 0x20);
+		tripped = (bool)(frame.data[7] & 0x40);
 
 		id = frame.id; 
 	}
@@ -476,6 +483,7 @@ public:
 	byte dc_error_flags, gear;
 	bool brake_engaged, was_reset, fuel_door;
 	uint16_t ignition_state;
+	bool tripped;
 	
 	Frame generate_frame() const;
 };
@@ -485,43 +493,197 @@ public:
  */
 class DC_Status : public Layout {
 public:
-	DC_Status(uint16_t can_error, uint8_t error1, uint8_t error2,
-		uint8_t status1, uint8_t status2) { 
+	DC_Status(uint32_t flags) { 
 
-		this->can_error = can_error;
-		this->error1 = error1;
-		this->error2 = error2;
-		this->status1 = status1;
-		this->status2 = status2;
+		this->flags = flags;
 
 		id = DC_STATUS_ID; 
 	}
 
 	DC_Status(const Frame& frame) { 
 		// bytes 0, 1
-		can_error  = frame.s0;
-		
-		// byte 2
-		error1 = frame.data[2];
-
-		// byte 3
-		error2 = frame.data[3];
-
-		// byte 4
-		status1 = frame.data[4];
-
-		// byte 5
-		status2 = frame.data[5];
+		flags  = frame.low;
 
 		id = frame.id; 
 	}
 
-	uint8_t error1, error2, status1, status2;
-	uint16_t can_error;
+	uint32_t flags;
+
+	static const uint8_t F_CHARGING_OVER_TEMP 		= 0x01;
+	static const uint8_t F_DISCHARGING_OVER_TEMP    = 0x02;
+	static const uint8_t F_CHARGING_OVER_CURRENT    = 0x04;
+	static const uint8_t F_DISCHARGING_OVER_CURRENT = 0x08;
+	static const uint8_t F_NO_TRIP					= 0x00;
+
+	// 0x80 also defined by driver controls as the flag for a BMS-controlled trip
 	
 	Frame generate_frame() const;
 };
 
+/* Temperature Sensor Data Packets 
+   Packet 1: Min, Max, and Modules 1 - 6
+   Packet 2: Modules 7 - 14
+   Packet 3: Modules 15 - 22
+   Packet 4: Modules 23 - 30 */
+
+class DC_Temp_0 : public Layout {
+public:
+	DC_Temp_0(uint8_t maxT, uint8_t minT, uint8_t T1, uint8_t T2, uint8_t T3, uint8_t T4, uint8_t T5, uint8_t T6) { 
+
+		max_temp = maxT;
+		min_temp = minT;
+		temp[1] = T1;
+		temp[2] = T2;
+		temp[3] = T3;
+		temp[4] = T4;
+		temp[5] = T5;
+		temp[6] = T6;
+
+		id = DC_TEMP_0_ID; 
+	}
+
+	DC_Temp_0(uint8_t maxT, uint8_t minT, uint8_t *_temps) { 
+
+		max_temp = maxT;
+		min_temp = minT;
+		memcpy(temp+1,_temps, 6);
+
+		id = DC_TEMP_0_ID; 
+	}
+
+	DC_Temp_0(const Frame& frame) { 
+		max_temp = frame.data[0];
+		min_temp = frame.data[1];
+		temp[1]  = frame.data[2];
+		temp[2]  = frame.data[3];
+		temp[3]  = frame.data[4];
+		temp[4]  = frame.data[5];
+		temp[5]  = frame.data[6];
+		temp[6]  = frame.data[7];
+	}
+
+	uint8_t max_temp, min_temp;
+	uint8_t temp[7];
+	
+	Frame generate_frame() const;
+};
+
+class DC_Temp_1 : public Layout {
+public:
+	DC_Temp_1(uint8_t T7, uint8_t T8, uint8_t T9, uint8_t T10, uint8_t T11, uint8_t T12, uint8_t T13, uint8_t T14) { 
+
+		temp[1] = T7;
+		temp[2] = T8;
+		temp[3] = T9;
+		temp[4] = T10;
+		temp[5] = T11;
+		temp[6] = T12;
+		temp[7] = T13;
+		temp[8] = T13;
+
+		id = DC_TEMP_1_ID; 
+	}
+
+	DC_Temp_1(uint8_t *_temps) { 
+
+		memcpy(temp+1,_temps, 8);
+
+		id = DC_TEMP_1_ID; 
+	}
+
+	DC_Temp_1(const Frame& frame) { 
+		temp[1] = frame.data[0];
+		temp[2] = frame.data[1];
+		temp[3] = frame.data[2];
+		temp[4] = frame.data[3];
+		temp[5] = frame.data[4];
+		temp[6] = frame.data[5];
+		temp[7] = frame.data[6];
+		temp[8] = frame.data[7];
+	}
+
+	uint8_t temp[9];
+	
+	Frame generate_frame() const;
+};
+
+class DC_Temp_2 : public Layout {
+public:
+	DC_Temp_2(uint8_t T15, uint8_t T16, uint8_t T17, uint8_t T18, uint8_t T19, uint8_t T20, uint8_t T21, uint8_t T22) { 
+
+		temp[1] = T15;
+		temp[2] = T16;
+		temp[3] = T17;
+		temp[4] = T18;
+		temp[5] = T19;
+		temp[6] = T20;
+		temp[7] = T21;
+		temp[8] = T22;
+
+		id = DC_TEMP_2_ID; 
+	}
+
+	DC_Temp_2(uint8_t *_temps) { 
+
+		memcpy(temp+1,_temps, 8);
+
+		id = DC_TEMP_2_ID; 
+	}
+
+	DC_Temp_2(const Frame& frame) { 
+		temp[1] = frame.data[0];
+		temp[2] = frame.data[1];
+		temp[3] = frame.data[2];
+		temp[4] = frame.data[3];
+		temp[5] = frame.data[4];
+		temp[6] = frame.data[5];
+		temp[7] = frame.data[6];
+		temp[8] = frame.data[7];
+	}
+
+	uint8_t temp[9];
+	
+	Frame generate_frame() const;
+};
+
+class DC_Temp_3 : public Layout {
+public:
+	DC_Temp_3(uint8_t T23, uint8_t T24, uint8_t T25, uint8_t T26, uint8_t T27, uint8_t T28, uint8_t T29, uint8_t T30) { 
+
+		temp[1] = T23;
+		temp[2] = T24;
+		temp[3] = T25;
+		temp[4] = T26;
+		temp[5] = T27;
+		temp[6] = T28;
+		temp[7] = T29;
+		temp[8] = T30;
+
+		id = DC_TEMP_3_ID; 
+	}
+
+	DC_Temp_3(uint8_t *_temps) { 
+
+		memcpy(temp+1,_temps, 8);
+
+		id = DC_TEMP_3_ID; 
+	}
+
+	DC_Temp_3(const Frame& frame) { 
+		temp[1] = frame.data[0];
+		temp[2] = frame.data[1];
+		temp[3] = frame.data[2];
+		temp[4] = frame.data[3];
+		temp[5] = frame.data[4];
+		temp[6] = frame.data[5];
+		temp[7] = frame.data[6];
+		temp[8] = frame.data[7];
+	}
+
+	uint8_t temp[9];
+	
+	Frame generate_frame() const;
+};
 
 /** 
  ** \brief Steering wheel data packet, sent to the driver controls.

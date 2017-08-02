@@ -7,6 +7,8 @@ Date:		  6/13/2015
 
 Version:	3.0
 
+Full Documentation: https://nusolar.github.io/NUsolar-CAN/docs/html/index.html
+
 Goals
 -----
 This library is intended to simplify CAN bus communication for Arduino MCUs in NUsolar's vehicles which use the MCP2515. The library encapsulates the entire sending procedure into a single fuction call, and adds a buffer for holding incoming messages. It also defines a large number of packet layouts as classes, which allow data to easily be place into the CAN frame format.

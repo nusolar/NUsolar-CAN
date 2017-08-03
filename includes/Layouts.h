@@ -1,6 +1,7 @@
 /**
  ** \file Layouts.h
  ** Declarations for NUsolar specific CAN packet layouts.
+ ** \todo (Documentation) Add tables to the detailed description of each layout so that this documentation can be used rather than referencing the Tritium PDFs all the time.
  */
 
 #ifndef Layouts_h
@@ -81,7 +82,9 @@
  **
  ** Each Layout object contains an ID representing the Frame ID, a virtual function  Children of the Layout class contain named variables specific to their application. 
  ** For example, the DC_Drive packet contains two variables. 
- ** \todo Finish describing the parent-child relationship between individual layouts and this class.
+ ** \todo (Documentation) Finish describing the parent-child relationship between individual layouts and this class.
+ ** \todo (Code) Merge this class with the Frame class and have the individual layouts derive directly from Frame. This would
+ **              extra function calls in the code and reduce memory requirements.
  */
 class Layout {
 public:
@@ -526,6 +529,20 @@ public:
    Packet 3: Modules 15 - 22
    Packet 4: Modules 23 - 30 */
 
+/**
+ ** \brief Temperature Sensor Data (Packet 1 / 4)
+ **
+ ** Temperature data is sent in °C as an 8-bit unsigned integer, giving a range of 0 to 256.
+ ** 
+ ** Packet Location | Data
+ ** ----------------|-----
+ ** Byte 0   		| Maximum Module Temperature
+ ** Byte 1   		| Minimum Module Temperature
+ ** Byte 2-9 		| Module 1-6 Temperatures (1 byte per temperature)
+ **
+ ** /todo If 32 modules are ever used, minT and maxT should be moved to a separate CAN packet and possibly made into 
+ **       16 bit integers for more precision on the maximum temperature.
+ */
 class DC_Temp_0 : public Layout {
 public:
 	DC_Temp_0(uint8_t maxT, uint8_t minT, uint8_t T1, uint8_t T2, uint8_t T3, uint8_t T4, uint8_t T5, uint8_t T6) { 
@@ -568,6 +585,15 @@ public:
 	Frame generate_frame() const;
 };
 
+/**
+ ** \brief Temperature Sensor Data (Packet 2 / 4)
+ **
+ ** Temperature data is sent in °C as an 8-bit unsigned integer, giving a range of 0 to 256.
+ ** 
+ ** Packet Location | Data
+ ** ----------------|-----
+ ** Byte 1-8   		| Module 7-14 Temperature
+ */
 class DC_Temp_1 : public Layout {
 public:
 	DC_Temp_1(uint8_t T7, uint8_t T8, uint8_t T9, uint8_t T10, uint8_t T11, uint8_t T12, uint8_t T13, uint8_t T14) { 
@@ -607,6 +633,15 @@ public:
 	Frame generate_frame() const;
 };
 
+/**
+ ** \brief Temperature Sensor Data (Packet 3 / 4)
+ **
+ ** Temperature data is sent in °C as an 8-bit unsigned integer, giving a range of 0 to 256.
+ ** 
+ ** Packet Location | Data
+ ** ----------------|-----
+ ** Byte 1-8   		| Module 15-22 Temperature
+ */
 class DC_Temp_2 : public Layout {
 public:
 	DC_Temp_2(uint8_t T15, uint8_t T16, uint8_t T17, uint8_t T18, uint8_t T19, uint8_t T20, uint8_t T21, uint8_t T22) { 
@@ -646,6 +681,17 @@ public:
 	Frame generate_frame() const;
 };
 
+/**
+ ** \brief Temperature Sensor Data (Packet 4 / 4)
+ **
+ ** Temperature data is sent in °C as an 8-bit unsigned integer, giving a range of 0 to 256.
+ ** 
+ ** Packet Location | Data
+ ** ----------------|-----
+ ** Byte 1-8   		| Module 23-30 Temperature
+ **
+ ** Note: On SC6 and SC7, only 26 modules are used, so bytes 5,6,7, and 8 are undefined.
+ */
 class DC_Temp_3 : public Layout {
 public:
 	DC_Temp_3(uint8_t T23, uint8_t T24, uint8_t T25, uint8_t T26, uint8_t T27, uint8_t T28, uint8_t T29, uint8_t T30) { 

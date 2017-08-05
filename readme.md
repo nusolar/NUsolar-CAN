@@ -166,3 +166,10 @@ Spencer Williams -- project-manager@nusolar.org
 Licence
 -------
 This library is Copyright 2015 by NUsolar. The code may be used in non-commercial projects without compensation, but we would appreciate it if you let us know that you're using it.
+
+Documentation To-Dos
+-------
+- Write description of how to add a new CAN frame
+- Example snippets for each major function.
+- CANFilterOpt class description
+- Detailed descriptions for each CAN_IO callable function.

@@ -88,7 +88,7 @@
  */
 class Layout {
 public:
-	uint16_t id;
+	uint16_t id; //!< The packet ID of the CAN packet
 	
 	/**
 	 ** \brief Creates a Frame object to represent this layout.
@@ -104,7 +104,17 @@ public:
 
 protected:
 	/**
-	 ** \brief Fill out the header info for a frame.
+	 ** \brief Helper function to set the header information for a frame.
+	 **
+	 ** \param f 	Reference to the frame to fill out the header information for
+	 ** \param size	# of data bytes in the CAN packet (defaults to 8). This is necessary in order 
+	 **				to set the data frame size.
+	 ** This function is called within the generate_frame() function and acts as a shortcut to set
+	 ** the following variables in the generated Frame object:
+	 **		- Frame::srr
+	 **		- Frame::rtr
+	 **		- Frame::ide
+	 **		- Frame::dlc
 	 */
 	 inline void set_header(Frame& f, byte size = 8) const;
 };

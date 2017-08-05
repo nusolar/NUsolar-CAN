@@ -1,5 +1,6 @@
 /*
-  MCP2515.h - Library for Microchip MCP2515 CAN Controller
+  \file MCP2515.h
+  \brief Library for Microchip MCP2515 CAN Controller
   
   Author: David Harding
   
@@ -28,8 +29,8 @@ String frameToString(const Frame&);
  ** This class handles all SPI communication with the MCP2515 chip and has methods to both read and load 
  ** the transmit and receive buffers with Frame objects, among other features. 
  **
- ** \todo Merge this class with the CAN_IO class in order to simplify and optimize the library. Requires more thorough testing.
- ** \todo Rename GetInterrupt() to readInterrupts() or something like that.
+ ** \todo (Code) Merge this class with the CAN_IO class in order to simplify and optimize the library. Requires more thorough testing.
+ ** \todo (Code) Rename GetInterrupt() to readInterrupts() or something like that.
  */
 class MCP2515
 {

@@ -1,5 +1,6 @@
 /*
-  MCP2515.cpp - Library for Microchip MCP2515 CAN Controller
+  \file MCP2515.cpp
+  \brief Library for Microchip MCP2515 CAN Controller
   
   Author: David Harding
   

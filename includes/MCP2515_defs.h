@@ -1,7 +1,7 @@
 /**
   \file MCP2515_defs.h 
 
-  Library for Microchip MCP2515 CAN Controller
+  \brief Library definitions for Microchip MCP2515 CAN Controller
   
   Author: David Harding
   

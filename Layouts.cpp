@@ -5,11 +5,51 @@
  ** \todo Describe how to program the generate_frame() method for a new CAN packet.
  */
 
- /* Note: Uninitialized packets in frames must be set to UNUSED. They are not automatically initialized */
+ /** \note Uninitialized sections of Frames must be set to UNUSED within the Layout::generate_frame() functions.
+     They are not automatically initialized and can have undefined values if not pre-set. */
 #define UNUSED 0
 
 #include "includes/Layouts.h"
 
+/**
+ ** The generate_frame() function, which is overloaded for each specific Layout, creates a new copy of a 
+ ** Frame object f. It then copies the named variables from within the Layout into the correct positions 
+ ** within that Frame object so that it can be sent out over the CAN bus. In additon, each instance of 
+ ** generate_frame() calls the special helper function set_header(f) to set the correct values for the Frame's
+ ** header variables (i.e. the type of frame, id, data length, etc.);
+ ** 
+ ** Each time a new CAN packet is defined in the form of a new child class of Layout, it's generate_frame() overload
+ ** must be defined here. The general structure of a generate_frame() overload is as follows:
+ **
+ ** \code
+ ** Frame PacketClassName::generate_frame() const {
+ ** 	Frame f; 			// Declare a new frame object
+ ** 	;					// Assign the packet's named variables to
+ ** 	;					//   specific locations within the frame's
+ ** 	;					//   annonymous union.
+ ** 	set_header(f);		// Setup the header info in the Frame
+ ** 	return f;			// Return the frame back to the calling function.
+ ** }
+ ** \endcode
+ **
+ ** Here is an example of a generate_frame() function for the \ref BMS_Status_Ext "BMS Extended Status CAN packet".
+ ** 
+ ** \code
+ ** Frame BMS_Status_Ext::generate_frame() const {
+ **		Frame f;						
+ **		f.low = flags;					
+ **		f.data[4] = hardware_version;	
+ **		f.data[5] = model;				
+ **		f.s3 = UNUSED;					
+ **		set_header(f);					
+ **		return f;						
+ ** }
+ ** \endcode
+ **
+ ** \note The \def UNUSED value should be asssigned to all parts of the frame which are not filled with data. This will
+ ** 	  default their value to 0. If \def UNUSED is not assigned, the value of any unassigned part of the data frame is 
+ **		  undefined.
+ */
 Frame Layout::generate_frame() const {
 	Frame f;
 	set_header(f);
@@ -17,7 +57,7 @@ Frame Layout::generate_frame() const {
 }
 
 
-// Helper function. We should really use a Macro or __inline__ function here.
+// Helper function.
 inline void Layout::set_header(Frame& f, byte size) const {
 	f.id = id;
 	f.dlc = size; // send size bytes

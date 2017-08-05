@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>My Project: CAN_IO Class Reference</title>
+<title>NUsolar CAN: CAN_IO Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -21,7 +21,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">My Project
+   <div id="projectname">NUsolar CAN
    </div>
   </td>
  </tr>
@@ -61,8 +61,6 @@ $(function() {
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="#pri-methods">Private Member Functions</a> &#124;
-<a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="class_c_a_n___i_o-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">CAN_IO Class Reference</div>  </div>
@@ -76,7 +74,7 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a54219933510b3a5fd23aa0e12fda9f90"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_a_n___i_o.html#a54219933510b3a5fd23aa0e12fda9f90">CAN_IO</a> (byte CS_pin, byte <a class="el" href="class_c_a_n___i_o.html#a1ee2073114002062f951085376a5af09">INT_pin</a>, int baud, byte freq)</td></tr>
+<tr class="memitem:a54219933510b3a5fd23aa0e12fda9f90"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_a_n___i_o.html#a54219933510b3a5fd23aa0e12fda9f90">CAN_IO</a> (byte CS_pin, byte INT_pin, int baud, byte freq)</td></tr>
 <tr class="memdesc:a54219933510b3a5fd23aa0e12fda9f90"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a54219933510b3a5fd23aa0e12fda9f90">More...</a><br /></td></tr>
 <tr class="separator:a54219933510b3a5fd23aa0e12fda9f90"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8658429bfd9b825a1e1758514ed387eb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_a_n___i_o.html#a8658429bfd9b825a1e1758514ed387eb">Setup</a> (byte interrupts=<a class="el" href="_m_c_p2515__defs_8h.html#a6978bfe6ae8159fa041a4c388c9978a0">RX0IE</a>|<a class="el" href="_m_c_p2515__defs_8h.html#a4a83bd5cc435fc9953e5f2ac7d5215ed">RX1IE</a>|<a class="el" href="_m_c_p2515__defs_8h.html#af887675075169f716f45e1266b36beb7">TX1IE</a>|<a class="el" href="_m_c_p2515__defs_8h.html#a7f4fd75676158acd6567364d981a16f3">TX2IE</a>|<a class="el" href="_m_c_p2515__defs_8h.html#a46a0a594d03278b315e6b1a173b9967b">TX0IE</a>)</td></tr>
@@ -154,35 +152,6 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a49f3b7f300b3b9879fd596c1be42999a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_c_a_n_filter_opt.html">CANFilterOpt</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_a_n___i_o.html#a49f3b7f300b3b9879fd596c1be42999a">filters</a></td></tr>
 <tr class="memdesc:a49f3b7f300b3b9879fd596c1be42999a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stores the filters currently in use by the <a class="el" href="class_m_c_p2515.html" title="a class which acts as an interface to the MCP2515 chip. ">MCP2515</a>.  <a href="#a49f3b7f300b3b9879fd596c1be42999a">More...</a><br /></td></tr>
 <tr class="separator:a49f3b7f300b3b9879fd596c1be42999a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
-Private Member Functions</h2></td></tr>
-<tr class="memitem:acef94694dfe2e886c23576abbd6d09b5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_a_n___i_o.html#acef94694dfe2e886c23576abbd6d09b5">write_rx_filter</a> (uint8_t address, uint16_t)</td></tr>
-<tr class="memdesc:acef94694dfe2e886c23576abbd6d09b5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper function for configuring the RX masks/filters.  <a href="#acef94694dfe2e886c23576abbd6d09b5">More...</a><br /></td></tr>
-<tr class="separator:acef94694dfe2e886c23576abbd6d09b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a495180c91c5abf64e9cb4b00511b2c12"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_a_n___i_o.html#a495180c91c5abf64e9cb4b00511b2c12">init_controller</a> ()</td></tr>
-<tr class="separator:a495180c91c5abf64e9cb4b00511b2c12"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae3dda9ee35770c32f9189b00c69422ed"><td class="memItemLeft" align="right" valign="top">uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_a_n___i_o.html#ae3dda9ee35770c32f9189b00c69422ed">select_open_buffer</a> ()</td></tr>
-<tr class="memdesc:ae3dda9ee35770c32f9189b00c69422ed"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper function to select a TX buffer automatically.  <a href="#ae3dda9ee35770c32f9189b00c69422ed">More...</a><br /></td></tr>
-<tr class="separator:ae3dda9ee35770c32f9189b00c69422ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
-Private Attributes</h2></td></tr>
-<tr class="memitem:a1ee2073114002062f951085376a5af09"><td class="memItemLeft" align="right" valign="top">byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_a_n___i_o.html#a1ee2073114002062f951085376a5af09">INT_pin</a></td></tr>
-<tr class="memdesc:a1ee2073114002062f951085376a5af09"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pin which is attached to the <a class="el" href="class_m_c_p2515.html" title="a class which acts as an interface to the MCP2515 chip. ">MCP2515</a> interrupt pin.  <a href="#a1ee2073114002062f951085376a5af09">More...</a><br /></td></tr>
-<tr class="separator:a1ee2073114002062f951085376a5af09"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a391391b353b1b1f7b02f65a089eaf7dc"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_a_n___i_o.html#a391391b353b1b1f7b02f65a089eaf7dc">bus_speed</a></td></tr>
-<tr class="memdesc:a391391b353b1b1f7b02f65a089eaf7dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configured bus speed (e.g. 500 kbps, 1mbps, ...)  <a href="#a391391b353b1b1f7b02f65a089eaf7dc">More...</a><br /></td></tr>
-<tr class="separator:a391391b353b1b1f7b02f65a089eaf7dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8eef5a8a5ea9f1b17bd7aa227ef27a7c"><td class="memItemLeft" align="right" valign="top">byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_a_n___i_o.html#a8eef5a8a5ea9f1b17bd7aa227ef27a7c">bus_freq</a></td></tr>
-<tr class="memdesc:a8eef5a8a5ea9f1b17bd7aa227ef27a7c"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="class_m_c_p2515.html" title="a class which acts as an interface to the MCP2515 chip. ">MCP2515</a> oscillator frequency (16MHz on all NUsolar boards)  <a href="#a8eef5a8a5ea9f1b17bd7aa227ef27a7c">More...</a><br /></td></tr>
-<tr class="separator:a8eef5a8a5ea9f1b17bd7aa227ef27a7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af7355f88a518f05f954cf72abc2ccbb9"><td class="memItemLeft" align="right" valign="top">volatile byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_a_n___i_o.html#af7355f88a518f05f954cf72abc2ccbb9">tx_open</a></td></tr>
-<tr class="memdesc:af7355f88a518f05f954cf72abc2ccbb9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tracks which TX buffers are open.  <a href="#af7355f88a518f05f954cf72abc2ccbb9">More...</a><br /></td></tr>
-<tr class="separator:af7355f88a518f05f954cf72abc2ccbb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab69b60c2030da8130096920be522c619"><td class="memItemLeft" align="right" valign="top">byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_a_n___i_o.html#ab69b60c2030da8130096920be522c619">my_interrupts</a></td></tr>
-<tr class="memdesc:ab69b60c2030da8130096920be522c619"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stores the currently-active interrupts enable flags.  <a href="#ab69b60c2030da8130096920be522c619">More...</a><br /></td></tr>
-<tr class="separator:ab69b60c2030da8130096920be522c619"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Class for handling CAN I/O operations using the <a class="el" href="class_m_c_p2515.html" title="a class which acts as an interface to the MCP2515 chip. ">MCP2515</a> CAN controller. </p>
@@ -363,31 +332,6 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a495180c91c5abf64e9cb4b00511b2c12"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a495180c91c5abf64e9cb4b00511b2c12">&#9670;&nbsp;</a></span>init_controller()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void CAN_IO::init_controller </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a4ddc5defd3b2f0a865ae3f2d050045a3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a4ddc5defd3b2f0a865ae3f2d050045a3">&#9670;&nbsp;</a></span>Read()</h2>
 
@@ -435,34 +379,6 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="ae3dda9ee35770c32f9189b00c69422ed"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae3dda9ee35770c32f9189b00c69422ed">&#9670;&nbsp;</a></span>select_open_buffer()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">uint8_t CAN_IO::select_open_buffer </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Helper function to select a TX buffer automatically. </p>
-<p>This method is called by <a class="el" href="class_c_a_n___i_o.html#a71e0198aa24bd6125e0a5f0598bb33d5" title="Sends messages to the CAN bus via the controller. ">Send()</a> or <a class="el" href="class_c_a_n___i_o.html#a666bb97e677c178a8345fb11c5400e62" title="Sends messages to the CAN bus via the controller, confirming correct SPI transmission. ">SendVerified()</a> whenever the user specifies TXANY as the transmission buffer argument. </p>
-
-</div>
-</div>
 <a id="a71e0198aa24bd6125e0a5f0598bb33d5"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a71e0198aa24bd6125e0a5f0598bb33d5">&#9670;&nbsp;</a></span>Send() <span class="overload">[1/2]</span></h2>
 
@@ -492,7 +408,7 @@ Private Attributes</h2></td></tr>
 <p>Sends messages to the CAN bus via the controller. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">layout</td><td>Constant reference to a <a class="el" href="class_layout.html" title="Abstract Base Class for CAN packet layouts. ">Layout</a> object. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">layout</td><td>Constant reference to a <a class="el" href="class_layout.html" title="Abstract Layout Packet Base Class. ">Layout</a> object. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">buffer</td><td>Specify the transmit buffer to use on the <a class="el" href="class_m_c_p2515.html" title="a class which acts as an interface to the MCP2515 chip. ">MCP2515</a>. Possible values are: TXB0, TXB1, TXB2, TXBANY (i.e. automatically chosen) </td></tr>
   </table>
   </dd>
@@ -569,7 +485,7 @@ Private Attributes</h2></td></tr>
 <p>Sends messages to the CAN bus via the controller, confirming correct SPI transmission. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">layout</td><td>Constant reference to a <a class="el" href="class_layout.html" title="Abstract Base Class for CAN packet layouts. ">Layout</a> object. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">layout</td><td>Constant reference to a <a class="el" href="class_layout.html" title="Abstract Layout Packet Base Class. ">Layout</a> object. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">buffer</td><td>Specify the transmit buffer to use on the <a class="el" href="class_m_c_p2515.html" title="a class which acts as an interface to the MCP2515 chip. ">MCP2515</a>. Possible values are: TXB0, TXB1, TXB2, TXBANY (i.e. automatically chosen) </td></tr>
   </table>
   </dd>
@@ -710,94 +626,7 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="acef94694dfe2e886c23576abbd6d09b5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acef94694dfe2e886c23576abbd6d09b5">&#9670;&nbsp;</a></span>write_rx_filter()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void CAN_IO::write_rx_filter </td>
-          <td>(</td>
-          <td class="paramtype">uint8_t&#160;</td>
-          <td class="paramname"><em>address</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">uint16_t&#160;</td>
-          <td class="paramname"><em>data</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Helper function for configuring the RX masks/filters. </p>
-<p>If first is true, sets the mask/filter for the first buffer; otherwise sets the second. </p>
-
-</div>
-</div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a8eef5a8a5ea9f1b17bd7aa227ef27a7c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8eef5a8a5ea9f1b17bd7aa227ef27a7c">&#9670;&nbsp;</a></span>bus_freq</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">byte CAN_IO::bus_freq</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p><a class="el" href="class_m_c_p2515.html" title="a class which acts as an interface to the MCP2515 chip. ">MCP2515</a> oscillator frequency (16MHz on all NUsolar boards) </p>
-
-</div>
-</div>
-<a id="a391391b353b1b1f7b02f65a089eaf7dc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a391391b353b1b1f7b02f65a089eaf7dc">&#9670;&nbsp;</a></span>bus_speed</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">int CAN_IO::bus_speed</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Configured bus speed (e.g. 500 kbps, 1mbps, ...) </p>
-
-</div>
-</div>
 <a id="a6f0060e57a9c6cff0e58451a32e211fe"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6f0060e57a9c6cff0e58451a32e211fe">&#9670;&nbsp;</a></span>canstat_register</h2>
 
@@ -881,30 +710,6 @@ Private Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="a1ee2073114002062f951085376a5af09"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1ee2073114002062f951085376a5af09">&#9670;&nbsp;</a></span>INT_pin</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">byte CAN_IO::INT_pin</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Pin which is attached to the <a class="el" href="class_m_c_p2515.html" title="a class which acts as an interface to the MCP2515 chip. ">MCP2515</a> interrupt pin. </p>
-
-</div>
-</div>
 <a id="afd473b4b58e8ff57f54753729905bd4a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afd473b4b58e8ff57f54753729905bd4a">&#9670;&nbsp;</a></span>last_interrupt</h2>
 
@@ -919,30 +724,6 @@ Private Attributes</h2></td></tr>
 
 <p>Stores the return value of GetInterrupt() every time <a class="el" href="class_c_a_n___i_o.html#a02724e01fa0b5d3bd6d50e00f5b4f523" title="Fetch any available messages from the MCP2515. ">Fetch()</a> is called. </p>
 <p>This allows the user to see what the interrupt status was even after <a class="el" href="class_c_a_n___i_o.html#a02724e01fa0b5d3bd6d50e00f5b4f523" title="Fetch any available messages from the MCP2515. ">Fetch()</a> clears the register </p>
-
-</div>
-</div>
-<a id="ab69b60c2030da8130096920be522c619"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab69b60c2030da8130096920be522c619">&#9670;&nbsp;</a></span>my_interrupts</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">byte CAN_IO::my_interrupts</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Stores the currently-active interrupts enable flags. </p>
 
 </div>
 </div>
@@ -993,30 +774,6 @@ Private Attributes</h2></td></tr>
 
 <p>Transmission Error Counter. </p>
 <p>Integer value corresponding to the # of failed transmission attempts. The <a class="el" href="class_m_c_p2515.html" title="a class which acts as an interface to the MCP2515 chip. ">MCP2515</a> goes into BUS PASSIVE mode when this value exceeds 127, and goes into BUS OFF mode when it exceeds 255. </p>
-
-</div>
-</div>
-<a id="af7355f88a518f05f954cf72abc2ccbb9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af7355f88a518f05f954cf72abc2ccbb9">&#9670;&nbsp;</a></span>tx_open</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">volatile byte CAN_IO::tx_open</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Tracks which TX buffers are open. </p>
 
 </div>
 </div>

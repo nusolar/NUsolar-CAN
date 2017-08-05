@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>My Project: DC_Info Class Reference</title>
+<title>NUsolar CAN: DC_Info Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -21,7 +21,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">My Project
+   <div id="projectname">NUsolar CAN
    </div>
   </td>
  </tr>
@@ -77,14 +77,14 @@ Inheritance diagram for DC_Info:</div>
  <div class="center">
   <img src="class_d_c___info.png" usemap="#DC_5FInfo_map" alt=""/>
   <map id="DC_5FInfo_map" name="DC_5FInfo_map">
-<area href="class_layout.html" title="Abstract Base Class for CAN packet layouts. " alt="Layout" shape="rect" coords="0,0,58,24"/>
+<area href="class_layout.html" title="Abstract Layout Packet Base Class. " alt="Layout" shape="rect" coords="0,0,58,24"/>
 </map>
  </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a723dcc842b3f60aa8f8b5800fefd2811"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_d_c___info.html#a723dcc842b3f60aa8f8b5800fefd2811">DC_Info</a> (float accel, float regen, bool brake, uint16_t can_errors, byte dc_errors, bool reset, bool fuel, byte current_gear, uint16_t ignition)</td></tr>
-<tr class="separator:a723dcc842b3f60aa8f8b5800fefd2811"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a34e1265dbe857e505507cfced98d536c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_d_c___info.html#a34e1265dbe857e505507cfced98d536c">DC_Info</a> (float accel, float regen, bool brake, uint16_t can_errors, byte dc_errors, bool reset, bool fuel, byte current_gear, uint16_t ignition, bool tripcondition)</td></tr>
+<tr class="separator:a34e1265dbe857e505507cfced98d536c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aabacae128b3682fbff000b62329741d6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_d_c___info.html#aabacae128b3682fbff000b62329741d6">DC_Info</a> (const <a class="el" href="struct_frame.html">Frame</a> &amp;frame)</td></tr>
 <tr class="separator:aabacae128b3682fbff000b62329741d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af4329c3c2d91d442de17ac0594562e65"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_frame.html">Frame</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_d_c___info.html#af4329c3c2d91d442de17ac0594562e65">generate_frame</a> () const</td></tr>
@@ -115,22 +115,25 @@ Public Attributes</h2></td></tr>
 <tr class="separator:ad16b6280ce622257ed1b08886f785775"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a37a97904a31e457da3b9d0a941a50dc8"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_d_c___info.html#a37a97904a31e457da3b9d0a941a50dc8">ignition_state</a></td></tr>
 <tr class="separator:a37a97904a31e457da3b9d0a941a50dc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5cc63cac4062e9cf4fa8feade2f2161d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_d_c___info.html#a5cc63cac4062e9cf4fa8feade2f2161d">tripped</a></td></tr>
+<tr class="separator:a5cc63cac4062e9cf4fa8feade2f2161d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_attribs_class_layout"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_class_layout')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="class_layout.html">Layout</a></td></tr>
 <tr class="memitem:a8544370b56601cc36c2838ef9fcabfd8 inherit pub_attribs_class_layout"><td class="memItemLeft" align="right" valign="top">uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_layout.html#a8544370b56601cc36c2838ef9fcabfd8">id</a></td></tr>
+<tr class="memdesc:a8544370b56601cc36c2838ef9fcabfd8 inherit pub_attribs_class_layout"><td class="mdescLeft">&#160;</td><td class="mdescRight">The packet ID of the CAN packet.  <a href="class_layout.html#a8544370b56601cc36c2838ef9fcabfd8">More...</a><br /></td></tr>
 <tr class="separator:a8544370b56601cc36c2838ef9fcabfd8 inherit pub_attribs_class_layout"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pro_methods_class_layout"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_layout')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_layout.html">Layout</a></td></tr>
 <tr class="memitem:ad03eef36531c91578776b7fecb62c6a2 inherit pro_methods_class_layout"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_layout.html#ad03eef36531c91578776b7fecb62c6a2">set_header</a> (<a class="el" href="struct_frame.html">Frame</a> &amp;f, byte size=8) const</td></tr>
-<tr class="memdesc:ad03eef36531c91578776b7fecb62c6a2 inherit pro_methods_class_layout"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fill out the header info for a frame.  <a href="class_layout.html#ad03eef36531c91578776b7fecb62c6a2">More...</a><br /></td></tr>
+<tr class="memdesc:ad03eef36531c91578776b7fecb62c6a2 inherit pro_methods_class_layout"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper function to set the header information for a frame.  <a href="class_layout.html#ad03eef36531c91578776b7fecb62c6a2">More...</a><br /></td></tr>
 <tr class="separator:ad03eef36531c91578776b7fecb62c6a2 inherit pro_methods_class_layout"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Driver controls information packet. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a723dcc842b3f60aa8f8b5800fefd2811"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a723dcc842b3f60aa8f8b5800fefd2811">&#9670;&nbsp;</a></span>DC_Info() <span class="overload">[1/2]</span></h2>
+<a id="a34e1265dbe857e505507cfced98d536c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a34e1265dbe857e505507cfced98d536c">&#9670;&nbsp;</a></span>DC_Info() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -190,7 +193,13 @@ Additional Inherited Members</h2></td></tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">uint16_t&#160;</td>
-          <td class="paramname"><em>ignition</em>&#160;</td>
+          <td class="paramname"><em>ignition</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>tripcondition</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -370,6 +379,20 @@ Additional Inherited Members</h2></td></tr>
       <table class="memname">
         <tr>
           <td class="memname">float DC_Info::regen_ratio</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a5cc63cac4062e9cf4fa8feade2f2161d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5cc63cac4062e9cf4fa8feade2f2161d">&#9670;&nbsp;</a></span>tripped</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool DC_Info::tripped</td>
         </tr>
       </table>
 </div><div class="memdoc">

@@ -1,14 +1,8 @@
 var searchData=
 [
-  ['s0',['s0',['../struct_frame.html#a71972de9ca3fcc689e47837de999e02a',1,'Frame']]],
-  ['s1',['s1',['../struct_frame.html#a9974192721ff8afddf052ec8748c28e2',1,'Frame']]],
-  ['s2',['s2',['../struct_frame.html#a1d6f233c445a2c2bddc0011823d76339',1,'Frame']]],
-  ['s3',['s3',['../struct_frame.html#a50ad5fcad2e6d9669522c51b17a172c5',1,'Frame']]],
-  ['serial_5fno',['serial_no',['../class_b_m_s___heartbeat.html#a8699311b4d2f959920253ed127446b9e',1,'BMS_Heartbeat::serial_no()'],['../class_m_c___heartbeat.html#aa5d3a1b6fa6160b864ea8a7795cbd882',1,'MC_Heartbeat::serial_no()'],['../class_d_c___heartbeat.html#aceae66c7c3b7911dda94093170e462e3',1,'DC_Heartbeat::serial_no()']]],
-  ['soc_5fmismatch',['SOC_mismatch',['../class_b_m_s___balance_s_o_c.html#a70e3b5e3de656652187ceb0031d9c087',1,'BMS_BalanceSOC']]],
-  ['speed',['speed',['../class_m_c___fan_speed.html#a9074b2de972e5b9f0e077c529c00d70c',1,'MC_FanSpeed']]],
-  ['sql_5fconnected',['sql_connected',['../class_t_e_l___status.html#ad4b1067ce50490325d7d8e48c3822bc8',1,'TEL_Status']]],
-  ['srr',['srr',['../struct_frame.html#a760a6ea5ca1affbdc26de9dd01b9ce5c',1,'Frame']]],
-  ['status1',['status1',['../class_d_c___status.html#a367ecef781b59edfe98ef499e3c9e739',1,'DC_Status']]],
-  ['status2',['status2',['../class_d_c___status.html#a6ad049666d9afdd83ba5573b34aee316',1,'DC_Status']]]
+  ['tec',['tec',['../class_c_a_n___i_o.html#a70bb474f87b56bf6aec097c8a7760a40',1,'CAN_IO']]],
+  ['temp',['temp',['../class_d_c___temp__0.html#ab1a86de3adcfb8585b88356432731bf4',1,'DC_Temp_0::temp()'],['../class_d_c___temp__1.html#ab1a6c1e24e87cc44bc4434cdac61c412',1,'DC_Temp_1::temp()'],['../class_d_c___temp__2.html#abc0b774198b7ce4fc47e6c694a27bffe',1,'DC_Temp_2::temp()'],['../class_d_c___temp__3.html#af5e5c5d2b1bb241831339c9bd4614b36',1,'DC_Temp_3::temp()']]],
+  ['timer_5felapsed',['timer_elapsed',['../class_b_m_s___precharge_status.html#ac3004cb97e5a8d75c3454486d5d06082',1,'BMS_PrechargeStatus']]],
+  ['tripped',['tripped',['../class_d_c___info.html#a5cc63cac4062e9cf4fa8feade2f2161d',1,'DC_Info']]],
+  ['trituim_5fid',['trituim_id',['../class_m_c___heartbeat.html#aad65258c2269a60abe794f0ddf9573c3',1,'MC_Heartbeat']]]
 ];

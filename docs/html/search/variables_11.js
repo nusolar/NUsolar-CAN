@@ -1,8 +1,9 @@
 var searchData=
 [
-  ['tail',['tail',['../class_r_x___queue.html#abeefbc6a3ee899e8ce90b4036e1dcfb4',1,'RX_Queue::tail()'],['../class_r_x___deque.html#a863743c050c4f3e4dbebd0284766bcdf',1,'RX_Deque::tail()']]],
-  ['tec',['tec',['../class_c_a_n___i_o.html#a70bb474f87b56bf6aec097c8a7760a40',1,'CAN_IO']]],
-  ['timer_5felapsed',['timer_elapsed',['../class_b_m_s___precharge_status.html#ac3004cb97e5a8d75c3454486d5d06082',1,'BMS_PrechargeStatus']]],
-  ['trituim_5fid',['trituim_id',['../class_m_c___heartbeat.html#aad65258c2269a60abe794f0ddf9573c3',1,'MC_Heartbeat']]],
-  ['tx_5fopen',['tx_open',['../class_c_a_n___i_o.html#af7355f88a518f05f954cf72abc2ccbb9',1,'CAN_IO']]]
+  ['value',['value',['../struct_frame.html#ab0f5d7c650d372189d642a8865c77b70',1,'Frame']]],
+  ['value_5fs',['value_s',['../struct_frame.html#a59e7aab982d73d8ddbcf6ddf8cba4e54',1,'Frame']]],
+  ['velocity',['velocity',['../class_d_c___drive.html#a05bda742fc9760bdcd378aea533ec6b2',1,'DC_Drive']]],
+  ['voltage',['voltage',['../class_b_m_s___voltage_current.html#a68d0507a9a2eefece69f12618fd4aede',1,'BMS_VoltageCurrent']]],
+  ['voltage_5ffalling',['voltage_falling',['../class_b_m_s___status.html#a1593c04b7293ed4116a04eb1e0151fec',1,'BMS_Status']]],
+  ['voltage_5frising',['voltage_rising',['../class_b_m_s___status.html#aa0584f6be28b89b78cbc80e7c79f895f',1,'BMS_Status']]]
 ];

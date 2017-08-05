@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>My Project: MCP2515 Class Reference</title>
+<title>NUsolar CAN: MCP2515 Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -21,7 +21,7 @@
  <tbody>
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
-   <div id="projectname">My Project
+   <div id="projectname">NUsolar CAN
    </div>
   </td>
  </tr>
@@ -60,8 +60,6 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pri-methods">Private Member Functions</a> &#124;
-<a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="class_m_c_p2515-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">MCP2515 Class Reference</div>  </div>
@@ -117,24 +115,12 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a84d5255adafcbc78ba806c934c3821b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0becca9bf577ae010161dc336e48051b"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_c_p2515.html#a0becca9bf577ae010161dc336e48051b">AbortTransmissions</a> (byte timeout=10)</td></tr>
 <tr class="separator:a0becca9bf577ae010161dc336e48051b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-methods"></a>
-Private Member Functions</h2></td></tr>
-<tr class="memitem:a0481ed13e67efd4a9ef4c62f8ef2ad75"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_c_p2515.html#a0481ed13e67efd4a9ef4c62f8ef2ad75">_init</a> (int baud, byte freq, byte sjw, bool autoBaud)</td></tr>
-<tr class="separator:a0481ed13e67efd4a9ef4c62f8ef2ad75"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
-Private Attributes</h2></td></tr>
-<tr class="memitem:a89ab5f35e1c01bd9f9283110a9837512"><td class="memItemLeft" align="right" valign="top">byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_c_p2515.html#a89ab5f35e1c01bd9f9283110a9837512">_CS</a></td></tr>
-<tr class="separator:a89ab5f35e1c01bd9f9283110a9837512"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6146f88ee8bed677fc71d613462b74f7"><td class="memItemLeft" align="right" valign="top">byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_m_c_p2515.html#a6146f88ee8bed677fc71d613462b74f7">_INT</a></td></tr>
-<tr class="separator:a6146f88ee8bed677fc71d613462b74f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>a class which acts as an interface to the <a class="el" href="class_m_c_p2515.html" title="a class which acts as an interface to the MCP2515 chip. ">MCP2515</a> chip. </p>
 <p>This class handles all SPI communication with the <a class="el" href="class_m_c_p2515.html" title="a class which acts as an interface to the MCP2515 chip. ">MCP2515</a> chip and has methods to both read and load the transmit and receive buffers with <a class="el" href="struct_frame.html" title="An object representing a generic CAN frame. ">Frame</a> objects, among other features.</p>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000007">Todo:</a></b></dt><dd><p class="startdd">Merge this class with the <a class="el" href="class_c_a_n___i_o.html" title="Class for handling CAN I/O operations using the MCP2515 CAN controller. ">CAN_IO</a> class in order to simplify and optimize the library. Requires more thorough testing. </p>
-<p class="enddd">Rename <a class="el" href="class_m_c_p2515.html#a54a090fc35ed440f69e24c759f4b9ef2">GetInterrupt()</a> to readInterrupts() or something like that. </p>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000008">Todo:</a></b></dt><dd><p class="startdd">(Code) Merge this class with the <a class="el" href="class_c_a_n___i_o.html" title="Class for handling CAN I/O operations using the MCP2515 CAN controller. ">CAN_IO</a> class in order to simplify and optimize the library. Requires more thorough testing. </p>
+<p class="enddd">(Code) Rename <a class="el" href="class_m_c_p2515.html#a54a090fc35ed440f69e24c759f4b9ef2">GetInterrupt()</a> to readInterrupts() or something like that. </p>
 </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a1ce96121f11960a0f95bacc7374f4a0b"></a>
@@ -175,54 +161,6 @@ Private Attributes</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a0481ed13e67efd4a9ef4c62f8ef2ad75"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0481ed13e67efd4a9ef4c62f8ef2ad75">&#9670;&nbsp;</a></span>_init()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool MCP2515::_init </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>baud</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">byte&#160;</td>
-          <td class="paramname"><em>freq</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">byte&#160;</td>
-          <td class="paramname"><em>sjw</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>autoBaud</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
 <a id="a0becca9bf577ae010161dc336e48051b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0becca9bf577ae010161dc336e48051b">&#9670;&nbsp;</a></span>AbortTransmissions()</h2>
 
@@ -664,51 +602,6 @@ Private Attributes</h2></td></tr>
           <td></td><td></td>
         </tr>
       </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="a89ab5f35e1c01bd9f9283110a9837512"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a89ab5f35e1c01bd9f9283110a9837512">&#9670;&nbsp;</a></span>_CS</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">byte MCP2515::_CS</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a6146f88ee8bed677fc71d613462b74f7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6146f88ee8bed677fc71d613462b74f7">&#9670;&nbsp;</a></span>_INT</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">byte MCP2515::_INT</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">private</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 
 </div>

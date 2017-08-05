@@ -1,18 +1,12 @@
 var searchData=
 [
-  ['rec',['rec',['../class_c_a_n___i_o.html#acaeb025fc077395159d3a8850205f021',1,'CAN_IO']]],
-  ['regen_5fratio',['regen_ratio',['../class_d_c___info.html#a5f4b158938e9eca864c46b0455f3726e',1,'DC_Info']]],
-  ['rtr',['rtr',['../struct_frame.html#a553c3185b4e35c983e8a5e6e82a2ff6b',1,'Frame']]],
-  ['rts',['rts',['../class_s_w___data.html#a31ca8cbed76dd7c8d30439497ecae38b',1,'SW_Data']]],
-  ['rx_5fdeque_5fsize',['RX_DEQUE_SIZE',['../class_r_x___deque.html#a063e6c981316b4bb9e02771118d435ad',1,'RX_Deque']]],
-  ['rx_5fqueue_5fsize',['RX_QUEUE_SIZE',['../class_r_x___queue.html#a46b915faad72a97397176f31219a74e4',1,'RX_Queue']]],
-  ['rxbuffer',['RXbuffer',['../class_c_a_n___i_o.html#a84f603bf473485c7231b30d99e0b848b',1,'CAN_IO']]],
-  ['rxf0',['RXF0',['../struct_c_a_n_filter_opt.html#a7109a37df9c7ed35f19d6a0b2ff4af21',1,'CANFilterOpt']]],
-  ['rxf1',['RXF1',['../struct_c_a_n_filter_opt.html#a457486697dfd3c72d86f9c0e5a2435ed',1,'CANFilterOpt']]],
-  ['rxf2',['RXF2',['../struct_c_a_n_filter_opt.html#a5dfd75e1e823fb3aa93741a6cce23855',1,'CANFilterOpt']]],
-  ['rxf3',['RXF3',['../struct_c_a_n_filter_opt.html#a85c67a641aafa516fbaf59dd0efb7fad',1,'CANFilterOpt']]],
-  ['rxf4',['RXF4',['../struct_c_a_n_filter_opt.html#ad87b9f71fbf0a0278e87277461ccaad5',1,'CANFilterOpt']]],
-  ['rxf5',['RXF5',['../struct_c_a_n_filter_opt.html#ae48a943179587b95c6d24fcb99840b97',1,'CANFilterOpt']]],
-  ['rxm0',['RXM0',['../struct_c_a_n_filter_opt.html#a8238123d45ff8a88246ceae0a45608f1',1,'CANFilterOpt']]],
-  ['rxm1',['RXM1',['../struct_c_a_n_filter_opt.html#a1a9d2fa936b3a131d20eacf2681e949e',1,'CANFilterOpt']]]
+  ['s0',['s0',['../struct_frame.html#a71972de9ca3fcc689e47837de999e02a',1,'Frame']]],
+  ['s1',['s1',['../struct_frame.html#a9974192721ff8afddf052ec8748c28e2',1,'Frame']]],
+  ['s2',['s2',['../struct_frame.html#a1d6f233c445a2c2bddc0011823d76339',1,'Frame']]],
+  ['s3',['s3',['../struct_frame.html#a50ad5fcad2e6d9669522c51b17a172c5',1,'Frame']]],
+  ['serial_5fno',['serial_no',['../class_b_m_s___heartbeat.html#a8699311b4d2f959920253ed127446b9e',1,'BMS_Heartbeat::serial_no()'],['../class_m_c___heartbeat.html#aa5d3a1b6fa6160b864ea8a7795cbd882',1,'MC_Heartbeat::serial_no()'],['../class_d_c___heartbeat.html#aceae66c7c3b7911dda94093170e462e3',1,'DC_Heartbeat::serial_no()']]],
+  ['soc_5fmismatch',['SOC_mismatch',['../class_b_m_s___balance_s_o_c.html#a70e3b5e3de656652187ceb0031d9c087',1,'BMS_BalanceSOC']]],
+  ['speed',['speed',['../class_m_c___fan_speed.html#a9074b2de972e5b9f0e077c529c00d70c',1,'MC_FanSpeed']]],
+  ['sql_5fconnected',['sql_connected',['../class_t_e_l___status.html#ad4b1067ce50490325d7d8e48c3822bc8',1,'TEL_Status']]],
+  ['srr',['srr',['../struct_frame.html#a760a6ea5ca1affbdc26de9dd01b9ce5c',1,'Frame']]]
 ];

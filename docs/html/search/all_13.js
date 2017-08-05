@@ -1,9 +1,8 @@
 var searchData=
 [
-  ['value',['value',['../struct_frame.html#ab0f5d7c650d372189d642a8865c77b70',1,'Frame']]],
-  ['value_5fs',['value_s',['../struct_frame.html#a59e7aab982d73d8ddbcf6ddf8cba4e54',1,'Frame']]],
-  ['velocity',['velocity',['../class_d_c___drive.html#a05bda742fc9760bdcd378aea533ec6b2',1,'DC_Drive']]],
-  ['voltage',['voltage',['../class_b_m_s___voltage_current.html#a68d0507a9a2eefece69f12618fd4aede',1,'BMS_VoltageCurrent']]],
-  ['voltage_5ffalling',['voltage_falling',['../class_b_m_s___status.html#a1593c04b7293ed4116a04eb1e0151fec',1,'BMS_Status']]],
-  ['voltage_5frising',['voltage_rising',['../class_b_m_s___status.html#aa0584f6be28b89b78cbc80e7c79f895f',1,'BMS_Status']]]
+  ['wake',['Wake',['../class_c_a_n___i_o.html#a40e9bf23190283eb015b24f2d78ba413',1,'CAN_IO']]],
+  ['wakie',['WAKIE',['../_m_c_p2515__defs_8h.html#ad098b73609e4bad9f91de143e7d16887',1,'MCP2515_defs.h']]],
+  ['wakif',['WAKIF',['../_m_c_p2515__defs_8h.html#a79838cf89c2473896180fab0e1593530',1,'MCP2515_defs.h']]],
+  ['was_5freset',['was_reset',['../class_d_c___info.html#a21a8f929f440adfa0da07c2ea0f93244',1,'DC_Info']]],
+  ['write',['Write',['../class_m_c_p2515.html#abb764271aad2d2053b8a1fa1f6353ed3',1,'MCP2515::Write(byte address, byte data)'],['../class_m_c_p2515.html#aac3989aa9eab535441fc8aeb02948739',1,'MCP2515::Write(byte address, byte data[], byte bytes)']]]
 ];

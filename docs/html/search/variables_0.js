@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['_5fcs',['_CS',['../class_m_c_p2515.html#a89ab5f35e1c01bd9f9283110a9837512',1,'MCP2515']]],
-  ['_5fint',['_INT',['../class_m_c_p2515.html#a6146f88ee8bed677fc71d613462b74f7',1,'MCP2515']]]
+  ['accel_5fratio',['accel_ratio',['../class_d_c___info.html#ac10a7a004520702b6c6c928b68ca3703',1,'DC_Info']]],
+  ['active_5fmotor',['active_motor',['../class_m_c___status.html#a0a588ca64830ce38d1f7eee5ba079648',1,'MC_Status']]]
 ];

@@ -42,11 +42,11 @@ to configure the masks and filters for the two receive buffers on the MCP2515.
 
 
 3. Call ```CAN_IO::Setup(<interrupts>)``` to initialize the MCP2515.
-	```<interrupts>``` is a byte containing the interrupt enable flags that you want to set (i.e. MERRIE, ERRIE, RX0IE, etc.) You can OR these flags together to combine them. For example, the following code enables the ____, Error Flag, Receive Buffer 0, and Receive Buffer 1 interrupts.
+	```<interrupts>``` is a byte containing the interrupt enable flags that you want to set (i.e. MERRIE, ERRIE, RX0IE, etc.) You can OR these flags together to combine them. For example, the following code enables the Message Receive Error, Generic Error, Receive Buffer 0, and Receive Buffer 1 interrupts.
 ```
     can.Setup(MERRIE|ERRIE|RX0IE|RX1IE);
 ```
-NOTE: We recommend that you DO NOT attach the interrupt pin INTpin to an actual Arduino interrupt. Instead, check for messages calling CAN_IO::Fetch, which will check the INTpin to see if messages are waiting to be transferred from the MCP2515 to the Arduino.
+\note We recommend that you DO NOT attach the interrupt pin INTpin to an actual Arduino interrupt. Instead, check for messages calling CAN_IO::Fetch, which will check the INTpin to see if messages are waiting to be transferred from the MCP2515 to the Arduino.
  
 
 4. To send a packet, create a layout object:
@@ -66,7 +66,7 @@ If you want the system to automatically select a TX buffer for you, pass the buf
 ```
   	can.Send(DC_Drive(velocity, current), TXBANY);
 ```
-NOTE: Currently, the library does not wait for a buffer to become open before attempting to load it. If you try to send from a buffer that is currently being used, packet data may be corrupted. Use the TXBANY option to avoid this. Alternatively, you can call ```CAN_IO::Send_Verified(<packet>, <buffer>)``` to make sure the correct data was loaded onto the MCP2515.
+/note Currently, the library does not wait for a buffer to become open before attempting to load it. If you try to send from a buffer that is currently being used, packet data may be corrupted. Use the TXBANY option to avoid this. Alternatively, you can call ```CAN_IO::Send_Verified(<packet>, <buffer>)``` to make sure the correct data was loaded onto the MCP2515.
  
 
 5. Call ```CAN_IO::Fetch()``` at least once per main control loop. This checks for any messages on the MCP2515 and loads them. It is recommended that this function be used rather than attaching interrupts, as interrupts have been known to cause conflicts with serial communication that results in corrupted CAN data.
@@ -167,7 +167,7 @@ Licence
 -------
 This library is Copyright 2015 by NUsolar. The code may be used in non-commercial projects without compensation, but we would appreciate it if you let us know that you're using it.
 
-Documentation To-Dos
+\todo Documentation To-Dos
 -------
 - Write description of how to add a new CAN frame
 - Example snippets for each major function.

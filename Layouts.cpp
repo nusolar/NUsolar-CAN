@@ -46,8 +46,8 @@
  ** }
  ** \endcode
  **
- ** \note The \def UNUSED value should be asssigned to all parts of the frame which are not filled with data. This will
- ** 	  default their value to 0. If \def UNUSED is not assigned, the value of any unassigned part of the data frame is 
+ ** \note The \ref UNUSED value should be asssigned to all parts of the frame which are not filled with data. This will
+ ** 	  default their value to 0. If \ref UNUSED is not assigned, the value of any unassigned part of the data frame is 
  **		  undefined.
  */
 Frame Layout::generate_frame() const {

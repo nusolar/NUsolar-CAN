@@ -120,7 +120,7 @@ protected:
 };
 
 /** \defgroup LAYOUTS NUsolar CAN packet layouts 
- ** \todo Add Detailed Description
+ ** \todo Add Detailed Description of each field in each packet.
  ** @{
  */
 

@@ -11,29 +11,38 @@
 #include "includes/Layouts.h"
 #include "includes/RX_Queue.h"
 
-/* 
- * \brief Struct containing the filter info for the rx buffers.
- *
- * The user can specify 1 mask and 2 filters for RXB0, and 1 mask and
- * 5 filters for RXB1.
- *
- * Any message which matches any of the filters on all of the bits where their respective mask contains 
- * a 1 will be accepted. e.g. If 
- * 		RXM0 = 010b
- *		RXF0 = 000b
- * Then messages with IDs matching x0xb will be accepted, where x is either a 0 or a 1.
+/**
+ ** \brief A special struct to hold filter info for the MCP2515 \ref MCP2515_defs.h "RX buffers".
+ **
+ ** The user can specify 1 mask and 2 filters for RXB0, and 1 mask and
+ ** 5 filters for RXB1.
+ **
+ ** Any message which matches any of the filters on all of the bits where their respective mask contains 
+ ** a 1 will be accepted. e.g. If 
+ ** 		RXM0 = 010b
+ **		RXF0 = 000b
+ ** Then messages with IDs matching x0xb will be accepted, where x is either a 0 or a 1.
  */
-struct CANFilterOpt {
-	uint16_t RXM0; /** mask 0 (RXB0) */
-	uint16_t RXM1; /** mask 1 (RXB1) */
-	uint16_t RXF0; /** filter 0 (RXB0) */
-	uint16_t RXF1; /** filter 1 (RXB0) */
-	uint16_t RXF2; /** filter 2 (RXB1) */
-	uint16_t RXF3; /** filter 3 (RXB1) */
-	uint16_t RXF4; /** filter 4 (RXB1) */
-	uint16_t RXF5; /** filter 5 (RXB1) */
+ /// \todo (Code) Incorporate the 8 filter and mask variables directly into the CAN_IO object, or at least to 
+ ///		      an annonymous struct within CAN_IO, and move the setRB0 and setRB1 functions to within the CAN_IO 
+ ///		      class as well. Then the user can do the following \n 
+ ///			     CAN_IO CanControl(args); \n
+ ///			 	 CanControl.setRB0(args); \n
+ ///				 CanControl.setRB1(args); \n
+ ///				 CanControl.Setup(args); \n
+ ///		 	  or they can call CAN_IO::Setup() first and then set the filters and call some new set_filters() method.
 
-	/** Default Constructor. Initialize to No Masking or Filtering */
+struct CANFilterOpt {
+	uint16_t RXM0; //!< mask 0 (applies to RXB0)
+	uint16_t RXM1; //!< mask 1 (applies to RXB1)
+	uint16_t RXF0; //!< filter 0 (applies to RXB0)
+	uint16_t RXF1; //!< filter 1 (applies to RXB0)
+	uint16_t RXF2; //!< filter 2 (applies to RXB1)
+	uint16_t RXF3; //!< filter 3 (applies to RXB1)
+	uint16_t RXF4; //!< filter 4 (applies to RXB1)
+	uint16_t RXF5; //!< filter 5 (applies to RXB1)
+
+	/** Default Constructor. Initialize to accept all packets (no filtering). */
 	CANFilterOpt() : RXM0(0), RXM1(0) {}
 
 	/** Specify the masks and filters for the first read buffer (RB0) 
@@ -118,9 +127,9 @@ public:
 	 */
 	void Setup(byte interrupts = RX0IE | RX1IE | TX1IE | TX2IE | TX0IE );
 
-	bool Sleep(); 				//!< Put the controller to sleep
-	bool Wake();  				//!< Wake the controller up from sleep.
-	void ResetController();		//!< Reinitialize the controller
+	bool Sleep(); 				//!< Put the controller to sleep. See the MCP2515 datasheet.
+	bool Wake();  				//!< Wake the controller up from sleep. See the MCP2515 datasheet.
+	void ResetController();		//!< Reinitialize the controller by calling MCP2515::Init() again.
 	
 	/** 
 	 ** \brief Reconfigure the interrupts that are enabled on the MCP2515 

@@ -63,38 +63,45 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><dl class="reflist">
-<dt><a class="anchor" id="_todo000010"></a>Module <a class="el" href="_m_c_p2515__defs_8h.html#amgrpaec81b1d225304dc238a866f2e09dc8a">Buffer Bit Masks</a>  </dt>
+<dt><a class="anchor" id="_todo000011"></a>Module <a class="el" href="_m_c_p2515__defs_8h.html#amgrpaec81b1d225304dc238a866f2e09dc8a">Buffer Bit Masks</a>  </dt>
 <dd>description  </dd>
-<dt><a class="anchor" id="_todo000003"></a>Member <a class="el" href="class_c_a_n___i_o.html#a6f0060e57a9c6cff0e58451a32e211fe">CAN_IO::canstat_register</a>  </dt>
+<dt><a class="anchor" id="_todo000004"></a>Member <a class="el" href="class_c_a_n___i_o.html#a6f0060e57a9c6cff0e58451a32e211fe">CAN_IO::canstat_register</a>  </dt>
 <dd>Rename this to be consistent with the errors variable.  </dd>
-<dt><a class="anchor" id="_todo000002"></a>Member <a class="el" href="class_c_a_n___i_o.html#aab012915eb2b8e73476ec16f97c5edb5">CAN_IO::FetchStatus</a>  ()</dt>
+<dt><a class="anchor" id="_todo000003"></a>Member <a class="el" href="class_c_a_n___i_o.html#aab012915eb2b8e73476ec16f97c5edb5">CAN_IO::FetchStatus</a>  ()</dt>
 <dd>Finish documenting <a class="el" href="_m_c_p2515__defs_8h.html#a6a94773afc5cf8a9065d3588dccc42be">CANSTAT</a> register.  </dd>
-<dt><a class="anchor" id="_todo000001"></a>Module <a class="el" href="group___c_a_n_e_r_r_o_r_s___g_r_o_u_p.html">CANERRORS_GROUP</a>  </dt>
+<dt><a class="anchor" id="_todo000002"></a>Module <a class="el" href="group___c_a_n_e_r_r_o_r_s___g_r_o_u_p.html">CANERRORS_GROUP</a>  </dt>
 <dd>where are these found </dd>
-<dt><a class="anchor" id="_todo000007"></a>Class <a class="el" href="class_layout.html">Layout</a>  </dt>
+<dt><a class="anchor" id="_todo000001"></a>Class <a class="el" href="struct_c_a_n_filter_opt.html">CANFilterOpt</a>  </dt>
+<dd>(Code) Incorporate the 8 filter and mask variables directly into the <a class="el" href="class_c_a_n___i_o.html" title="Class for handling CAN I/O operations using the MCP2515 CAN controller. ">CAN_IO</a> object, or at least to an annonymous struct within <a class="el" href="class_c_a_n___i_o.html" title="Class for handling CAN I/O operations using the MCP2515 CAN controller. ">CAN_IO</a>, and move the setRB0 and setRB1 functions to within the <a class="el" href="class_c_a_n___i_o.html" title="Class for handling CAN I/O operations using the MCP2515 CAN controller. ">CAN_IO</a> class as well. Then the user can do the following <br />
+ <a class="el" href="class_c_a_n___i_o.html" title="Class for handling CAN I/O operations using the MCP2515 CAN controller. ">CAN_IO</a> CanControl(args); <br />
+ CanControl.setRB0(args); <br />
+ CanControl.setRB1(args); <br />
+ CanControl.Setup(args); <br />
+ or they can call <a class="el" href="class_c_a_n___i_o.html#a8658429bfd9b825a1e1758514ed387eb" title="Initialization method for the can controller. ">CAN_IO::Setup()</a> first and then set the filters and call some new set_filters() method.  </dd>
+<dt><a class="anchor" id="_todo000008"></a>Class <a class="el" href="class_layout.html">Layout</a>  </dt>
 <dd><p class="startdd">(Documentation) Finish describing the parent-child relationship between individual layouts and this class. </p>
 <p class="enddd">(Code) Merge this class with the <a class="el" href="struct_frame.html" title="An object representing a generic CAN frame. ">Frame</a> class and have the individual layouts derive directly from <a class="el" href="struct_frame.html" title="An object representing a generic CAN frame. ">Frame</a>. This would extra function calls in the code and reduce memory requirements.  </p>
 </dd>
-<dt><a class="anchor" id="_todo000008"></a>Module <a class="el" href="group___l_a_y_o_u_t_s.html">LAYOUTS</a>  </dt>
+<dt><a class="anchor" id="_todo000009"></a>Module <a class="el" href="group___l_a_y_o_u_t_s.html">LAYOUTS</a>  </dt>
 <dd><p class="startdd">Add Detailed Description of each field in each packet.</p>
 <p class="enddd"></p>
 </dd>
-<dt><a class="anchor" id="_todo000004"></a>File <a class="el" href="_layouts_8cpp.html">Layouts.cpp</a>  </dt>
+<dt><a class="anchor" id="_todo000005"></a>File <a class="el" href="_layouts_8cpp.html">Layouts.cpp</a>  </dt>
 <dd><p class="startdd">Explain what the <a class="el" href="class_layout.html#af50d9174dd7132e8ec6af0b7e7e5c759" title="Creates a Frame object to represent this layout. ">generate_frame()</a> method does. </p>
 <p class="enddd">Describe how to program the <a class="el" href="class_layout.html#af50d9174dd7132e8ec6af0b7e7e5c759" title="Creates a Frame object to represent this layout. ">generate_frame()</a> method for a new CAN packet.  </p>
 </dd>
-<dt><a class="anchor" id="_todo000006"></a>File <a class="el" href="_layouts_8h.html">Layouts.h</a>  </dt>
+<dt><a class="anchor" id="_todo000007"></a>File <a class="el" href="_layouts_8h.html">Layouts.h</a>  </dt>
 <dd>(Documentation) Add tables to the detailed description of each layout so that this documentation can be used rather than referencing the Tritium PDFs all the time.  </dd>
-<dt><a class="anchor" id="_todo000009"></a>Class <a class="el" href="class_m_c_p2515.html">MCP2515</a>  </dt>
+<dt><a class="anchor" id="_todo000010"></a>Class <a class="el" href="class_m_c_p2515.html">MCP2515</a>  </dt>
 <dd><p class="startdd">(Code) Merge this class with the <a class="el" href="class_c_a_n___i_o.html" title="Class for handling CAN I/O operations using the MCP2515 CAN controller. ">CAN_IO</a> class in order to simplify and optimize the library. Requires more thorough testing. </p>
 <p class="enddd">(Code) Rename <a class="el" href="class_m_c_p2515.html#a54a090fc35ed440f69e24c759f4b9ef2">GetInterrupt()</a> to readInterrupts() or something like that.  </p>
 </dd>
-<dt><a class="anchor" id="_todo000005"></a>page <a class="el" href="index.html">NUsolar MCP2515 CAN Library for Arduino</a>  </dt>
+<dt><a class="anchor" id="_todo000006"></a>page <a class="el" href="index.html">NUsolar MCP2515 CAN Library for Arduino</a>  </dt>
 <dd><h2>Documentation To-Dos </h2>
 <ul>
 <li>Write description of how to add a new CAN frame</li>
 <li>Example snippets for each major function.</li>
-<li><a class="el" href="struct_c_a_n_filter_opt.html">CANFilterOpt</a> class description</li>
+<li><a class="el" href="struct_c_a_n_filter_opt.html" title="A special struct to hold filter info for the MCP2515 RX buffers. ">CANFilterOpt</a> class description</li>
 <li>Detailed descriptions for each <a class="el" href="class_c_a_n___i_o.html" title="Class for handling CAN I/O operations using the MCP2515 CAN controller. ">CAN_IO</a> callable function. </li>
 </ul>
 </dd>

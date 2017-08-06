@@ -81,13 +81,13 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a8658429bfd9b825a1e1758514ed387eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialization method for the can controller.  <a href="#a8658429bfd9b825a1e1758514ed387eb">More...</a><br /></td></tr>
 <tr class="separator:a8658429bfd9b825a1e1758514ed387eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a04cc76436585581d1d449f806bd69c51"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_a_n___i_o.html#a04cc76436585581d1d449f806bd69c51">Sleep</a> ()</td></tr>
-<tr class="memdesc:a04cc76436585581d1d449f806bd69c51"><td class="mdescLeft">&#160;</td><td class="mdescRight">Put the controller to sleep.  <a href="#a04cc76436585581d1d449f806bd69c51">More...</a><br /></td></tr>
+<tr class="memdesc:a04cc76436585581d1d449f806bd69c51"><td class="mdescLeft">&#160;</td><td class="mdescRight">Put the controller to sleep. See the <a class="el" href="class_m_c_p2515.html" title="a class which acts as an interface to the MCP2515 chip. ">MCP2515</a> datasheet.  <a href="#a04cc76436585581d1d449f806bd69c51">More...</a><br /></td></tr>
 <tr class="separator:a04cc76436585581d1d449f806bd69c51"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a40e9bf23190283eb015b24f2d78ba413"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_a_n___i_o.html#a40e9bf23190283eb015b24f2d78ba413">Wake</a> ()</td></tr>
-<tr class="memdesc:a40e9bf23190283eb015b24f2d78ba413"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wake the controller up from sleep.  <a href="#a40e9bf23190283eb015b24f2d78ba413">More...</a><br /></td></tr>
+<tr class="memdesc:a40e9bf23190283eb015b24f2d78ba413"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wake the controller up from sleep. See the <a class="el" href="class_m_c_p2515.html" title="a class which acts as an interface to the MCP2515 chip. ">MCP2515</a> datasheet.  <a href="#a40e9bf23190283eb015b24f2d78ba413">More...</a><br /></td></tr>
 <tr class="separator:a40e9bf23190283eb015b24f2d78ba413"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a359a9994e7068dc3a33462d26f015ce5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_a_n___i_o.html#a359a9994e7068dc3a33462d26f015ce5">ResetController</a> ()</td></tr>
-<tr class="memdesc:a359a9994e7068dc3a33462d26f015ce5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reinitialize the controller.  <a href="#a359a9994e7068dc3a33462d26f015ce5">More...</a><br /></td></tr>
+<tr class="memdesc:a359a9994e7068dc3a33462d26f015ce5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reinitialize the controller by calling <a class="el" href="class_m_c_p2515.html#a54c16cbee2cace366fef4bdcfdf245a6" title="Initialization function. ">MCP2515::Init()</a> again.  <a href="#a359a9994e7068dc3a33462d26f015ce5">More...</a><br /></td></tr>
 <tr class="separator:a359a9994e7068dc3a33462d26f015ce5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a17eb672ec9cadd64aeacaa9042646413"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_c_a_n___i_o.html#a17eb672ec9cadd64aeacaa9042646413">ConfigureInterrupts</a> (byte interrupts)</td></tr>
 <tr class="memdesc:a17eb672ec9cadd64aeacaa9042646413"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reconfigure the interrupts that are enabled on the <a class="el" href="class_m_c_p2515.html" title="a class which acts as an interface to the MCP2515 chip. ">MCP2515</a>.  <a href="#a17eb672ec9cadd64aeacaa9042646413">More...</a><br /></td></tr>
@@ -328,7 +328,7 @@ Public Attributes</h2></td></tr>
 <li>The current mode of the <a class="el" href="class_m_c_p2515.html" title="a class which acts as an interface to the MCP2515 chip. ">MCP2515</a></li>
 <li></li>
 </ul>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000002">Todo:</a></b></dt><dd>Finish documenting <a class="el" href="_m_c_p2515__defs_8h.html#a6a94773afc5cf8a9065d3588dccc42be">CANSTAT</a> register. </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000003">Todo:</a></b></dt><dd>Finish documenting <a class="el" href="_m_c_p2515__defs_8h.html#a6a94773afc5cf8a9065d3588dccc42be">CANSTAT</a> register. </dd></dl>
 
 </div>
 </div>
@@ -375,7 +375,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Reinitialize the controller. </p>
+<p>Reinitialize the controller by calling <a class="el" href="class_m_c_p2515.html#a54c16cbee2cace366fef4bdcfdf245a6" title="Initialization function. ">MCP2515::Init()</a> again. </p>
 
 </div>
 </div>
@@ -603,7 +603,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Put the controller to sleep. </p>
+<p>Put the controller to sleep. See the <a class="el" href="class_m_c_p2515.html" title="a class which acts as an interface to the MCP2515 chip. ">MCP2515</a> datasheet. </p>
 
 </div>
 </div>
@@ -622,7 +622,7 @@ Public Attributes</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-<p>Wake the controller up from sleep. </p>
+<p>Wake the controller up from sleep. See the <a class="el" href="class_m_c_p2515.html" title="a class which acts as an interface to the MCP2515 chip. ">MCP2515</a> datasheet. </p>
 
 </div>
 </div>
@@ -640,7 +640,7 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Holds a copy of the <a class="el" href="_m_c_p2515__defs_8h.html#a6a94773afc5cf8a9065d3588dccc42be">CANSTAT</a> register. </p>
-<p>Updated when <a class="el" href="class_c_a_n___i_o.html#a10393f1a9f55c853bb21d74ebbc9d7ca" title="Fetch the error status of the MCP2515 over SPI and update internal variables. ">FetchErrors()</a> is called. </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000003">Todo:</a></b></dt><dd>Rename this to be consistent with the errors variable. </dd></dl>
+<p>Updated when <a class="el" href="class_c_a_n___i_o.html#a10393f1a9f55c853bb21d74ebbc9d7ca" title="Fetch the error status of the MCP2515 over SPI and update internal variables. ">FetchErrors()</a> is called. </p><dl class="todo"><dt><b><a class="el" href="todo.html#_todo000004">Todo:</a></b></dt><dd>Rename this to be consistent with the errors variable. </dd></dl>
 
 </div>
 </div>

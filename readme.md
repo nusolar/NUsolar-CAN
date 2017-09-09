@@ -3,9 +3,9 @@ NUsolar MCP2515 CAN Library for Arduino
 
 Author:   Alexander Martin
 
-Date:		  6/13/2015
+Date Last Revised:  6/13/2015
 
-Version:	3.0
+Library Version:	3.0
 
 Full Documentation: https://nusolar.github.io/NUsolar-CAN/docs/html/index.html
 
@@ -29,43 +29,43 @@ For more information on installing libraries, visit http://www.arduino.cc/en/Gui
 Usage
 -----
 1. Create a CAN_IO object, specifying the pins that will be used as the CS and INT pins
-```
+~~~~{.cpp}
     CAN_IO can( CSpin, INTpin, baudrate (kbps), freq. Osc. (Mhz));
-```
+~~~~
  
  
 2. Setupt filters by calling the setRB<n> methods of the built-in filters object. These methods return their calling object, so they can be daisy-chained, as shown below.
-``` 
+~~~~{.cpp}
     can.filters.setRB0(m0, f0, f1).setRB1(m1, f2, f3, f4, f5);
-```
+~~~~
 to configure the masks and filters for the two receive buffers on the MCP2515.
 
 
 3. Call ```CAN_IO::Setup(<interrupts>)``` to initialize the MCP2515.
 	```<interrupts>``` is a byte containing the interrupt enable flags that you want to set (i.e. MERRIE, ERRIE, RX0IE, etc.) You can OR these flags together to combine them. For example, the following code enables the Message Receive Error, Generic Error, Receive Buffer 0, and Receive Buffer 1 interrupts.
-```
+~~~~{.cpp}
     can.Setup(MERRIE|ERRIE|RX0IE|RX1IE);
-```
+~~~~
 \note We recommend that you DO NOT attach the interrupt pin INTpin to an actual Arduino interrupt. Instead, check for messages calling CAN_IO::Fetch, which will check the INTpin to see if messages are waiting to be transferred from the MCP2515 to the Arduino.
  
 
 4. To send a packet, create a layout object:
-```
+~~~~{.cpp}
     DC_Drive drivePacket(<velocity>, <current>);
-```
+~~~~
 Then call
-```
+~~~~{.cpp}
     can.Send(drivePacket,TXB0);
-```
+~~~~
 where TXB0 specifies one of the three transmission buffers to send the message out over (alternate buffers to send messages in quicker succession).
 You can also use an implicit packet object:
-```	
+~~~~{.cpp}
     can.Send(DC_Drive(velocity, current), TXB0);
-```
+~~~~
 If you want the system to automatically select a TX buffer for you, pass the buffer TXBANY.
-```
+~~~~{.cpp}
   	can.Send(DC_Drive(velocity, current), TXBANY);
-```
+~~~~
 /note Currently, the library does not wait for a buffer to become open before attempting to load it. If you try to send from a buffer that is currently being used, packet data may be corrupted. Use the TXBANY option to avoid this. Alternatively, you can call ```CAN_IO::Send_Verified(<packet>, <buffer>)``` to make sure the correct data was loaded onto the MCP2515.
  
 
@@ -73,25 +73,25 @@ If you want the system to automatically select a TX buffer for you, pass the buf
  
 
 6. Messages retrieved by ```CAN_IO::Fetch()``` are loaded into an internal frame FIFO buffer. To get the messages on this buffer, use
-```
+~~~~{.cpp}
 	if (can.Available()) {
 		Frame& f = can.Read();
 		/*...*/
 	}
-```
+~~~~
 The variable ``` f ``` is then a reference to the first frame in the buffer.
 You can find the packet type of this frame using f.id, which will be a hexidecimal number between 0x000 and 0x7FF.
 
 
 7. Once the packet type has been identified, convert it into the appropriate layout class:
-```	
+~~~~{.cpp}
     DC_Drive receivedPacket(f);
-```
+~~~~
 
 8. Access the data using the layout class variables:
-```
+~~~~{.cpp}
     receivedPacket.velocity;
-```
+~~~~
  
 
 9. The CAN_IO object keeps track of errors that occur in an internal state variable "errors", as well as the TEC and REC counters of the MCP2515. To update these, call CAN_IO::FetchErrors().
@@ -100,62 +100,87 @@ You can find the packet type of this frame using f.id, which will be a hexidecim
 10. The MCP2515 may occasionally enter sleep mode for random reasons. Code to detect this will be written into the CAN_IO class in a future release, but for now the check and reset procedure if this occurs must be done by you.
 
 
-Example Code
+Example Code 
 ------------
-```
-#include <SPI.h>
+
+~~~~{.cpp}
 #include <CAN_IO.h>
+#include <SPI.h>
 
-//CAN parameters
-const byte     CAN_CS 	 		 = 10;
-const byte     CAN_INT	 		 = 2;
-const uint16_t CAN_BAUD_RATE = 1000;	// MUST match the baud rate of the CAN bus. Setting this to 0 will enable Auto-BAUD (untested)
-const byte     CAN_FREQ      = 16;	// MUST BE the frequency of the oscillator you use
 
-unsigned long previous_send_time = 0;
+// First the CAN parameters are initialized
+const byte     CAN_CS        = 10;      // The arduino pin to which the MCP2515 CS (chip select) input is attached
+const byte     CAN_INT       = 2;       // The arduino pin to which the MPC2515 INT (interrupt) pin is attached
+const uint16_t CAN_BAUD_RATE = 1000;  // MUST match the baud rate of the CAN bus. Setting this to 0 will enable Auto-BAUD (untested)
+const byte     CAN_FREQ      = 16;    // MUST BE the frequency of the oscillator you use
 
-// Set up the can controller object.
+unsigned long previous_send_time = 0; // A timing variable we define to keep 
+
+// Then the can controller object is set up using the configuration variables.
 CAN_IO CanControl(CAN_CS,CAN_INT,CAN_BAUD_RATE,CAN_FREQ);
 
+//  
+//  The Arduino Setup() routine begins the SPI protocols to output received data to the COM window, Sets the applicable CAN filters,
+//  and then calls the CAN_IO::Setup() routine. In this case, the CAN controller is set up to listen only for BMS State of Charge and 
+//  motor controller velocity data packets.
+//
 void setup() {
+  // Start serial here so that we can communicate with the test computer. Not necessary for CAN to work.
   Serial.begin(9600);
-  
+
+  // Here is where we specify which packets we want to filter out, and then instruct the controler to
+  // initialize using the Setup command
   CanControl.filters.setRB0(MASK_Sxxx,BMS_SOC_ID, MC_VELOCITY_ID); 
   CanControl.filters.setRB1(MASK_Sxxx,0,0,0,0);
   CanControl.Setup();
 }
 
 void loop() {
-  CanControl.Fetch(); //If there are any new messages or TX buffers that have been cleared, they will be received.
+  /******* FETCH ********/
 
-  // Sending CAN
-  if (millis() - previous_send_time > 500) // Check and see whether the timer has expired
+  // If there are any new messages, they will be loaded from the MCP2515 into an internal buffer with
+  // this function call
+  CanControl.Fetch(); 
+
+  /******  SEND  ********/
+  // Now, we send data over the CAN bus every 500 ms
+  if (millis() - previous_send_time > 500) // Check and see whether it is time to send another packet
   {
-    // This command sends data over any available TX port.
+    // Send the binary data 01101100, and let the arduino choose which TX (transmit) buffer on the MCP2515 to use
+    // If all you care about is sending data, you can stop after running this command.
     CanControl.Send(SW_Data(0b01101100),TXBANY);
-    
-    // You can print out the error counters. You can also read registers on the board by using the controller.Read() command.
+
+    // To help with debugging the CAN bus, you can print out the error counters of the MCP2515. 
+    // Before you read these values, you need to fetch them using the FetchErrors() command, which grabs
+    // status and error counter registers.
+    // If you see the TEC and/or REC counters continuously incrementing, it means that your MCP2515
+    // is not able to sucessfully read and/or write messages to the CAN bus. You should troubleshoot the issue
+    // (See the troubleshooting guide in the documentation)
+
     CanControl.FetchErrors(); //Call this first to get the error data from the MCP2515
     Serial.print("TEC/REC ");
     Serial.print(CanControl.tec); Serial.print(", ");
     Serial.println(CanControl.rec);
-    Serial.print("CNF2: " );
-    Serial.println(CanControl.controller.Read(CNF2));
 
+    // This line resets the timing variable we use to send CAN packets.
     previous_send_time = millis();
   }
 
-  if (CanControl.Available()) // Check if there are messages that have been received
+  /******* RECEIVE *******/
+  // Here we check to see if any messages were loaded when we called CanControl.Fetch() on line 35.
+  if (CanControl.Available())
   {
-  	// Get the frame of of the buffer
-  	Frame& f = CanControl.Read();
+    // Get the frame of of the buffer. Read() returns a reference to a frame object which we can then convert into a string
+    Frame& f = CanControl.Read();
 
-  	// Print the frame
-  	Serial.print(f.toString());
+    // Print the frame over serial to the test computer
+    Serial.print(f.toString());
   }
+
+  // Run the loop() function every 100 ms
   delay(100);
 }
-```
+~~~~
 
 Contact
 -------
@@ -173,3 +198,5 @@ This library is Copyright 2015 by NUsolar. The code may be used in non-commercia
 - Example snippets for each major function.
 - CANFilterOpt class description
 - Detailed descriptions for each CAN_IO callable function.
+
+@example sendandreceive.ino

@@ -62,10 +62,165 @@ $(function() {
 </div>
 </div><!-- top -->
 <div class="header">
+  <div class="summary">
+<a href="#func-members">Functions</a> &#124;
+<a href="#var-members">Variables</a>  </div>
   <div class="headertitle">
 <div class="title">sendandreceive.ino File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+<div class="textblock"><code>#include &lt;<a class="el" href="_c_a_n___i_o_8h_source.html">CAN_IO.h</a>&gt;</code><br />
+<code>#include &lt;SPI.h&gt;</code><br />
+</div><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:a4fc01d736fe50cf5b977f755b675f11d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sendandreceive_8ino.html#a4fc01d736fe50cf5b977f755b675f11d">setup</a> ()</td></tr>
+<tr class="separator:a4fc01d736fe50cf5b977f755b675f11d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe461d27b9c48d5921c00d521181f12f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sendandreceive_8ino.html#afe461d27b9c48d5921c00d521181f12f">loop</a> ()</td></tr>
+<tr class="separator:afe461d27b9c48d5921c00d521181f12f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
+Variables</h2></td></tr>
+<tr class="memitem:a4a61b69ddc646f92bb9806f3c37cdabf"><td class="memItemLeft" align="right" valign="top">const byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sendandreceive_8ino.html#a4a61b69ddc646f92bb9806f3c37cdabf">CAN_CS</a> = 10</td></tr>
+<tr class="memdesc:a4a61b69ddc646f92bb9806f3c37cdabf"><td class="mdescLeft">&#160;</td><td class="mdescRight">First the CAN parameters are initialized.  <a href="#a4a61b69ddc646f92bb9806f3c37cdabf">More...</a><br /></td></tr>
+<tr class="separator:a4a61b69ddc646f92bb9806f3c37cdabf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a667229cec5ebdea1cf6e5dfe2f339cb2"><td class="memItemLeft" align="right" valign="top">const byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sendandreceive_8ino.html#a667229cec5ebdea1cf6e5dfe2f339cb2">CAN_INT</a> = 2</td></tr>
+<tr class="separator:a667229cec5ebdea1cf6e5dfe2f339cb2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a80e94abd1663a2cf4f1a005cf9c92429"><td class="memItemLeft" align="right" valign="top">const uint16_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sendandreceive_8ino.html#a80e94abd1663a2cf4f1a005cf9c92429">CAN_BAUD_RATE</a> = 1000</td></tr>
+<tr class="separator:a80e94abd1663a2cf4f1a005cf9c92429"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9939c0297ca553d8a711e8983a51d3e5"><td class="memItemLeft" align="right" valign="top">const byte&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sendandreceive_8ino.html#a9939c0297ca553d8a711e8983a51d3e5">CAN_FREQ</a> = 16</td></tr>
+<tr class="separator:a9939c0297ca553d8a711e8983a51d3e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6101389d5d9d7a1c44982d7552dd8fba"><td class="memItemLeft" align="right" valign="top">unsigned long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sendandreceive_8ino.html#a6101389d5d9d7a1c44982d7552dd8fba">previous_send_time</a> = 0</td></tr>
+<tr class="separator:a6101389d5d9d7a1c44982d7552dd8fba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a00719b8459e45eef153dd766ae813234"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_c_a_n___i_o.html">CAN_IO</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="sendandreceive_8ino.html#a00719b8459e45eef153dd766ae813234">CanControl</a> (<a class="el" href="sendandreceive_8ino.html#a4a61b69ddc646f92bb9806f3c37cdabf">CAN_CS</a>, <a class="el" href="sendandreceive_8ino.html#a667229cec5ebdea1cf6e5dfe2f339cb2">CAN_INT</a>, <a class="el" href="sendandreceive_8ino.html#a80e94abd1663a2cf4f1a005cf9c92429">CAN_BAUD_RATE</a>, <a class="el" href="sendandreceive_8ino.html#a9939c0297ca553d8a711e8983a51d3e5">CAN_FREQ</a>)</td></tr>
+<tr class="memdesc:a00719b8459e45eef153dd766ae813234"><td class="mdescLeft">&#160;</td><td class="mdescRight">Then the can controller object is set up using the configuration variables.  <a href="#a00719b8459e45eef153dd766ae813234">More...</a><br /></td></tr>
+<tr class="separator:a00719b8459e45eef153dd766ae813234"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<h2 class="groupheader">Function Documentation</h2>
+<a id="afe461d27b9c48d5921c00d521181f12f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afe461d27b9c48d5921c00d521181f12f">&#9670;&nbsp;</a></span>loop()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void loop </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a4fc01d736fe50cf5b977f755b675f11d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4fc01d736fe50cf5b977f755b675f11d">&#9670;&nbsp;</a></span>setup()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void setup </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>The Arduino Setup() routine begins the SPI protocols to output received data to the COM window, Sets the applicable CAN filters, and then calls the <a class="el" href="class_c_a_n___i_o.html#a8658429bfd9b825a1e1758514ed387eb" title="Initialization method for the can controller. ">CAN_IO::Setup()</a> routine. In this case, the CAN controller is set up to listen only for BMS State of Charge and motor controller velocity data packets. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Variable Documentation</h2>
+<a id="a80e94abd1663a2cf4f1a005cf9c92429"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a80e94abd1663a2cf4f1a005cf9c92429">&#9670;&nbsp;</a></span>CAN_BAUD_RATE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const uint16_t CAN_BAUD_RATE = 1000</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a4a61b69ddc646f92bb9806f3c37cdabf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4a61b69ddc646f92bb9806f3c37cdabf">&#9670;&nbsp;</a></span>CAN_CS</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const byte CAN_CS = 10</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>First the CAN parameters are initialized. </p>
+
+</div>
+</div>
+<a id="a9939c0297ca553d8a711e8983a51d3e5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9939c0297ca553d8a711e8983a51d3e5">&#9670;&nbsp;</a></span>CAN_FREQ</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const byte CAN_FREQ = 16</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a667229cec5ebdea1cf6e5dfe2f339cb2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a667229cec5ebdea1cf6e5dfe2f339cb2">&#9670;&nbsp;</a></span>CAN_INT</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const byte CAN_INT = 2</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a00719b8459e45eef153dd766ae813234"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a00719b8459e45eef153dd766ae813234">&#9670;&nbsp;</a></span>CanControl</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_c_a_n___i_o.html">CAN_IO</a> CanControl(<a class="el" href="sendandreceive_8ino.html#a4a61b69ddc646f92bb9806f3c37cdabf">CAN_CS</a>, <a class="el" href="sendandreceive_8ino.html#a667229cec5ebdea1cf6e5dfe2f339cb2">CAN_INT</a>, <a class="el" href="sendandreceive_8ino.html#a80e94abd1663a2cf4f1a005cf9c92429">CAN_BAUD_RATE</a>, <a class="el" href="sendandreceive_8ino.html#a9939c0297ca553d8a711e8983a51d3e5">CAN_FREQ</a>)</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Then the can controller object is set up using the configuration variables. </p>
+
+</div>
+</div>
+<a id="a6101389d5d9d7a1c44982d7552dd8fba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6101389d5d9d7a1c44982d7552dd8fba">&#9670;&nbsp;</a></span>previous_send_time</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned long previous_send_time = 0</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

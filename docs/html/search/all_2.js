@@ -38,7 +38,9 @@ var searchData=
   ['com_5fconnected',['com_connected',['../class_t_e_l___status.html#aefa9a71f8f100665198a585b726a2226',1,'TEL_Status']]],
   ['configureinterrupts',['ConfigureInterrupts',['../class_c_a_n___i_o.html#a17eb672ec9cadd64aeacaa9042646413',1,'CAN_IO']]],
   ['controller',['controller',['../class_c_a_n___i_o.html#a639b6c622d0ed337ef26c0fe086e6553',1,'CAN_IO']]],
+  ['creatingnewpackets_2emd',['creatingNewPackets.md',['../creating_new_packets_8md.html',1,'']]],
   ['cruiseoff',['cruiseoff',['../class_s_w___data.html#af1cfe6fb29648597ab4ecf562e1c7b37',1,'SW_Data']]],
   ['cruiseon',['cruiseon',['../class_s_w___data.html#a8f139b8525898105baefb1377953f851',1,'SW_Data']]],
-  ['current',['current',['../class_b_m_s___voltage_current.html#a2a0009549083792356c57ec00e2ff20e',1,'BMS_VoltageCurrent::current()'],['../class_d_c___drive.html#a04b2ef2a009eb52a06122ba6ddc1ea3b',1,'DC_Drive::current()']]]
+  ['current',['current',['../class_b_m_s___voltage_current.html#a2a0009549083792356c57ec00e2ff20e',1,'BMS_VoltageCurrent::current()'],['../class_d_c___drive.html#a04b2ef2a009eb52a06122ba6ddc1ea3b',1,'DC_Drive::current()']]],
+  ['creating_20new_20packet_20layouts_20guide',['Creating New Packet Layouts Guide',['../def_packets_guide.html',1,'']]]
 ];

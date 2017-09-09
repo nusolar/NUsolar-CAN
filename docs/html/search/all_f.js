@@ -7,7 +7,6 @@ var searchData=
   ['s3',['s3',['../struct_frame.html#a50ad5fcad2e6d9669522c51b17a172c5',1,'Frame']]],
   ['second_5fbyte',['second_byte',['../_c_a_n___i_o_8cpp.html#a552355dceae026bf95fd416612fb0ae6',1,'CAN_IO.cpp']]],
   ['send',['Send',['../class_c_a_n___i_o.html#a71e0198aa24bd6125e0a5f0598bb33d5',1,'CAN_IO::Send(const Layout &amp;layout, uint8_t buffer)'],['../class_c_a_n___i_o.html#aaa513fd1e7bde744c3ef7f9fcbbbe573',1,'CAN_IO::Send(const Frame &amp;frame, uint8_t buffer)']]],
-  ['sendandreceive_2eino',['sendandreceive.ino',['../sendandreceive_8ino.html',1,'']]],
   ['sendbuffer',['SendBuffer',['../class_m_c_p2515.html#a9ab369bda1d94a0dd7aa4964ce9c5216',1,'MCP2515']]],
   ['sendverified',['SendVerified',['../class_c_a_n___i_o.html#a666bb97e677c178a8345fb11c5400e62',1,'CAN_IO::SendVerified(const Layout &amp;layout, uint8_t buffer)'],['../class_c_a_n___i_o.html#ad71af5c6b8cc3b9d9f7097f0ddd1c517',1,'CAN_IO::SendVerified(const Frame &amp;frame, uint8_t buffer)']]],
   ['serial_5fno',['serial_no',['../class_b_m_s___heartbeat.html#a8699311b4d2f959920253ed127446b9e',1,'BMS_Heartbeat::serial_no()'],['../class_m_c___heartbeat.html#aa5d3a1b6fa6160b864ea8a7795cbd882',1,'MC_Heartbeat::serial_no()'],['../class_d_c___heartbeat.html#aceae66c7c3b7911dda94093170e462e3',1,'DC_Heartbeat::serial_no()']]],

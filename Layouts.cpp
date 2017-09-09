@@ -50,6 +50,7 @@
  ** 	  default their value to 0. If \ref UNUSED is not assigned, the value of any unassigned part of the data frame is 
  **		  undefined.
  */
+/** See \ref Layout::generate_frame() */
 Frame Layout::generate_frame() const {
 	Frame f;
 	set_header(f);
@@ -57,7 +58,7 @@ Frame Layout::generate_frame() const {
 }
 
 
-// Helper function.
+// A helper function (docs in .h file)
 inline void Layout::set_header(Frame& f, byte size) const {
 	f.id = id;
 	f.dlc = size; // send size bytes
@@ -66,7 +67,7 @@ inline void Layout::set_header(Frame& f, byte size) const {
 	f.srr = 0;
 }
 
-
+/** See \ref Layout::generate_frame() */
 Frame BMS_Heartbeat::generate_frame() const {
 	Frame f;
 	f.low = device_id;
@@ -75,6 +76,7 @@ Frame BMS_Heartbeat::generate_frame() const {
 	return f;
 }
 
+/** See \ref Layout::generate_frame() */
 Frame BMS_SOC::generate_frame() const {
 	Frame f;
 	f.low_f = power_consumed;
@@ -83,6 +85,7 @@ Frame BMS_SOC::generate_frame() const {
 	return f;
 }
 
+/** See \ref Layout::generate_frame() */
 Frame BMS_BalanceSOC::generate_frame() const {
 	Frame f;
 	f.low_f = power_supplied;
@@ -90,6 +93,7 @@ Frame BMS_BalanceSOC::generate_frame() const {
 	set_header(f);
 	return f;
 }
+
 
 Frame BMS_PrechargeStatus::generate_frame() const {
 	Frame f;
@@ -103,6 +107,7 @@ Frame BMS_PrechargeStatus::generate_frame() const {
 	f.data[7] = precharge_timer;
 }
 
+/** See \ref Layout::generate_frame() */
 Frame BMS_VoltageCurrent::generate_frame() const {
 	Frame f;
 	f.low = voltage;
@@ -111,6 +116,7 @@ Frame BMS_VoltageCurrent::generate_frame() const {
 	return f;
 }
 
+/** See \ref Layout::generate_frame() */
 Frame BMS_Status::generate_frame() const {
 	Frame f;
 	f.s0 = voltage_rising;
@@ -122,6 +128,7 @@ Frame BMS_Status::generate_frame() const {
 	return f;
 }
 
+/** See \ref Layout::generate_frame() */
 Frame BMS_Status_Ext::generate_frame() const {
 	Frame f;
 	f.low = flags;
@@ -132,6 +139,7 @@ Frame BMS_Status_Ext::generate_frame() const {
 	return f;
 }
 
+/** See \ref Layout::generate_frame() */
 Frame BMS_FanStatus::generate_frame() const {
 	Frame f;
 	f.s0 = fan0_speed;
@@ -142,6 +150,7 @@ Frame BMS_FanStatus::generate_frame() const {
 	return f;
 }
 
+/** See \ref Layout::generate_frame() */
 Frame MC_Heartbeat::generate_frame() const {
 	Frame f;
 	f.low = trituim_id;
@@ -150,6 +159,7 @@ Frame MC_Heartbeat::generate_frame() const {
 	return f;
 }
 
+/** See \ref Layout::generate_frame() */
 Frame MC_Status::generate_frame() const {
 	Frame f;
 	f.s0 = UNUSED;
@@ -160,6 +170,7 @@ Frame MC_Status::generate_frame() const {
 	return f;
 }
 
+/** See \ref Layout::generate_frame() */
 Frame MC_BusStatus::generate_frame() const {
 	Frame f;
 	f.low_f = bus_voltage;
@@ -168,6 +179,7 @@ Frame MC_BusStatus::generate_frame() const {
 	return f;
 }
 
+/** See \ref Layout::generate_frame() */
 Frame MC_Velocity::generate_frame() const {
 	Frame f;
 	f.low_f = motor_velocity;
@@ -176,6 +188,7 @@ Frame MC_Velocity::generate_frame() const {
 	return f;
 }
 
+/** See \ref Layout::generate_frame() */
 Frame MC_PhaseCurrent::generate_frame() const {
 	Frame f;
 	f.low_f = phase_b;
@@ -184,6 +197,7 @@ Frame MC_PhaseCurrent::generate_frame() const {
 	return f;
 }
 
+/** See \ref Layout::generate_frame() */
 Frame MC_FanSpeed::generate_frame() const {
 	Frame f;
 	f.low_f = drive;
@@ -192,6 +206,7 @@ Frame MC_FanSpeed::generate_frame() const {
 	return f;
 }
 
+/** See \ref Layout::generate_frame() */
 Frame DC_Heartbeat::generate_frame() const {
 	Frame f;
 	f.low = dc_id;
@@ -200,6 +215,7 @@ Frame DC_Heartbeat::generate_frame() const {
 	return f;
 }
 
+/** See \ref Layout::generate_frame() */
 Frame DC_Drive::generate_frame() const {
 	Frame f;
 	f.low_f = velocity;
@@ -208,6 +224,7 @@ Frame DC_Drive::generate_frame() const {
 	return f;
 }
 
+/** See \ref Layout::generate_frame() */
 Frame DC_Power::generate_frame() const {
 	Frame f;
 	f.low_f = 0;
@@ -216,6 +233,7 @@ Frame DC_Power::generate_frame() const {
 	return f;
 }
 
+/** See \ref Layout::generate_frame() */
 Frame DC_Reset::generate_frame() const {
 	Frame f;
 	f.low = 0;
@@ -224,6 +242,7 @@ Frame DC_Reset::generate_frame() const {
 	return f;
 }
 
+/** See \ref Layout::generate_frame() */
 Frame DC_Info::generate_frame() const {
 	Frame f;
 
@@ -255,6 +274,7 @@ Frame DC_Info::generate_frame() const {
 	return f;
 }
 
+/** See \ref Layout::generate_frame() */
 Frame DC_Status::generate_frame() const {
 	Frame f;
 
@@ -266,6 +286,7 @@ Frame DC_Status::generate_frame() const {
 	return f;
 }
 
+/** See \ref Layout::generate_frame() */
 Frame DC_Temp_0::generate_frame() const {
     Frame f;
     f.data[0] = max_temp;
@@ -280,6 +301,7 @@ Frame DC_Temp_0::generate_frame() const {
     return f;
 }
 
+/** See \ref Layout::generate_frame() */
 Frame DC_Temp_1::generate_frame() const {
     Frame f;
 	f.data[0] = temp[1];
@@ -294,6 +316,7 @@ Frame DC_Temp_1::generate_frame() const {
     return f;
 }
 
+/** See \ref Layout::generate_frame() */
 Frame DC_Temp_2::generate_frame() const {
     Frame f;
 	f.data[0] = temp[1];
@@ -308,6 +331,7 @@ Frame DC_Temp_2::generate_frame() const {
     return f;
 }
 
+/** See \ref Layout::generate_frame() */
 Frame DC_Temp_3::generate_frame() const {
     Frame f;
 	f.data[0] = temp[1];
@@ -323,6 +347,7 @@ Frame DC_Temp_3::generate_frame() const {
     return f;
 }
 
+/** See \ref Layout::generate_frame() */
 Frame SW_Data::generate_frame() const {
     Frame f;
     f.data[0] = byte0;
@@ -331,6 +356,7 @@ Frame SW_Data::generate_frame() const {
     return f;
 }
 
+/** See \ref Layout::generate_frame() */
 Frame TEL_Status::generate_frame() const {
     Frame f;
     f.data[0] = 0;

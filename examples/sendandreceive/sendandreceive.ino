@@ -1,6 +1,11 @@
 #include <CAN_IO.h>
 #include <SPI.h>
 
+/*************************************         NOTE        ******************************************************/
+/* This example code is desgined to be run on two Arduino processors connected to a common 1000 kbps 
+/* CAN bus via MCP2515 can controllers. Designate one arduino to be the receiver, and one to be the transmitter.
+/* On the receiver, comment out the SEND block in the loop(). On the transmitter, comment out the RECEIVE block.
+/****************************************************************************************************************/
 
 // First the CAN parameters are initialized
 const byte     CAN_CS      = 10;      // The arduino pin to which the MCP2515 CS (chip select) input is attached
@@ -24,25 +29,19 @@ void setup() {
 
   // Here is where we specify which packets we want to filter out, and then instruct the controler to
   // initialize using the Setup command
-  CanControl.filters.setRB0(MASK_Sxxx,BMS_SOC_ID, MC_VELOCITY_ID); 
+  CanControl.filters.setRB0(MASK_Sxxx,DC_DRIVE_ID, MC_VELOCITY_ID); 
   CanControl.filters.setRB1(MASK_Sxxx,0,0,0,0);
   CanControl.Setup();
 }
 
 void loop() {
-  /******* FETCH ********/
-
-  // If there are any new messages, they will be loaded from the MCP2515 into an internal buffer with
-  // this function call
-  CanControl.Fetch(); 
-
   /******  SEND  ********/
-  // Now, we send data over the CAN bus every 500 ms
+  // Send data over the CAN bus every 500 ms
   if (millis() - previous_send_time > 500) // Check and see whether it is time to send another packet
   {
-    // Send the binary data 01101100, and let the arduino choose which TX (transmit) buffer on the MCP2515 to use
+    // Send the DC_Drive packet, which controls the (velocity, current) of the Wavesculptor 22 motor controller, and let the arduino choose which TX (transmit) buffer on the MCP2515 to use
     // If all you care about is sending data, you can stop after running this command.
-    CanControl.Send(SW_Data(0b01101100),TXBANY);
+    CanControl.Send(DC_Drive(37.5,100),TXBANY);
 
     // To help with debugging the CAN bus, you can print out the error counters of the MCP2515. 
     // Before you read these values, you need to fetch them using the FetchErrors() command, which grabs
@@ -59,17 +58,38 @@ void loop() {
     // This line resets the timing variable we use to send CAN packets.
     previous_send_time = millis();
   }
+  /****** END SEND *******/
+
 
   /******* RECEIVE *******/
-  // Here we check to see if any messages were loaded when we called CanControl.Fetch() on line 35.
+  // If there are any new messages, they will be loaded from the MCP2515 into an internal buffer with
+  // this function call
+  CanControl.Fetch(); 
+
+  // Now we check to see if we fetched any messages.
   if (CanControl.Available())
   {
     // Get the frame of of the buffer. Read() returns a reference to a frame object which we can then convert into a string
     Frame& f = CanControl.Read();
 
-    // Print the frame over serial to the test computer
-    Serial.print(f.toString());
+    // Determine which packet type the frame is using frame.id
+    switch (f.id) {
+      case DC_DRIVE_ID:
+        DC_Drive packet(f); // Initialze a packet object using the data in the frame.
+
+        // Print the data over serial to a test computer
+        Serial.println("Velocity and Current Data Received:");
+        Serial.println(packet.velocity);
+        Serial.println(packet.current);
+        Serial.println("--");
+        break;
+      default: 
+        Serial.print("Unknown Packet Received with id ");
+        Serial.println(f.id);
+        break;
+    }
   }
+  /******** END RECEIVE *********/
 
   // Run the loop() function every 100 ms
   delay(100);

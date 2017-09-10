@@ -1,5 +1,11 @@
 /** \file CAN_IO.h
  *  \brief Contains class definition for CAN_IO library.
+ *
+ *  This is the main #include file for the NUsolar-CAN library. To use the library, put 
+ *  ~~~~{.cpp}
+ *  #include <CAN_IO.h>
+ *  ~~~~
+ *  at the top of your Arduino project. This will automatically include all other necessary files within the library.
  */
 
 #ifndef CAN_IO_h

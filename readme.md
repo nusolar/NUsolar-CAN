@@ -184,9 +184,9 @@ void loop() {
 
 Contact
 -------
-Alexander Martin -- a-martin@u.northwestern.edu
+NUsolar project manager -- project hyphen manager at nusolar dot org
 
-Spencer Williams -- project-manager@nusolar.org
+Alexander Martin -- a hyphen martin at u dot northwestern dot edu
 
 Licence
 -------

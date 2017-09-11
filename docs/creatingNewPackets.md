@@ -1,4 +1,4 @@
-@page def_packets_guide Creating New Packet Layouts Guide
+\page def_packets_guide Creating New Packet Layouts Guide
 
 NUsolar MCP2515 CAN Library for Arduino -- Defining New CAN Packet Layouts
 =====================

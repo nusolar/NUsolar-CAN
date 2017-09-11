@@ -214,9 +214,7 @@ This library is Copyright 2015 by NUsolar. The code may be used in non-commercia
 
 \todo Documentation To-Dos
 -------
-- Write description of how to add a new CAN frame
 - Example snippets for each major function.
 - CANFilterOpt class description
-- Detailed descriptions for each CAN_IO callable function.
 
 @example sendandreceive.ino

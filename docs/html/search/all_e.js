@@ -4,6 +4,8 @@ var searchData=
   ['readbuffer',['ReadBuffer',['../class_m_c_p2515.html#ad37b8e076e1f29be86d226e1388fcf8d',1,'MCP2515']]],
   ['readme_2emd',['readme.md',['../readme_8md.html',1,'']]],
   ['rec',['rec',['../class_c_a_n___i_o.html#acaeb025fc077395159d3a8850205f021',1,'CAN_IO::rec()'],['../_m_c_p2515__defs_8h.html#a8ef3693e46c397a26e50de7d35901e23',1,'REC():&#160;MCP2515_defs.h']]],
+  ['references',['References',['../references.html',1,'']]],
+  ['references_2emd',['references.md',['../references_8md.html',1,'']]],
   ['regen_5fratio',['regen_ratio',['../class_d_c___info.html#a5f4b158938e9eca864c46b0455f3726e',1,'DC_Info']]],
   ['reset',['Reset',['../class_m_c_p2515.html#aa4d4138b984dc87116cf72ae104acb70',1,'MCP2515']]],
   ['resetcontroller',['ResetController',['../class_c_a_n___i_o.html#a359a9994e7068dc3a33462d26f015ce5',1,'CAN_IO']]],

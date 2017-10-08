@@ -261,14 +261,29 @@ public:
 };
 
 //MITSUBA
-class MTBA_REQUEST_COMMAND_REAR_LEFT : public Layout {
+class MTBA_ReqCommRLeft: public Layout {
 public:
+
+	MTBA_ReqCommRLeft(bool f0_req, bool f1_req, bool f2_req) :
+		frame0_request(f0_req), frame1_req(f1_req), frame2_req(f2_req)
+		{ id = MTBA_REQUEST_COMMAND_REAR_LEFT_ID; }
+	MTBA_ReqCommRLeft(const Frame& frame) : frame0_request(frame.s0), frame1_req(frame.s1), frame2_req(frame.s2)
+		{ id = frame.id; }
+	Frame generate_frame() const;
+
 	bool frame0_request;
 	bool frame1_request;
 	bool frame2_request;
 }
-class MTBA_REQUEST_COMMAND_REAR_RIGHT : public Layout {
+class MTBA_ReqCommRRight : public Layout {
 public:
+	MTBA_ReqCommRRight(bool f0_req, bool f1_req, bool f2_req) :
+		frame0_request(f0_req), frame1_req(f1_req), frame2_req(f2_req)
+		{ id = MTBA_REQUEST_COMMAND_REAR_RIGHT_ID; }
+	MTBA_ReqCommRRight(const Frame& frame) : frame0_request(frame.s0), frame1_req(frame.s1), frame2_req(frame.s2)
+		{ id = frame.id; }
+	Frame generate_frame() const;
+
 	bool frame0_request;
 	bool frame1_request;
 	bool frame2_request;

@@ -26,6 +26,7 @@
 #define BMS_STATUS_EXT_ID	0x6FD
 
 // motor controller TX
+/**
 #define MC_BASEADDRESS		0x400
 #define MC_HEARTBEAT_ID		MC_BASEADDRESS
 #define MC_STATUS_ID 		0x401
@@ -33,7 +34,17 @@
 #define MC_VELOCITY_ID		0x403
 #define MC_PHASE_ID			0x404
 #define MC_FANSPEED_ID		0x40A
-#define MC_ODOAMP_ID		0x40E
+#define MC_ODOAMP_ID		0x40E**/
+
+// mitsuba motor controller
+#define MTBA_REQUEST_COMMAND_REAR_LEFT_ID		0x08F89540
+#define MTBA_REQUEST_COMMAND_REAR_RIGHT_ID	0x08F91540
+#define MTBA_FRAME0_REAR_LEFT_ID		0x08850225
+#define MTBA_FRAME0_REAR_RIGHT_ID		0x08850245
+#define MTBA_FRAME1_REAR_LEFT_ID		0x08950225
+#define MTBA_FRAME1_REAR_RIGHT_ID		0x08950245
+#define MTBA_FRAME2_REAR_LEFT_ID		0x08A50225
+#define MTBA_FRAME2_REAR_RIGHT_ID		0x08A50245
 
 // driver controls TX
 #define DC_BASEADDRESS		0x500
@@ -249,9 +260,107 @@ public:
 	uint16_t cmu_consumption;
 };
 
+//MITSUBA
+class MTBA_REQUEST_COMMAND_REAR_LEFT : public Layout {
+public:
+	bool frame0_request;
+	bool frame1_request;
+	bool frame2_request;
+}
+class MTBA_REQUEST_COMMAND_REAR_RIGHT : public Layout {
+public:
+	bool frame0_request;
+	bool frame1_request;
+	bool frame2_request;
+}
+class MTBA_FRAME0_REAR_RIGHT : public Layout{
+public:
+	//battery_volatage;
+	//battery_current;
+	bool battery_current_direction;
+	//motor_current_peak_avg;
+	//fet_temperature;
+	//motor_rotating_speed;
+	//pwm_duty;
+	//lead_angle;
+}		
+class MTBA_FRAME0_REAR_LEFT : public Layout{
+public:
+	//battery_volatage;
+	//battery_current;
+	bool battery_current_direction;
+	//motor_current_peak_avg;
+	//fet_temperature;
+	//motor_rotating_speed;
+	//pwm_duty;
+	//lead_angle;
+}		
+class MTBA_FRAME1_REAR_RIGHT : public Layout{
+public:
+	bool power_mode;
+	bool motor_control_mode;
+	//accelerator_position;
+	//regeneration_vr_position;
+	//digit_sw_position;
+	//output_target_value;
+	//drive_action_status;
+	bool regeneration_status;
+}		
+class MTBA_FRAME1_REAR_LEFT	: public Layout{
+	bool power_mode;
+	bool motor_control_mode;
+	//accelerator_position;
+	//regeneration_vr_position;
+	//digit_sw_position;
+	//output_target_value;
+	//drive_action_status;
+	bool regeneration_status;
+}
+
+class MTBA_FRAME2_REAR_RIGHT : public Layout{
+	bool analog_sensor_error;
+	bool motor_current_sensor_u_error;
+	bool motor_current_sensor_w_error;
+	bool fet_thermistor_error;
+	bool rfu1;
+	bool battery_voltage_sensor_error;
+	bool battery_current_sensor_error;
+	bool battery_current_sensor_adjust_error;
+	bool motor_current_sensor_adjust_error;
+	bool accelerator_position_error;
+	bool rfu2;
+	bool controller_voltage_sensor_error;
+	//rfu3
+	bool power_system_error;
+	bool over_current_error;
+	bool rfu4;
+	bool over_voltage_error;
+	bool rfu5;
+	bool over_current_limit;
+	//rfu6
+	bool motor_system_error;
+	bool motor_lock;
+	bool hall_sensor_short;
+	bool hall_sensor_open;
+	//rfu7
+	//over_heat_level
+}
+
+class MTBA_FRAME2_REAR_LEFT	: public Layout{
+	bool power_mode;
+	bool motor_control_mode;
+	//accelerator_position;
+	//regeneration_vr_position;
+	//digit_sw_position;
+	//output_target_value;
+	//drive_action_status;
+	bool regeneration_status;
+}
+
 /*
  * Motor controller heartbeat packet.
  */
+/**
 class MC_Heartbeat : public Layout {
 public:
 	MC_Heartbeat(uint32_t t_id, uint32_t s_no) : trituim_id(t_id), serial_no(s_no) { id = MC_HEARTBEAT_ID; }
@@ -261,11 +370,12 @@ public:
 
 	uint32_t trituim_id; // is actually a char[8]
 	uint32_t serial_no;
-};
+};**/
 
 /*
  * Motor controller status packet.
  */
+/**
 class MC_Status : public Layout {
 public:
 	MC_Status(uint16_t act_m, uint16_t err_f, uint16_t lim_f) : 
@@ -280,10 +390,11 @@ public:
 	uint16_t err_flags;
 	uint16_t limit_flags;
 };
-
+**/
 /*
  * Motor controller bus status packet.
  */
+/**
 class MC_BusStatus : public Layout {
 public:
 	MC_BusStatus(float bc, float bv) : bus_current(bc), bus_voltage(bv) { id = MC_BUS_STATUS_ID; }
@@ -293,11 +404,12 @@ public:
 
 	float bus_current;
 	float bus_voltage;
-};
+};**/
 
 /*
  * Motor controller velocity packet.
  */
+/**
 class MC_Velocity : public Layout {
 public:
 	MC_Velocity(float car_v, float motor_v) : car_velocity(car_v), motor_velocity(motor_v) { id = MC_VELOCITY_ID; }
@@ -307,11 +419,12 @@ public:
 
 	float car_velocity;
 	float motor_velocity;
-};
+};**/
 
 /*
  * Motor controller motor phase current packet.
  */
+/**
 class MC_PhaseCurrent : public Layout {
 public:
 	MC_PhaseCurrent(float a, float b) : phase_a(a), phase_b(b) { id = MC_PHASE_ID; }
@@ -343,7 +456,7 @@ public:
 
 	float bus_amphours;
 	float odometer;
-};
+};**/
 
 /*
  * Driver controls heartbeat packet.

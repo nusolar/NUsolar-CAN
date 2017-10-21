@@ -265,9 +265,9 @@ class MTBA_ReqCommRLeft: public Layout {
 public:
 
 	MTBA_ReqCommRLeft(bool f0_req, bool f1_req, bool f2_req) :
-		frame0_request(f0_req), frame1_req(f1_req), frame2_req(f2_req)
+		frame0_request(f0_req), frame1_request(f1_req), frame2_request(f2_req)
 		{ id = MTBA_REQUEST_COMMAND_REAR_LEFT_ID; }
-	MTBA_ReqCommRLeft(const Frame& frame) : frame0_request(frame.s0), frame1_req(frame.s1), frame2_req(frame.s2)
+	MTBA_ReqCommRLeft(const Frame& frame) : frame0_request(frame.s0), frame1_request(frame.s1), frame2_request(frame.s2)
 		{ id = frame.id; }
 	Frame generate_frame() const;
 
@@ -278,9 +278,9 @@ public:
 class MTBA_ReqCommRRight : public Layout {
 public:
 	MTBA_ReqCommRRight(bool f0_req, bool f1_req, bool f2_req) :
-		frame0_request(f0_req), frame1_req(f1_req), frame2_req(f2_req)
+		frame0_request(f0_req), frame1_request(f1_req), frame2_request(f2_req)
 		{ id = MTBA_REQUEST_COMMAND_REAR_RIGHT_ID; }
-	MTBA_ReqCommRRight(const Frame& frame) : frame0_request(frame.s0), frame1_req(frame.s1), frame2_req(frame.s2)
+	MTBA_ReqCommRRight(const Frame& frame) : frame0_request(frame.s0), frame1_request(frame.s1), frame2_request(frame.s2)
 		{ id = frame.id; }
 	Frame generate_frame() const;
 
@@ -288,51 +288,154 @@ public:
 	bool frame1_request;
 	bool frame2_request;
 }
-class MTBA_FRAME0_REAR_RIGHT : public Layout{
+class MTBA_F0_RRight : public Layout{
 public:
-	//battery_volatage;
-	//battery_current;
+	MTBA_F0_RRight(double bv, double bc, bool bcd, double mcpa, double ft, double mrs, double pd, double la) :
+		battery_voltage(bv), battery_current(bc), battery_current_direction(bcd),
+		motor_current_peak_avg(mcpa), fet_temperature(ft), motor_rotating_speed(mrs), pwm_duty(pd), lead_angle(la)
+		{ id = MTBA_FRAME0_REAR_RIGHT_ID; }
+	MTBA_F0_RRight(const Frame& frame) : battery_voltage(frame.s0), battery_current(frame.s1), battery_current_direction(frame.s2),
+		motor_current_peak_avg(frame.s3), fet_temperature(frame.s4), motor_rotating_speed(frame.s5), pwm_duty(frame.s6), lead_angle(frame.s7)
+		{ id = frame.id; }
+
+	Frame generate_frame() const;
+
+	double battery_voltage;
+	double battery_current;
 	bool battery_current_direction;
-	//motor_current_peak_avg;
-	//fet_temperature;
-	//motor_rotating_speed;
-	//pwm_duty;
-	//lead_angle;
+	double motor_current_peak_avg;
+	int fet_temperature;
+	double motor_rotating_speed;
+	double pwm_duty;
+	double lead_angle;
 }		
-class MTBA_FRAME0_REAR_LEFT : public Layout{
+class  MTBA_F0_RLeft : public Layout{
 public:
-	//battery_volatage;
-	//battery_current;
+	MTBA_F0_RLeft(double bv, double bc, bool bcd, double mcpa, double ft, double mrs, double pd, double la) :
+		battery_voltage(bv), battery_current(bc), battery_current_direction(bcd),
+		motor_current_peak_avg(mcpa), fet_temperature(ft), motor_rotating_speed(mrs), pwm_duty(pd), lead_angle(la)
+		{ id = MTBA_FRAME0_REAR_LEFT_ID; }
+	MTBA_F0_RLeft(const Frame& frame) : battery_voltage(frame.s0), battery_current(frame.s1), battery_current_direction(frame.s2),
+		motor_current_peak_avg(frame.s3), fet_temperature(frame.s4), motor_rotating_speed(frame.s5), pwm_duty(frame.s6), lead_angle(frame.s7)
+		{ id = frame.id; }
+
+	Frame generate_frame() const;
+
+	double battery_voltage;
+	double battery_current;
 	bool battery_current_direction;
-	//motor_current_peak_avg;
-	//fet_temperature;
-	//motor_rotating_speed;
-	//pwm_duty;
-	//lead_angle;
+	double motor_current_peak_avg;
+	int fet_temperature;
+	double motor_rotating_speed;
+	double pwm_duty;
+	double lead_angle;
 }		
-class MTBA_FRAME1_REAR_RIGHT : public Layout{
+class MTBA_F1_RRight : public Layout{
 public:
+	MTBA_F1_RRight(bool pm, bool mcm, double ap, double rvp, double dsp, double otv, double das, bool rs) :
+		power_mode(pm), motor_control_mode(mcm), accelerator_position(ap), regeneration_vr_position(rvp), digit_sw_position(dsp),
+		output_target_value(otv), drive_action_status(das), regeneration_status(rs)
+		{ id = MTBA_FRAME1_REAR_RIGHT_ID; }
+	MTBA_F1_RRight(const Frame& frame) : power_mode(frame.s0), motor_control_mode(frame.s1), accelerator_position(frame.s2), 
+		regeneration_vr_position(frame.s3), digit_sw_position(frame.s4), output_target_value(frame.s5), drive_action_status(frame.s6), 
+		regeneration_status(frame.s7)
+		{ id = frame.id; }
+
+	Frame generate_frame() const;
+
 	bool power_mode;
 	bool motor_control_mode;
-	//accelerator_position;
-	//regeneration_vr_position;
-	//digit_sw_position;
-	//output_target_value;
-	//drive_action_status;
+	double accelerator_position;
+	double regeneration_vr_position;
+	double digit_sw_position;
+	double output_target_value;
+	double drive_action_status;
 	bool regeneration_status;
 }		
-class MTBA_FRAME1_REAR_LEFT	: public Layout{
+class MTBA_F1_RLeft: public Layout{
+	MTBA_F1_RLeft(bool pm, bool mcm, double ap, double rvp, double dsp, double otv, double das, bool rs) :
+		power_mode(pm), motor_control_mode(mcm), accelerator_position(ap), regeneration_vr_position(rvp), digit_sw_position(dsp),
+		output_target_value(otv), drive_action_status(das), regeneration_status(rs)
+		{ id = MTBA_FRAME1_REAR_LEFT_ID; }
+	MTBA_F1_RLeft(const Frame& frame) : power_mode(frame.s0), motor_control_mode(frame.s1), accelerator_position(frame.s2), 
+		regeneration_vr_position(frame.s3), digit_sw_position(frame.s4), output_target_value(frame.s5), drive_action_status(frame.s6), 
+		regeneration_status(frame.s7)
+		{ id = frame.id; }
+
+	Frame generate_frame() const;
+
 	bool power_mode;
 	bool motor_control_mode;
-	//accelerator_position;
-	//regeneration_vr_position;
-	//digit_sw_position;
-	//output_target_value;
-	//drive_action_status;
+	double accelerator_position;
+	double regeneration_vr_position;
+	double digit_sw_position;
+	double output_target_value;
+	double drive_action_status;
 	bool regeneration_status;
 }
 
-class MTBA_FRAME2_REAR_RIGHT : public Layout{
+class MTBA_F2_RLeft : public Layout{
+	MTBA_F2_RLeft(bool ase, bool mcsue, bool mcswe, bool fte, bool r1, bool bvse, bool bcse, bool bcsae, bool mcsae, bool ape, bool r2, bool cvse,
+		double r3, bool pse, bool oce, bool r4, bool ove, bool r5, bool ocl, double r6, bool mse, bool ml, bool hss, bool hso, double r7, double ohl) : 
+	analog_sensor_error(ase),
+	motor_current_sensor_u_error(mcsue),
+	motor_current_sensor_w_error(mcswe),
+	fet_thermistor_error(fte),
+	rfu1(r1),
+	battery_voltage_sensor_error(bvse),
+	battery_current_sensor_error(bcse),	
+	battery_current_sensor_adjust_error(bcsae),
+	motor_current_sensor_adjust_error(mcsae),
+	accelerator_position_error(ape),
+	rfu2(r2),
+	controller_voltage_sensor_error(cvse),
+	rfu3(r3),
+	power_system_error(pse),
+	over_current_error(oce),
+	rfu4(r4),
+	over_voltage_error(ove),
+	rfu5(r5)
+	over_current_limit(ocl),
+	rfu6(r6),
+	motor_system_error(mse),
+	motor_lock(ml),
+	hall_sensor_short(hss),
+	hall_sensor_open(hso),
+	rfu7(r7),
+	over_heat_level(ohl)
+		{ id = MTBA_FRAME2_REAR_LEFT_ID; }
+	MTBA_F2_RLeft(const Frame& frame) : 
+	analog_sensor_error(frame.s0),
+	motor_current_sensor_u_error(frame.s1),
+	motor_current_sensor_w_error(frame.s2),
+	fet_thermistor_error(frame.s3),
+	rfu1(frame.s4),
+	battery_voltage_sensor_error(frame.s5),
+	battery_current_sensor_error(frame.s6),	
+	battery_current_sensor_adjust_error(frame.s7),
+	motor_current_sensor_adjust_error(frame.s8),
+	accelerator_position_error(frame.s9),
+	rfu2(frame.s10),
+	controller_voltage_sensor_error(frame.s11),
+	rfu3(r3),
+	power_system_error(frame.s12),
+	over_current_error(frame.s13),
+	rfu4(frame.s14),
+	over_voltage_error(frame.s15),
+	rfu5(frame.s16)
+	over_current_limit(frame.s17),
+	rfu6(frame.s18),
+	motor_system_error(frame.s19),
+	motor_lock(frame.s20),
+	hall_sensor_short(frame.s21),
+	hall_sensor_open(frame.s22),
+	rfu7(frame.s23),
+	over_heat_level(frame.s24)
+		{ id = frame.id; }
+
+	Frame generate_frame() const;
+
+
 	bool analog_sensor_error;
 	bool motor_current_sensor_u_error;
 	bool motor_current_sensor_w_error;
@@ -345,31 +448,110 @@ class MTBA_FRAME2_REAR_RIGHT : public Layout{
 	bool accelerator_position_error;
 	bool rfu2;
 	bool controller_voltage_sensor_error;
-	//rfu3
+	double rfu3;
 	bool power_system_error;
 	bool over_current_error;
 	bool rfu4;
 	bool over_voltage_error;
 	bool rfu5;
 	bool over_current_limit;
-	//rfu6
+	double rfu6;
 	bool motor_system_error;
 	bool motor_lock;
 	bool hall_sensor_short;
 	bool hall_sensor_open;
-	//rfu7
-	//over_heat_level
+	double rfu7;
+	double over_heat_level;
 }
 
-class MTBA_FRAME2_REAR_LEFT	: public Layout{
-	bool power_mode;
-	bool motor_control_mode;
-	//accelerator_position;
-	//regeneration_vr_position;
-	//digit_sw_position;
-	//output_target_value;
-	//drive_action_status;
-	bool regeneration_status;
+class MTBA_F2_RRight	: public Layout{
+	MTBA_F2_RRight(bool ase, bool mcsue, bool mcswe, bool fte, bool r1, bool bvse, bool bcse, bool bcsae, bool mcsae, bool ape, bool r2, bool cvse,
+		double r3, bool pse, bool oce, bool r4, bool ove, bool r5, bool ocl, double r6, bool mse, bool ml, bool hss, bool hso, double r7, double ohl) : 
+	analog_sensor_error(ase),
+	motor_current_sensor_u_error(mcsue),
+	motor_current_sensor_w_error(mcswe),
+	fet_thermistor_error(fte),
+	rfu1(r1),
+	battery_voltage_sensor_error(bvse),
+	battery_current_sensor_error(bcse),	
+	battery_current_sensor_adjust_error(bcsae),
+	motor_current_sensor_adjust_error(mcsae),
+	accelerator_position_error(ape),
+	rfu2(r2),
+	controller_voltage_sensor_error(cvse),
+	rfu3(r3),
+	power_system_error(pse),
+	over_current_error(oce),
+	rfu4(r4),
+	over_voltage_error(ove),
+	rfu5(r5)
+	over_current_limit(ocl),
+	rfu6(r6),
+	motor_system_error(mse),
+	motor_lock(ml),
+	hall_sensor_short(hss),
+	hall_sensor_open(hso),
+	rfu7(r7),
+	over_heat_level(ohl)
+		{ id = MTBA_FRAME2_REAR_RIGHT_ID; }
+	MTBA_F2_RRight(const Frame& frame) : 
+	analog_sensor_error(frame.s0),
+	motor_current_sensor_u_error(frame.s1),
+	motor_current_sensor_w_error(frame.s2),
+	fet_thermistor_error(frame.s3),
+	rfu1(frame.s4),
+	battery_voltage_sensor_error(frame.s5),
+	battery_current_sensor_error(frame.s6),	
+	battery_current_sensor_adjust_error(frame.s7),
+	motor_current_sensor_adjust_error(frame.s8),
+	accelerator_position_error(frame.s9),
+	rfu2(frame.s10),
+	controller_voltage_sensor_error(frame.s11),
+	rfu3(r3),
+	power_system_error(frame.s12),
+	over_current_error(frame.s13),
+	rfu4(frame.s14),
+	over_voltage_error(frame.s15),
+	rfu5(frame.s16)
+	over_current_limit(frame.s17),
+	rfu6(frame.s18),
+	motor_system_error(frame.s19),
+	motor_lock(frame.s20),
+	hall_sensor_short(frame.s21),
+	hall_sensor_open(frame.s22),
+	rfu7(frame.s23),
+	over_heat_level(frame.s24)
+		{ id = frame.id; }
+
+	Frame generate_frame() const;
+
+
+	bool analog_sensor_error;
+	bool motor_current_sensor_u_error;
+	bool motor_current_sensor_w_error;
+	bool fet_thermistor_error;
+	bool rfu1;
+	bool battery_voltage_sensor_error;
+	bool battery_current_sensor_error;
+	bool battery_current_sensor_adjust_error;
+	bool motor_current_sensor_adjust_error;
+	bool accelerator_position_error;
+	bool rfu2;
+	bool controller_voltage_sensor_error;
+	double rfu3;
+	bool power_system_error;
+	bool over_current_error;
+	bool rfu4;
+	bool over_voltage_error;
+	bool rfu5;
+	bool over_current_limit;
+	double rfu6;
+	bool motor_system_error;
+	bool motor_lock;
+	bool hall_sensor_short;
+	bool hall_sensor_open;
+	double rfu7;
+	double over_heat_level;
 }
 
 /*

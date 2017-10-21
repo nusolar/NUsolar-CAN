@@ -86,7 +86,7 @@ Frame BMS_Status_Ext::generate_frame() const {
 	f.data[4] = hardware_version;
 	f.data[5] = model;
 	f.s3 = UNUSED;
-	set_header(f);
+	set_header(f);8
 	return f;
 }
 
@@ -296,4 +296,135 @@ Frame TEL_Status::generate_frame() const {
     f.data[0] |= com_connected << 1;
     set_header(f);
     return f;
+}
+
+Frame MTBA_ReqCommRLeft::generate_frame() const {
+	Frame f;
+	f.s0=frame0_request;
+	f.s1=frame1_request; 
+	f.s2=frame2_request;
+	set_header(f);
+	return f;
+}
+Frame MTBA_ReqCommRRight::generate_frame() const {
+	Frame f;
+	f.s0=frame0_request;
+	f.s1=frame1_request; 
+	f.s2=frame2_request;
+	set_header(f);
+	return f;
+}
+Frame MTBA_F0_RRight::generate_frame() const {
+	Frame f;
+	f.s0=battery_voltage; 
+	f.s1=battery_current;
+	f.s2=battery_current_direction;
+	f.s3=motor_current_peak_avg;
+	f.s4=fet_temperature;
+	f.s5=motor_rotating_speed;
+	f.s6=pwm_duty;
+	f.s7=lead_angle;
+	set_header(f);
+	return f;
+}
+Frame MTBA_F0_RLeft::generate_frame() const {
+	Frame f;
+	f.s0=battery_voltage; 
+	f.s1=battery_current;
+	f.s2=battery_current_direction;
+	f.s3=motor_current_peak_avg;
+	f.s4=fet_temperature;
+	f.s5=motor_rotating_speed;
+	f.s6=pwm_duty;
+	f.s7=lead_angle;
+	set_header(f);
+	return f;
+}
+Frame MTBA_F1_RRight::generate_frame() const {
+	Frame f;
+	f.s0=power_mode; 
+	f.s1=motor_control_mode;
+	f.s2=accelerator_position;
+	f.s3=regeneration_vr_position;
+	f.s4=digit_sw_position;
+	f.s5=output_target_value;
+	f.s6=drive_action_status;
+	f.s7=regeneration_status;
+	set_header(f);
+	return f;
+}
+Frame MTBA_F1_RLeft::generate_frame() const {
+	Frame f;
+	f.s0=power_mode; 
+	f.s1=motor_control_mode;
+	f.s2=accelerator_position;
+	f.s3=regeneration_vr_position;
+	f.s4=digit_sw_position;
+	f.s5=output_target_value;
+	f.s6=drive_action_status;
+	f.s7=regeneration_status;
+	set_header(f);
+	return f;
+}
+Frame MTBA_F2_RLeft::generate_frame() const {
+	Frame f;
+	f.s0=analog_sensor_error;
+	f.s1=motor_current_sensor_u_error;
+	f.s2=motor_current_sensor_w_error;
+	f.s3=fet_thermistor_error;
+	f.s4=rfu1;
+	f.s5=battery_voltage_sensor_error;
+	f.s6=battery_current_sensor_error;
+	f.s7=battery_current_sensor_adjust_error;
+	f.s8=motor_current_sensor_adjust_error;
+	f.s9=accelerator_position_error;
+	f.s10=rfu2;
+	f.s11=controller_voltage_sensor_error;
+	f.s12=rfu3;
+	f.s13=power_system_error;
+	f.s14=over_current_error;
+	f.s15=rfu4;
+	f.s16=over_voltage_error;
+	f.s17=rfu5;
+	f.s18=over_current_limit;
+	f.s19=rfu6;
+	f.s20=motor_system_error;
+	f.s21=motor_lock;
+	f.s22=hall_sensor_short;
+	f.s23=hall_sensor_open;
+	f.s24=rfu7;
+	f.s25=over_heat_level;
+	set_header(f);
+	return f;
+}
+Frame MTBA_F2_RRight::generate_frame() const {
+	Frame f;
+	f.s0=analog_sensor_error;
+	f.s1=motor_current_sensor_u_error;
+	f.s2=motor_current_sensor_w_error;
+	f.s3=fet_thermistor_error;
+	f.s4=rfu1;
+	f.s5=battery_voltage_sensor_error;
+	f.s6=battery_current_sensor_error;
+	f.s7=battery_current_sensor_adjust_error;
+	f.s8=motor_current_sensor_adjust_error;
+	f.s9=accelerator_position_error;
+	f.s10=rfu2;
+	f.s11=controller_voltage_sensor_error;
+	f.s12=rfu3;
+	f.s13=power_system_error;
+	f.s14=over_current_error;
+	f.s15=rfu4;
+	f.s16=over_voltage_error;
+	f.s17=rfu5;
+	f.s18=over_current_limit;
+	f.s19=rfu6;
+	f.s20=motor_system_error;
+	f.s21=motor_lock;
+	f.s22=hall_sensor_short;
+	f.s23=hall_sensor_open;
+	f.s24=rfu7;
+	f.s25=over_heat_level;
+	set_header(f);
+	return f;
 }

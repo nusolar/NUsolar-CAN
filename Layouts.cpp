@@ -86,7 +86,7 @@ Frame BMS_Status_Ext::generate_frame() const {
 	f.data[4] = hardware_version;
 	f.data[5] = model;
 	f.s3 = UNUSED;
-	set_header(f);8
+	set_header(f);
 	return f;
 }
 
@@ -99,7 +99,7 @@ Frame BMS_FanStatus::generate_frame() const {
 	set_header(f);
 	return f;
 }
-
+/**
 Frame MC_Heartbeat::generate_frame() const {
 	Frame f;
 	f.low = trituim_id;
@@ -149,7 +149,7 @@ Frame MC_FanSpeed::generate_frame() const {
 	set_header(f);
 	return f;
 }
-
+**/
 Frame DC_Heartbeat::generate_frame() const {
 	Frame f;
 	f.low = dc_id;

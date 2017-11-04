@@ -274,7 +274,7 @@ public:
 	bool frame0_request;
 	bool frame1_request;
 	bool frame2_request;
-}
+};
 class MTBA_ReqCommRRight : public Layout {
 public:
 	MTBA_ReqCommRRight(bool f0_req, bool f1_req, bool f2_req) :
@@ -287,7 +287,7 @@ public:
 	bool frame0_request;
 	bool frame1_request;
 	bool frame2_request;
-}
+};
 class MTBA_F0_RRight : public Layout{
 public:
 	MTBA_F0_RRight(double bv, double bc, bool bcd, double mcpa, double ft, double mrs, double pd, double la) :
@@ -308,7 +308,7 @@ public:
 	double motor_rotating_speed;
 	double pwm_duty;
 	double lead_angle;
-}		
+};		
 class  MTBA_F0_RLeft : public Layout{
 public:
 	MTBA_F0_RLeft(double bv, double bc, bool bcd, double mcpa, double ft, double mrs, double pd, double la) :
@@ -329,7 +329,7 @@ public:
 	double motor_rotating_speed;
 	double pwm_duty;
 	double lead_angle;
-}		
+};		
 class MTBA_F1_RRight : public Layout{
 public:
 	MTBA_F1_RRight(bool pm, bool mcm, double ap, double rvp, double dsp, double otv, double das, bool rs) :
@@ -351,7 +351,7 @@ public:
 	double output_target_value;
 	double drive_action_status;
 	bool regeneration_status;
-}		
+};		
 class MTBA_F1_RLeft: public Layout{
 	MTBA_F1_RLeft(bool pm, bool mcm, double ap, double rvp, double dsp, double otv, double das, bool rs) :
 		power_mode(pm), motor_control_mode(mcm), accelerator_position(ap), regeneration_vr_position(rvp), digit_sw_position(dsp),
@@ -372,7 +372,7 @@ class MTBA_F1_RLeft: public Layout{
 	double output_target_value;
 	double drive_action_status;
 	bool regeneration_status;
-}
+};
 
 class MTBA_F2_RLeft : public Layout{
 	MTBA_F2_RLeft(bool ase, bool mcsue, bool mcswe, bool fte, bool r1, bool bvse, bool bcse, bool bcsae, bool mcsae, bool ape, bool r2, bool cvse,
@@ -394,7 +394,7 @@ class MTBA_F2_RLeft : public Layout{
 	over_current_error(oce),
 	rfu4(r4),
 	over_voltage_error(ove),
-	rfu5(r5)
+	rfu5(r5),
 	over_current_limit(ocl),
 	rfu6(r6),
 	motor_system_error(mse),
@@ -417,20 +417,20 @@ class MTBA_F2_RLeft : public Layout{
 	accelerator_position_error(frame.s9),
 	rfu2(frame.s10),
 	controller_voltage_sensor_error(frame.s11),
-	rfu3(r3),
-	power_system_error(frame.s12),
-	over_current_error(frame.s13),
-	rfu4(frame.s14),
-	over_voltage_error(frame.s15),
-	rfu5(frame.s16)
-	over_current_limit(frame.s17),
-	rfu6(frame.s18),
-	motor_system_error(frame.s19),
-	motor_lock(frame.s20),
-	hall_sensor_short(frame.s21),
-	hall_sensor_open(frame.s22),
-	rfu7(frame.s23),
-	over_heat_level(frame.s24)
+	rfu3(frame.s12),
+	power_system_error(frame.s13),
+	over_current_error(frame.s14),
+	rfu4(frame.s15),
+	over_voltage_error(frame.s16),
+	rfu5(frame.s17),
+	over_current_limit(frame.s18),
+	rfu6(frame.s19),
+	motor_system_error(frame.s20),
+	motor_lock(frame.s21),
+	hall_sensor_short(frame.s22),
+	hall_sensor_open(frame.s23),
+	rfu7(frame.s24),
+	over_heat_level(frame.s25)
 		{ id = frame.id; }
 
 	Frame generate_frame() const;
@@ -462,7 +462,7 @@ class MTBA_F2_RLeft : public Layout{
 	bool hall_sensor_open;
 	double rfu7;
 	double over_heat_level;
-}
+};
 
 class MTBA_F2_RRight	: public Layout{
 	MTBA_F2_RRight(bool ase, bool mcsue, bool mcswe, bool fte, bool r1, bool bvse, bool bcse, bool bcsae, bool mcsae, bool ape, bool r2, bool cvse,
@@ -484,7 +484,7 @@ class MTBA_F2_RRight	: public Layout{
 	over_current_error(oce),
 	rfu4(r4),
 	over_voltage_error(ove),
-	rfu5(r5)
+	rfu5(r5),
 	over_current_limit(ocl),
 	rfu6(r6),
 	motor_system_error(mse),
@@ -507,20 +507,20 @@ class MTBA_F2_RRight	: public Layout{
 	accelerator_position_error(frame.s9),
 	rfu2(frame.s10),
 	controller_voltage_sensor_error(frame.s11),
-	rfu3(r3),
-	power_system_error(frame.s12),
-	over_current_error(frame.s13),
-	rfu4(frame.s14),
-	over_voltage_error(frame.s15),
-	rfu5(frame.s16)
-	over_current_limit(frame.s17),
-	rfu6(frame.s18),
-	motor_system_error(frame.s19),
-	motor_lock(frame.s20),
-	hall_sensor_short(frame.s21),
-	hall_sensor_open(frame.s22),
-	rfu7(frame.s23),
-	over_heat_level(frame.s24)
+	rfu3(frame.s12),
+	power_system_error(frame.s13),
+	over_current_error(frame.s14),
+	rfu4(frame.s15),
+	over_voltage_error(frame.s16),
+	rfu5(frame.s17),
+	over_current_limit(frame.s18),
+	rfu6(frame.s19),
+	motor_system_error(frame.s20),
+	motor_lock(frame.s21),
+	hall_sensor_short(frame.s22),
+	hall_sensor_open(frame.s23),
+	rfu7(frame.s24),
+	over_heat_level(frame.s25)
 		{ id = frame.id; }
 
 	Frame generate_frame() const;
@@ -552,7 +552,7 @@ class MTBA_F2_RRight	: public Layout{
 	bool hall_sensor_open;
 	double rfu7;
 	double over_heat_level;
-}
+};
 
 /*
  * Motor controller heartbeat packet.

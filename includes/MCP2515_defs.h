@@ -19,7 +19,7 @@
 
 typedef struct
 {
-      unsigned long id;      // EID if ide set, SID otherwise
+      long id;      // EID if ide set, SID otherwise //used to be unsigned long but modified to handle large MTBA IDs
       byte srr = 0;                  // Standard Frame Remote Transmit Request
       byte rtr = 0;                  // Remote Transmission Request
       byte ide = 0;                  // Extended ID flag

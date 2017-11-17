@@ -20,16 +20,16 @@
 struct CANFilterOpt {
 	uint16_t RXM0; // mask 0 (RXB0)
 	uint16_t RXM1; // mask 1 (RXB1)
-	uint16_t RXF0; // filter 0 (RXB0)
-	uint16_t RXF1; // filter 1 (RXB0)
-	uint16_t RXF2; // filter 2 (RXB1)
-	uint16_t RXF3; // filter 3 (RXB1)
-	uint16_t RXF4; // filter 4 (RXB1)
-	uint16_t RXF5; // filter 5 (RXB1)
+	int32_t RXF0; // filter 0 (RXB0)
+	int32_t RXF1; // filter 1 (RXB0)
+	int32_t RXF2; // filter 2 (RXB1)
+	int32_t RXF3; // filter 3 (RXB1)
+	int32_t RXF4; // filter 4 (RXB1)
+	int32_t RXF5; // filter 5 (RXB1)
 
 	CANFilterOpt() : RXM0(0), RXM1(0) {} // Initialize to no masking
 
-	CANFilterOpt& setRB0(uint16_t m0, uint16_t f0, uint16_t f1)
+	CANFilterOpt& setRB0(uint16_t m0, int32_t f0, int32_t f1)
 	{
 	  RXM0 = m0;
 	  RXF0 = f0;
@@ -37,7 +37,7 @@ struct CANFilterOpt {
 	  return *(this); //Allow chaining
 	}
 	
-	CANFilterOpt& setRB1(uint16_t m1, uint16_t f2, uint16_t f3, uint16_t f4, uint16_t f5)
+	CANFilterOpt& setRB1(uint16_t m1, uint32_t f2, int32_t f3, int32_t f4, int32_t f5)
 	{
 	  RXM1 = m1;
 	  RXF2 = f2;

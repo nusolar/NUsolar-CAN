@@ -20,6 +20,10 @@ inline void Layout::set_header(Frame& f, byte size) const {
 	f.id = id;
 	f.dlc = size; // send size bytes
 	f.ide = 0; // make it a standard frame
+	//set .ide frame vairable to True when sending/receiving an extended packet
+	if (id > 0xffff){
+		f.ide = 1;
+	}
 	f.rtr = 0; // make it a data frame
 	f.srr = 0;
 }
@@ -300,17 +304,13 @@ Frame TEL_Status::generate_frame() const {
 
 Frame MTBA_ReqCommRLeft::generate_frame() const {
 	Frame f;
-	f.s0=frame0_request;
-	f.s1=frame1_request; 
-	f.s2=frame2_request;
+	f.data[0] = frame0_request;
 	set_header(f);
 	return f;
 }
 Frame MTBA_ReqCommRRight::generate_frame() const {
 	Frame f;
-	f.s0=frame0_request;
-	f.s1=frame1_request; 
-	f.s2=frame2_request;
+	f.data[0] = frame0_request;
 	set_header(f);
 	return f;
 }

@@ -84,7 +84,7 @@
  */
 class Layout {
 public:
-	uint16_t id;
+	uint32_t id;
 	
 	/*
 	 * Creates a Frame object to represent this layout.
@@ -264,29 +264,25 @@ public:
 class MTBA_ReqCommRLeft: public Layout {
 public:
 
-	MTBA_ReqCommRLeft(bool f0_req, bool f1_req, bool f2_req) :
-		frame0_request(f0_req), frame1_request(f1_req), frame2_request(f2_req)
+	MTBA_ReqCommRLeft(uint8_t f0_req) :
+		frame0_request(f0_req)
 		{ id = MTBA_REQUEST_COMMAND_REAR_LEFT_ID; }
-	MTBA_ReqCommRLeft(const Frame& frame) : frame0_request(frame.s0), frame1_request(frame.s1), frame2_request(frame.s2)
+	MTBA_ReqCommRLeft(const Frame& frame) : frame0_request(frame.s0)
 		{ id = frame.id; }
 	Frame generate_frame() const;
 
-	bool frame0_request;
-	bool frame1_request;
-	bool frame2_request;
+	uint8_t frame0_request;
 };
 class MTBA_ReqCommRRight : public Layout {
 public:
-	MTBA_ReqCommRRight(bool f0_req, bool f1_req, bool f2_req) :
-		frame0_request(f0_req), frame1_request(f1_req), frame2_request(f2_req)
+	MTBA_ReqCommRRight(uint8_t f0_req) :
+		frame0_request(f0_req)
 		{ id = MTBA_REQUEST_COMMAND_REAR_RIGHT_ID; }
-	MTBA_ReqCommRRight(const Frame& frame) : frame0_request(frame.s0), frame1_request(frame.s1), frame2_request(frame.s2)
+	MTBA_ReqCommRRight(const Frame& frame) : frame0_request(frame.s0)
 		{ id = frame.id; }
 	Frame generate_frame() const;
 
-	bool frame0_request;
-	bool frame1_request;
-	bool frame2_request;
+	uint8_t frame0_request;
 };
 class MTBA_F0_RRight : public Layout{
 public:

@@ -36,13 +36,13 @@ void CAN_IO::Setup(byte interrupts) { // default interrupts are RX0IE | RX1IE | 
 	// Set as main can
 	main_CAN = this;
 
-	pinMode(INT_pin,INPUT_PULLUP);	
+	pinMode(INT_pin,INPUT_PULLUP);
 
 	// Copy filters and interrupts to internal variables
 	this->my_interrupts = interrupts;
 
 	// init the controller
-	init_controller(); //private helper function	
+	init_controller(); //private helper function
 }
 
 inline void CAN_IO::init_controller() //private helper function
@@ -192,12 +192,12 @@ void CAN_IO::FetchErrors() {
 
 	if (eflg & 0x01) // If EWARN flag is set
 	{
-		if (eflg & 0x20) // if busmode flag is set 
+		if (eflg & 0x20) // if busmode flag is set
 			this->errors |= CANERR_BUSOFF_MODE;
 		else
 			this->errors &= (~CANERR_BUSOFF_MODE);
 
-		if (this->tec > 135 || this->rec > 135 
+		if (this->tec > 135 || this->rec > 135
 			|| errors & CANERR_BUSOFF_MODE) // If any TX/RX errors have occured, raise this flag.
 			this->errors |= CANERR_HIGH_ERROR_COUNT;
 		else
@@ -301,12 +301,17 @@ bool CAN_IO::Send(const Frame& frame, uint8_t buffer) {
 }
 
 // Define two macros for the following function, to improve readability.
-#define first_byte(value) uint8_t((value >> 3) & 0x00FF)
-#define second_byte(value) uint8_t((value << 5) & 0x00E0)
+//#define first_byte(value) uint8_t((value >> 3) & 0x00FF) //11111111
+//#define second_byte(value) uint8_t((value << 5) & 0x00E0) //11100000
+// added two additional macros to increase readability
+#define first_byte(value) uint8_t((value >> 21) & 0x00FF) //gets (leftmost) 8 bits
+#define second_byte(value) uint8_t((value >> 13 )& 0x00FF) //another 8
+#define third_byte(value) uint8_t((value >> 5 )& 0x00FF)
+#define fourth_byte(value) uint8_t((value << 24 )& 0x00F8) //last 5
 
-void CAN_IO::write_rx_filter(uint8_t address, uint16_t data) {
-	uint8_t bytes[2] = { first_byte(data), second_byte(data) };
-	controller.Write(address, bytes, 2);
+void CAN_IO::write_rx_filter(uint8_t address, uint32_t data) {
+	uint8_t bytes[4] = { first_byte(data), second_byte(data), third_byte(data), fourth_byte(data) };
+	controller.Write(address, bytes, 4);
 }
 
 inline uint8_t CAN_IO::select_open_buffer() {

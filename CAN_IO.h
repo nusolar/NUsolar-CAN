@@ -180,7 +180,7 @@ private:
 	 * If first is true, sets the mask/filter for the first buffer;
 	 * otherwise sets the second.
 	 */
-	void write_rx_filter(uint8_t address, uint16_t);
+	void write_rx_filter(uint8_t address, uint32_t);
 	
 	inline void init_controller();
 

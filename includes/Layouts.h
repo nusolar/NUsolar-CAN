@@ -13,6 +13,9 @@
  * Packet_IDs.h
  * Constant definitions for CAN packet IDs.
  */
+// NEW BMS TX
+#define NEW_BMS_FRAME_1_ID 0x6B0
+#define NEW_BMS_FRAME_2_ID 0x6B1
 
 // BMS TX
 #define BMS_BASEADDRESS 	0x600
@@ -89,6 +92,53 @@ protected:
 	 * Fill out the header info for a frame.
 	 */
 	 inline void set_header(Frame& f, byte size = 8) const;
+};
+
+/*
+ * NEW BMS Packet 1
+ */
+class NEW_BMS_Frame_1 : public Layout {
+public:
+	NEW_BMS_Frame_1(uint8_t pc, uint8_t piv,uint8_t ps,uint8_t rs,uint8_t crc_c){
+		pack_current = pc;
+		pack_inst_voltage = piv;
+		pack_soc= ps;
+		relay_state = rs ;
+		CRC_check = crc_c;
+
+		id = NEW_BMS_FRAME_1_ID;
+	} 
+
+	NEW_BMS_Frame_1(const Frame& frame) { 
+		// bytes 0, 1 (ignition switch, fuel door)
+		// byte 0
+		pack_current = frame.data[0];
+		// byte 1 
+		// RESERVED
+		// byte 2
+		pack_inst_voltage = frame.data[2];
+		// byte 3
+		// RESERVED
+		// byte 4
+		pack_soc = frame.data[4];
+		// byte 5
+		relay_state = frame.data[5];
+		// byte 6
+		// RESERVED
+		// byte 7
+		CRC_check = frame.data[7]; 
+
+		id = frame.id; 
+	}
+
+	uint8_t pack_current;
+	uint8_t pack_inst_voltage;
+	uint8_t pack_soc;
+	uint8_t relay_state;
+	uint8_t CRC_check;
+
+	Frame generate_frame() const;
+
 };
 
 

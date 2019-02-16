@@ -24,6 +24,23 @@ inline void Layout::set_header(Frame& f, byte size) const {
 	f.srr = 0;
 }
 
+Frame NEW_BMS_Frame_1::generate_frame() const {
+	Frame f;
+
+	// untested.
+
+
+	f.data[0] = (uint8_t) pack_current;
+	f.data[2] = (uint8_t) pack_inst_voltage;
+	f.data[4] = (uint8_t) pack_soc;
+	f.data[5] = (uint8_t) relay_state;
+	f.data[7] = (uint8_t) CRC_check;
+
+
+	set_header(f);
+	return f;
+}
+
 
 Frame BMS_Heartbeat::generate_frame() const {
 	Frame f;

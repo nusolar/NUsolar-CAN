@@ -73,6 +73,11 @@ Frame BMS_VoltageCurrent::generate_frame() const {
 	return f;
 }
 
+Frame BMS19_VCSOC::generate_frame() const {
+	Frame f;
+	
+}
+
 Frame BMS_Status::generate_frame() const {
 	Frame f;
 	f.s0 = voltage_rising;
@@ -425,6 +430,26 @@ Frame MTBA_F2_RRight::generate_frame() const {
 	f.s23=hall_sensor_open;
 	f.s24=rfu7;
 	f.s25=over_heat_level;
+	set_header(f);
+	return f;
+}
+
+// 2019 BMS
+Frame BMS19_VCSOC::generate_frame() const {
+	Frame f;
+
+	f.data[0] = current;
+	f.data[2] = voltage;
+	f.data[4] = packSOC;
+	set_header(f);
+	return f;
+}
+
+Frame BMS19_MinMaxTemp::generate_frame() const {
+	Frame f;
+
+	f.data[4] = minTemp;
+	f.data[5] = maxTemp;
 	set_header(f);
 	return f;
 }

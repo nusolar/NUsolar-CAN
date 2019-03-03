@@ -50,28 +50,28 @@ typedef struct
           uint16_t s1;
           uint16_t s2;
           uint16_t s3;
-		  uint16_t s4; //added in s4 - s24
-		  uint16_t s5;
-		  uint16_t s6;
-		  uint16_t s7;
-		  uint16_t s8;
-		  uint16_t s9;
-		  uint16_t s10;
-		  uint16_t s11;
-		  uint16_t s12;
-		  uint16_t s13;
-		  uint16_t s14;
-		  uint16_t s15;
-		  uint16_t s16;
-		  uint16_t s17;
-		  uint16_t s18;
-		  uint16_t s19;
-		  uint16_t s20;
-		  uint16_t s21;
-		  uint16_t s22;
-		  uint16_t s23;
-		  uint16_t s24;
-		  uint16_t s25;
+		      uint16_t s4; //added in s4 - s24
+		      uint16_t s5;
+          uint16_t s6;
+          uint16_t s7;
+          uint16_t s8;
+          uint16_t s9;
+          uint16_t s10;
+          uint16_t s11;
+          uint16_t s12;
+          uint16_t s13;
+          uint16_t s14;
+          uint16_t s15;
+          uint16_t s16;
+          uint16_t s17;
+          uint16_t s18;
+          uint16_t s19;
+          uint16_t s20;
+          uint16_t s21;
+          uint16_t s22;
+          uint16_t s23;
+          uint16_t s24;
+          uint16_t s25;
         };
         // 2 bytes (signed)
         struct {

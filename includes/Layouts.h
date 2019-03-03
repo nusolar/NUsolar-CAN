@@ -20,10 +20,15 @@
 #define BMS_SOC_ID	        0x6F4
 #define BMS_BAL_SOC_ID		0x6F5
 #define BMS_PRECHARGE_ID	0x6F7
-#define BMS_VOLT_CURR_ID	0x6FA
+#define BMS_VOLT_CURR_ID	0x6B0
 #define BMS_STATUS_ID		0x6FB
 #define BMS_FAN_STATUS_ID	0x6FC
 #define BMS_STATUS_EXT_ID	0x6FD
+
+// BMS19 TX
+#define BMS19_VCSOC_ID			0x6B0
+#define BMS19_MinMaxTemp_ID		0x6B1
+#define BMS_BCL_HT_LT_ID		0x6B2
 
 // motor controller TX
 /**
@@ -183,6 +188,39 @@ public:
 
 	uint32_t voltage;
 	int32_t current;
+};
+
+/*
+ * BMS Voltage, Current, and SOC packet (2019 BMS)
+ */
+class BMS19_VCSOC : public Layout {
+public:
+	BMS19_VCSOC(uint8_t v, uint8_t i, uint8_t soc) : voltage(v), current(i), packSOC(soc) 
+	{id = BMS19_VCSOC_ID;} 
+	BMS19_VCSOC(const Frame& frame) : voltage(frame.data[2]), current(frame.data[0]), packSOC(frame.data[4])
+	{ id = frame.id; }
+
+	Frame generate_frame() const;
+
+	uint8_t voltage;
+	uint8_t current;
+	uint8_t packSOC;
+};
+
+/*
+* Battery Array Max and Min Temperature (2019 BMS)
+*/
+class BMS19_MinMaxTemp : public Layout {
+	public:
+		BMS19_MinMaxTemp(uint8_t minT, uint8_t maxT) : minTemp(minT), maxTemp(maxT)
+		{id = BMS19_MinMaxTemp_ID;}
+		BMS19_MinMaxTemp(const Frame& frame) : minTemp(frame.data[4]), maxTemp(frame.data[5])
+		{id = frame.id; }
+
+		Frame generate_frame()	const;
+
+		uint8_t minTemp;
+		uint8_t maxTemp;
 };
 
 /*

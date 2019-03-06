@@ -85,6 +85,35 @@
 #define MASK_EID			0x07FFFF
 
 /*
+* Mask IDs for the Mitsuba motors
+* Since their values don't really fall within bytes,
+* This is for masking an entire packet
+* 								  		  77	66	  55	44	  33	22	  11	00
+*/
+// Frame 0
+#define MASK_MTBA_BATT_VOLT				0x00/**/00/**/00/**/00/**/00/**/00/**/03/**/FF
+#define MASK_MTBA_BATT_CURR				0x00/**/00/**/00/**/00/**/00/**/07/**/FC/**/00
+#define MASK_MTBA_BATT_CURR_DIREC		0x00/**/00/**/00/**/00/**/00/**/08/**/00/**/00 
+#define MASK_MTBA_MOTOR_CURR			0x00/**/00/**/00/**/00/**/3F/**/F0/**/00/**/00
+#define MASK_MTBA_FET_TEMP				0x00/**/00/**/00/**/07/**/C0/**/00/**/00/**/00
+#define MASK_MTBA_MOTOR_SPEED			0x00/**/00/**/7F/**/F8/**/00/**/00/**/00/**/00
+#define MASK_MTBA_PWM_DUTY				0x01/**/FF/**/80/**/00/**/00/**/00/**/00/**/00
+#define MASK_MTBA_LEAD_ANGLE			0xFE/**/00/**/00/**/00/**/00/**/00/**/00/**/00
+
+// Frame 1
+#define MASK_MTBA_POWER_MODE			0x00/**/00/**/00/**/00/**/00/**/00/**/00/**/01
+#define MASK_MTBA_MOTOR_CONTROL_MODE	0x00/**/00/**/00/**/00/**/00/**/00/**/00/**/02
+#define MASK_MTBA_ACC_POS				0x00/**/00/**/00/**/00/**/00/**/00/**/0F/**/FC
+#define MASK_MTBA_REGEN_VR_POS			0x00/**/00/**/00/**/00/**/00/**/3F/**/F0/**/00
+#define MASK_MTBA_DIGIT_SW_POS			0x00/**/00/**/00/**/00/**/03/**/C0/**/00/**/00
+#define MASK_MTBA_OUTPUT_TAR_VAL		0x00/**/00/**/00/**/0F/**/FC/**/00/**/00/**/00
+#define MASK_MTBA_DRIVE_ACT_STAT		0x00/**/00/**/00/**/C0/**/00/**/00/**/00/**/00
+#define MASK_MTBA_REGEN_STAT			0x00/**/00/**/00/**/40/**/00/**/00/**/00/**/00
+
+// Finds the nth (starts at 0) bit from a byte
+#define getBit(a, n) ((a>> n) & 0x01)
+
+/*
  * Abstract base packet.
  */
 class Layout {

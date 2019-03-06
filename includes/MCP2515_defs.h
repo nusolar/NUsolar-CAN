@@ -44,7 +44,7 @@ typedef struct
           signed long  low_s;
           signed long  high_s;
         };
-        // 2 bytes
+        /*// 2 Bits? Should not work
         struct {
           uint16_t s0;
           uint16_t s1;
@@ -72,7 +72,7 @@ typedef struct
           uint16_t s23;
           uint16_t s24;
           uint16_t s25;
-        };
+        };*/
         // 2 bytes (signed)
         struct {
           signed int i0;

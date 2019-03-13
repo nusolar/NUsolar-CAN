@@ -84,35 +84,21 @@
 #define MASK_Sxxx			0x0007FF
 #define MASK_EID			0x07FFFF
 
-/*
-* Mask IDs for the Mitsuba motors
-* Since their values don't really fall within bytes,
-* This is for masking an entire packet
-* 								  		  77	66	  55	44	  33	22	  11	00
+/* Function for easy masking: shifts the frame to the LSB and applies mask 
+*	f		CAN Frame
+*	mask	Mask to specify length of packet
+*	lsb 	The rightmost bit of the value within the frame
 */
-// Frame 0
-#define MASK_MTBA_BATT_VOLT				0x00/**/00/**/00/**/00/**/00/**/00/**/03/**/FF
-#define MASK_MTBA_BATT_CURR				0x00/**/00/**/00/**/00/**/00/**/07/**/FC/**/00
-#define MASK_MTBA_BATT_CURR_DIREC		0x00/**/00/**/00/**/00/**/00/**/08/**/00/**/00 
-#define MASK_MTBA_MOTOR_CURR			0x00/**/00/**/00/**/00/**/3F/**/F0/**/00/**/00
-#define MASK_MTBA_FET_TEMP				0x00/**/00/**/00/**/07/**/C0/**/00/**/00/**/00
-#define MASK_MTBA_MOTOR_SPEED			0x00/**/00/**/7F/**/F8/**/00/**/00/**/00/**/00
-#define MASK_MTBA_PWM_DUTY				0x01/**/FF/**/80/**/00/**/00/**/00/**/00/**/00
-#define MASK_MTBA_LEAD_ANGLE			0xFE/**/00/**/00/**/00/**/00/**/00/**/00/**/00
+#define mask(f, mask, lsb) ( (f >> lsb ) & mask)
 
-// Frame 1
-#define MASK_MTBA_POWER_MODE			0x00/**/00/**/00/**/00/**/00/**/00/**/00/**/01
-#define MASK_MTBA_MOTOR_CONTROL_MODE	0x00/**/00/**/00/**/00/**/00/**/00/**/00/**/02
-#define MASK_MTBA_ACC_POS				0x00/**/00/**/00/**/00/**/00/**/00/**/0F/**/FC
-#define MASK_MTBA_REGEN_VR_POS			0x00/**/00/**/00/**/00/**/00/**/3F/**/F0/**/00
-#define MASK_MTBA_DIGIT_SW_POS			0x00/**/00/**/00/**/00/**/03/**/C0/**/00/**/00
-#define MASK_MTBA_OUTPUT_TAR_VAL		0x00/**/00/**/00/**/0F/**/FC/**/00/**/00/**/00
-#define MASK_MTBA_DRIVE_ACT_STAT		0x00/**/00/**/00/**/C0/**/00/**/00/**/00/**/00
-#define MASK_MTBA_REGEN_STAT			0x00/**/00/**/00/**/40/**/00/**/00/**/00/**/00
+/* Function for setting member value within frame, reverse of mask process
+*	f		CAN Frame
+*	mask	Mask to specify length of packet
+*	lsb 	The rightmost bit of the value within the frame
+*/
+#define makePrtlFrame(f, mask, lsb) ( ((f & mask) << lsb))
 
-// Finds the nth (starts at 0) bit from a byte
-#define getBit(a, n) ((a>> n) & 0x01)
-
+// Function
 /*
  * Abstract base packet.
  */
@@ -328,13 +314,13 @@ public:
 };
 
 //MITSUBA
-class MTBA_ReqCommRLeft: public Layout {
+class MTBA_ReqCommR: public Layout {
 public:
 
-	MTBA_ReqCommRLeft(uint8_t f0_req) :
+	MTBA_ReqCommR(uint8_t f0_req) :
 		frame0_request(f0_req)
 		{ id = MTBA_REQUEST_COMMAND_REAR_LEFT_ID; }
-	MTBA_ReqCommRLeft(const Frame& frame) : frame0_request(frame.s0)
+	MTBA_ReqCommR(const Frame& frame) : frame0_request(frame.s0)
 		{ id = frame.id; }
 	Frame generate_frame() const;
 
@@ -350,271 +336,304 @@ public:
 	Frame generate_frame() const;
 
 	uint8_t frame0_request;
+}; 
+class MTBA_F0_RLeft : public Layout{
+public:
+	MTBA_F0_R(uint16_t bv, uint16_t bc, bool bcd, uint8_t mcpa, uint16_t ft, uint16_t mrs, uint16_t pd, uint8_t la) :
+		battery_voltage(bv), 					// 10 bits
+		battery_current(bc), 					// 9 bits
+		battery_current_direction(bcd),			// 1 bit
+		motor_current_peak_avg(mcpa), 			// 10 bits
+		fet_temperature(ft), 					// 5 bits
+		motor_rotating_speed(mrs), 				// 12 bits
+		pwm_duty(pd), 							// 10 bits
+		lead_angle(la)                          // 7 bits
+		{ id = MTBA_FRAME0_REAR_LEFT_ID; }
+	MTBA_F0_R(const Frame& frame) : 
+		battery_voltage(mask(frame.value, MASK_MTBA_BATT_VOLT, MTBA_BATT_VOLT_LSB )), 
+		battery_current(mask(frame.value, MASK_MTBA_BATT_CURR, MTBA_BATT_CURR_LSB)), 
+		battery_current_direction(mask(frame.value, MASK_MTBA_BATT_CURR_DIREC, MTBA_BATT_CURR_DIREC_LSB)),
+		motor_current_peak_avg(mask(frame.value, MASK_MTBA_MOTOR_CURR, MTBA_MOTOR_CURR_LSB)), 
+		fet_temperature(mask(frame.value,MASK_MTBA_FET_TEMP, MTBA_FET_TEMP_LSB)), 
+		motor_rotating_speed(mask(frame.value, MASK_MTBA_MOTOR_SPEED, MTBA_MOTOR_SPEED_LSB)), 
+		pwm_duty(mask(frame.value, MASK_MTBA_PWM_DUTY, MTBA_PWM_DUTY_LSB)), 
+		lead_angle(mask(frame.value, MASK_MTBA_LEAD_ANGLE, MTBA_LEAD_ANGLE_LSB))
+		{ id = frame.id; }
+
+	Frame generate_frame() const;
+
+	uint16_t battery_voltage;
+	uint16_t battery_current;
+	bool battery_current_direction;
+	uint8_t motor_current_peak_avg;
+	uint16_t fet_temperature;
+	uint16_t motor_rotating_speed;
+	uint16_t pwm_duty;
+	uint8_t lead_angle;
+
+	/*
+	* Apply these masks after shifting frame to LSB
+	* MTBA Can packets don't follow bytes, so alot of masking is necessary 
+	*/
+	static const uint16_t MASK_MTBA_BATT_VOLT				= 0x3FF;
+	static const uint16_t MASK_MTBA_BATT_CURR				= 0x1FF;
+	static const uint16_t MASK_MTBA_BATT_CURR_DIREC			= 0x01;
+	static const uint16_t MASK_MTBA_MOTOR_CURR				= 0x3FF;
+	static const uint16_t MASK_MTBA_FET_TEMP				= 0x1F;
+	static const uint16_t MASK_MTBA_MOTOR_SPEED			    = 0x3FF;
+	static const uint16_t MASK_MTBA_PWM_DUTY				= 0x3FF;
+	static const uint16_t MASK_MTBA_LEAD_ANGLE				= 0x7F;
+
+	// The position right-most bit (LSB) after masking
+	static const int MTBA_BATT_VOLT_LSB						= 0;
+	static const int MTBA_BATT_CURR_LSB						= 10;
+	static const int MTBA_BATT_CURR_DIREC_LSB				= 19;
+	static const int MTBA_MOTOR_CURR_LSB					= 20;
+	static const int MTBA_FET_TEMP_LSB						= 30;
+	static const int MTBA_MOTOR_SPEED_LSB					= 35;
+	static const int MTBA_PWM_DUTY_LSB						= 47;
+	static const int MTBA_LEAD_ANGLE_LSB					= 57;
+	
 };
 class MTBA_F0_RRight : public Layout{
 public:
-	MTBA_F0_RRight(double bv, double bc, bool bcd, double mcpa, double ft, double mrs, double pd, double la) :
-		battery_voltage(bv), battery_current(bc), battery_current_direction(bcd),
-		motor_current_peak_avg(mcpa), fet_temperature(ft), motor_rotating_speed(mrs), pwm_duty(pd), lead_angle(la)
+	MTBA_F0_R(uint16_t bv, uint16_t bc, bool bcd, uint8_t mcpa, uint16_t ft, uint16_t mrs, uint16_t pd, uint8_t la) :
+		battery_voltage(bv), 					// 10 bits
+		battery_current(bc), 					// 9 bits
+		battery_current_direction(bcd),			// 1 bit
+		motor_current_peak_avg(mcpa), 			// 10 bits
+		fet_temperature(ft), 					// 5 bits
+		motor_rotating_speed(mrs), 				// 12 bits
+		pwm_duty(pd), 							// 10 bits
+		lead_angle(la)                          // 7 bits
 		{ id = MTBA_FRAME0_REAR_RIGHT_ID; }
-	MTBA_F0_RRight(const Frame& frame) : battery_voltage(frame.s0), battery_current(frame.s1), battery_current_direction(frame.s2),
-		motor_current_peak_avg(frame.s3), fet_temperature(frame.s4), motor_rotating_speed(frame.s5), pwm_duty(frame.s6), lead_angle(frame.s7)
+	MTBA_F0_R(const Frame& frame) : 
+		battery_voltage(mask(frame.value, MASK_MTBA_BATT_VOLT, MTBA_BATT_VOLT_LSB )), 
+		battery_current(mask(frame.value, MASK_MTBA_BATT_CURR, MTBA_BATT_CURR_LSB)), 
+		battery_current_direction(mask(frame.value, MASK_MTBA_BATT_CURR_DIREC, MTBA_BATT_CURR_DIREC_LSB)),
+		motor_current_peak_avg(mask(frame.value, MASK_MTBA_MOTOR_CURR, MTBA_MOTOR_CURR_LSB)), 
+		fet_temperature(mask(frame.value,MASK_MTBA_FET_TEMP, MTBA_FET_TEMP_LSB)), 
+		motor_rotating_speed(mask(frame.value, MASK_MTBA_MOTOR_SPEED, MTBA_MOTOR_SPEED_LSB)), 
+		pwm_duty(mask(frame.value, MASK_MTBA_PWM_DUTY, MTBA_PWM_DUTY_LSB)), 
+		lead_angle(mask(frame.value, MASK_MTBA_LEAD_ANGLE, MTBA_LEAD_ANGLE_LSB))
 		{ id = frame.id; }
 
 	Frame generate_frame() const;
 
-	double battery_voltage;
-	double battery_current;
+	uint16_t battery_voltage;
+	uint16_t battery_current;
 	bool battery_current_direction;
-	double motor_current_peak_avg;
-	int fet_temperature;
-	double motor_rotating_speed;
-	double pwm_duty;
-	double lead_angle;
-};		
-class  MTBA_F0_RLeft : public Layout{
-public:
-	MTBA_F0_RLeft(double bv, double bc, bool bcd, double mcpa, double ft, double mrs, double pd, double la) :
-		battery_voltage(bv), battery_current(bc), battery_current_direction(bcd),
-		motor_current_peak_avg(mcpa), fet_temperature(ft), motor_rotating_speed(mrs), pwm_duty(pd), lead_angle(la)
-		{ id = MTBA_FRAME0_REAR_LEFT_ID; }
-	MTBA_F0_RLeft(const Frame& frame) : battery_voltage(frame.s0), battery_current(frame.s1), battery_current_direction(frame.s2),
-		motor_current_peak_avg(frame.s3), fet_temperature(frame.s4), motor_rotating_speed(frame.s5), pwm_duty(frame.s6), lead_angle(frame.s7)
-		{ id = frame.id; }
+	uint8_t motor_current_peak_avg;
+	uint16_t fet_temperature;
+	uint16_t motor_rotating_speed;
+	uint16_t pwm_duty;
+	uint8_t lead_angle;
 
-	Frame generate_frame() const;
+	/*
+	* Apply these masks after shifting frame to LSB
+	* MTBA Can packets don't follow bytes, so alot of masking is necessary 
+	*/
+	static const uint16_t MASK_MTBA_BATT_VOLT				= 0x3FF;
+	static const uint16_t MASK_MTBA_BATT_CURR				= 0x1FF;
+	static const uint16_t MASK_MTBA_BATT_CURR_DIREC			= 0x01;
+	static const uint16_t MASK_MTBA_MOTOR_CURR				= 0x3FF;
+	static const uint16_t MASK_MTBA_FET_TEMP				= 0x1F;
+	static const uint16_t MASK_MTBA_MOTOR_SPEED			    = 0x3FF;
+	static const uint16_t MASK_MTBA_PWM_DUTY				= 0x3FF;
+	static const uint16_t MASK_MTBA_LEAD_ANGLE				= 0x7F;
 
-	double battery_voltage;
-	double battery_current;
-	bool battery_current_direction;
-	double motor_current_peak_avg;
-	int fet_temperature;
-	double motor_rotating_speed;
-	double pwm_duty;
-	double lead_angle;
-};		
+	// The position right-most bit (LSB) after masking
+	static const int MTBA_BATT_VOLT_LSB						= 0;
+	static const int MTBA_BATT_CURR_LSB						= 10;
+	static const int MTBA_BATT_CURR_DIREC_LSB				= 19;
+	static const int MTBA_MOTOR_CURR_LSB					= 20;
+	static const int MTBA_FET_TEMP_LSB						= 30;
+	static const int MTBA_MOTOR_SPEED_LSB					= 35;
+	static const int MTBA_PWM_DUTY_LSB						= 47;
+	static const int MTBA_LEAD_ANGLE_LSB					= 57;
+	
+};
 class MTBA_F1_RRight : public Layout{
 public:
-	MTBA_F1_RRight(bool pm, bool mcm, double ap, double rvp, double dsp, double otv, double das, bool rs) :
-		power_mode(pm), motor_control_mode(mcm), accelerator_position(ap), regeneration_vr_position(rvp), digit_sw_position(dsp),
-		output_target_value(otv), drive_action_status(das), regeneration_status(rs)
+	MTBA_F1_R(bool pm, bool mcm, uint16_t ap, uint16_t rvp, uint16_t dsp, uint16_t otv, uint16_t das, bool rs) :
+		power_mode(pm), 
+		motor_control_mode(mcm), 
+		accelerator_position(ap), 
+		regeneration_vr_position(rvp),
+		 digit_sw_position(dsp),
+		output_target_value(otv), 
+		drive_action_status(das), 
+		regeneration_status(rs)
 		{ id = MTBA_FRAME1_REAR_RIGHT_ID; }
-	MTBA_F1_RRight(const Frame& frame) : power_mode(frame.s0), motor_control_mode(frame.s1), accelerator_position(frame.s2), 
-		regeneration_vr_position(frame.s3), digit_sw_position(frame.s4), output_target_value(frame.s5), drive_action_status(frame.s6), 
-		regeneration_status(frame.s7)
+	MTBA_F1_R(const Frame& frame) : 
+		power_mode(mask(frame.value, MASK_MTBA_POWER_MODE, MTBA_POWER_MODE_LSB)), 
+		motor_control_mode(mask(frame.value, MASK_MTBA_MODE_CONTROL_MODE, MTBA_MODE_CONTROL_MODE_LSB)), 
+		accelerator_position(mask(frame.value, MASK_MTBA_ACCELERATOR_POSITION, MTBA_ACCELERATOR_POSITION_LSB)), 
+		regeneration_vr_position(mask(frame.value, MASK_MTBA_REGENERATION_VR_POSITION, MTBA_REGENERATION_VR_POSITION)), 
+		digit_sw_position(mask(frame.value, MASK_MTBA_DIGITAL_SW_POSITION, MTBA_DIGITAL_SW_POSITION_LSB)), 
+		output_target_value(mask(frame.value, MASK_MTBA_OUTPUT_TARGET_VALUE, MTBA_OUTPUT_TARGET_VALUE_LSB)), 
+		drive_action_status(mask(frame.value, MASK_MTBA_DRIVE_ACTION_STATUS, MTBA_DRIVE_ACTION_STATUS_LSB)), 
+		regeneration_status(mask(frame.value, MASK_MTBA_REGENERATION_STATUS, MTBA_REGENERATION_STATUS_LSB))
 		{ id = frame.id; }
 
 	Frame generate_frame() const;
 
-	bool power_mode;
-	bool motor_control_mode;
-	double accelerator_position;
-	double regeneration_vr_position;
-	double digit_sw_position;
-	double output_target_value;
-	double drive_action_status;
-	bool regeneration_status;
-};		
-class MTBA_F1_RLeft: public Layout{
-	MTBA_F1_RLeft(bool pm, bool mcm, double ap, double rvp, double dsp, double otv, double das, bool rs) :
-		power_mode(pm), motor_control_mode(mcm), accelerator_position(ap), regeneration_vr_position(rvp), digit_sw_position(dsp),
-		output_target_value(otv), drive_action_status(das), regeneration_status(rs)
+	bool power_mode;					// 1 bit
+	bool motor_control_mode;			// 1 bit
+	uint16_t accelerator_position;		// 10 bits
+	uint16_t regeneration_vr_position;	// 10 bits
+	uint8_t digit_sw_position;			// 4 bits
+	uint16_t output_target_value;		// 10 bits
+	uint8_t drive_action_status;		// 2 bits
+	bool regeneration_status;			// 1 bit
+
+	/*
+	* Apply these masks after shifting frame to LSB
+	* MTBA Can packets don't follow bytes, so alot of masking is necessary 
+	*/
+	static const uint16_t MASK_MTBA_POWER_MODE							= 0x01;
+	static const uint16_t MASK_MTBA_MODE_CONTROL_MODE					= 0x01;
+	static const uint16_t MASK_MTBA_ACCELERATOR_POSITION				= 0x3FF;
+	static const uint16_t MASK_MTBA_REGENERATION_VR_POSITION			= 0x3FF;
+	static const uint16_t MASK_MTBA_DIGITAL_SW_POSITION					= 0x0F;
+	static const uint16_t MASK_MTBA_OUTPUT_TARGET_VALUE			    	= 0x3FF;
+	static const uint16_t MASK_MTBA_DRIVE_ACTION_STATUS					= 0x03;
+	static const uint16_t MASK_MTBA_REGENERATION_STATUS					= 0x01;
+
+	// The position right-most bit (LSB) after masking
+	static const int MTBA_POWER_MODE_LSB								= 0;
+	static const int MTBA_MODE_CONTROL_MODE_LSB							= 1;
+	static const int MTBA_ACCELERATOR_POSITION_LSB						= 2;
+	static const int MTBA_REGENERATION_VR_POSITION_LSB					= 12;
+	static const int MTBA_DIGITAL_SW_POSITION_LSB						= 22;
+	static const int MTBA_OUTPUT_TARGET_VALUE_LSB						= 26;
+	static const int MTBA_DRIVE_ACTION_STATUS_LSB						= 36;
+	static const int MTBA_REGENERATION_STATUS_LSB						= 38;
+};
+class MTBA_F1_R : public Layout{
+public:
+	MTBA_F1_R(bool pm, bool mcm, uint16_t ap, uint16_t rvp, uint16_t dsp, uint16_t otv, uint16_t das, bool rs) :
+		power_mode(pm), 
+		motor_control_mode(mcm), 
+		accelerator_position(ap), 
+		regeneration_vr_position(rvp),
+		 digit_sw_position(dsp),
+		output_target_value(otv), 
+		drive_action_status(das), 
+		regeneration_status(rs)
 		{ id = MTBA_FRAME1_REAR_LEFT_ID; }
-	MTBA_F1_RLeft(const Frame& frame) : power_mode(frame.s0), motor_control_mode(frame.s1), accelerator_position(frame.s2), 
-		regeneration_vr_position(frame.s3), digit_sw_position(frame.s4), output_target_value(frame.s5), drive_action_status(frame.s6), 
-		regeneration_status(frame.s7)
+	MTBA_F1_R(const Frame& frame) : 
+		power_mode(mask(frame.value, MASK_MTBA_POWER_MODE, MTBA_POWER_MODE_LSB)), 
+		motor_control_mode(mask(frame.value, MASK_MTBA_MODE_CONTROL_MODE, MTBA_MODE_CONTROL_MODE_LSB)), 
+		accelerator_position(mask(frame.value, MASK_MTBA_ACCELERATOR_POSITION, MTBA_ACCELERATOR_POSITION_LSB)), 
+		regeneration_vr_position(mask(frame.value, MASK_MTBA_REGENERATION_VR_POSITION, MTBA_REGENERATION_VR_POSITION)), 
+		digit_sw_position(mask(frame.value, MASK_MTBA_DIGITAL_SW_POSITION, MTBA_DIGITAL_SW_POSITION_LSB)), 
+		output_target_value(mask(frame.value, MASK_MTBA_OUTPUT_TARGET_VALUE, MTBA_OUTPUT_TARGET_VALUE_LSB)), 
+		drive_action_status(mask(frame.value, MASK_MTBA_DRIVE_ACTION_STATUS, MTBA_DRIVE_ACTION_STATUS_LSB)), 
+		regeneration_status(mask(frame.value, MASK_MTBA_REGENERATION_STATUS, MTBA_REGENERATION_STATUS_LSB))
 		{ id = frame.id; }
 
 	Frame generate_frame() const;
 
-	bool power_mode;
-	bool motor_control_mode;
-	double accelerator_position;
-	double regeneration_vr_position;
-	double digit_sw_position;
-	double output_target_value;
-	double drive_action_status;
-	bool regeneration_status;
+	bool power_mode;					// 1 bit
+	bool motor_control_mode;			// 1 bit
+	uint16_t accelerator_position;		// 10 bits
+	uint16_t regeneration_vr_position;	// 10 bits
+	uint8_t digit_sw_position;			// 4 bits
+	uint16_t output_target_value;		// 10 bits
+	uint8_t drive_action_status;		// 2 bits
+	bool regeneration_status;			// 1 bit
+
+	/*
+	* Apply these masks after shifting frame to LSB
+	* MTBA Can packets don't follow bytes, so alot of masking is necessary 
+	*/
+	static const uint16_t MASK_MTBA_POWER_MODE							= 0x01;
+	static const uint16_t MASK_MTBA_MODE_CONTROL_MODE					= 0x01;
+	static const uint16_t MASK_MTBA_ACCELERATOR_POSITION				= 0x3FF;
+	static const uint16_t MASK_MTBA_REGENERATION_VR_POSITION			= 0x3FF;
+	static const uint16_t MASK_MTBA_DIGITAL_SW_POSITION					= 0x0F;
+	static const uint16_t MASK_MTBA_OUTPUT_TARGET_VALUE			    	= 0x3FF;
+	static const uint16_t MASK_MTBA_DRIVE_ACTION_STATUS					= 0x03;
+	static const uint16_t MASK_MTBA_REGENERATION_STATUS					= 0x01;
+
+	// The position right-most bit (LSB) after masking
+	static const int MTBA_POWER_MODE_LSB								= 0;
+	static const int MTBA_MODE_CONTROL_MODE_LSB							= 1;
+	static const int MTBA_ACCELERATOR_POSITION_LSB						= 2;
+	static const int MTBA_REGENERATION_VR_POSITION_LSB					= 12;
+	static const int MTBA_DIGITAL_SW_POSITION_LSB						= 22;
+	static const int MTBA_OUTPUT_TARGET_VALUE_LSB						= 26;
+	static const int MTBA_DRIVE_ACTION_STATUS_LSB						= 36;
+	static const int MTBA_REGENERATION_STATUS_LSB						= 38;
 };
 
 class MTBA_F2_RLeft : public Layout{
-	MTBA_F2_RLeft(bool ase, bool mcsue, bool mcswe, bool fte, bool r1, bool bvse, bool bcse, bool bcsae, bool mcsae, bool ape, bool r2, bool cvse,
-		double r3, bool pse, bool oce, bool r4, bool ove, bool r5, bool ocl, double r6, bool mse, bool ml, bool hss, bool hso, double r7, double ohl) : 
-	analog_sensor_error(ase),
-	motor_current_sensor_u_error(mcsue),
-	motor_current_sensor_w_error(mcswe),
-	fet_thermistor_error(fte),
-	rfu1(r1),
-	battery_voltage_sensor_error(bvse),
-	battery_current_sensor_error(bcse),	
-	battery_current_sensor_adjust_error(bcsae),
-	motor_current_sensor_adjust_error(mcsae),
-	accelerator_position_error(ape),
-	rfu2(r2),
-	controller_voltage_sensor_error(cvse),
-	rfu3(r3),
-	power_system_error(pse),
-	over_current_error(oce),
-	rfu4(r4),
-	over_voltage_error(ove),
-	rfu5(r5),
-	over_current_limit(ocl),
-	rfu6(r6),
-	motor_system_error(mse),
-	motor_lock(ml),
-	hall_sensor_short(hss),
-	hall_sensor_open(hso),
-	rfu7(r7),
-	over_heat_level(ohl)
-		{ id = MTBA_FRAME2_REAR_LEFT_ID; }
-	MTBA_F2_RLeft(const Frame& frame) : 
-	analog_sensor_error(frame.s0),
-	motor_current_sensor_u_error(frame.s1),
-	motor_current_sensor_w_error(frame.s2),
-	fet_thermistor_error(frame.s3),
-	rfu1(frame.s4),
-	battery_voltage_sensor_error(frame.s5),
-	battery_current_sensor_error(frame.s6),	
-	battery_current_sensor_adjust_error(frame.s7),
-	motor_current_sensor_adjust_error(frame.s8),
-	accelerator_position_error(frame.s9),
-	rfu2(frame.s10),
-	controller_voltage_sensor_error(frame.s11),
-	rfu3(frame.s12),
-	power_system_error(frame.s13),
-	over_current_error(frame.s14),
-	rfu4(frame.s15),
-	over_voltage_error(frame.s16),
-	rfu5(frame.s17),
-	over_current_limit(frame.s18),
-	rfu6(frame.s19),
-	motor_system_error(frame.s20),
-	motor_lock(frame.s21),
-	hall_sensor_short(frame.s22),
-	hall_sensor_open(frame.s23),
-	rfu7(frame.s24),
-	over_heat_level(frame.s25)
-		{ id = frame.id; }
+	MTBA_F2_RLeft(uint16_t adErr, uint8_t psErr, uint8_t msErr, uint8_t fetOHErr):
+		ADSensorErr(adErr),
+		powerSysErr(psErr),
+		motorSysErr(msErr),
+		FETOverHeatErr(fetOHErr)
+		{ id = MTBA_FRAME1_REAR_LEFT_ID; }
+	MTBA_F2_RLeft(const Frame& frame) :
+		ADSensorErr(mask(frame.value, MASK_MTBA_AD_SENS_ERR, MTBA_AD_SENS_LSB)),
+		powerSysErr(mask(frame.value, MASK_MTBA_POWER_SYS_ERR, MTBA_POWER_SYS_ERR_LSB)),
+		motorSysErr(mask(frame.value, MASK_MTBA_MOTOR_SYS_ERR, MTBA_MOTOR_SYS_ERR_LSB)),
+		FETOverHeatErr(mask(frame.value, MASK_MTBA_FET_OVER_HEAT_ERR, MTBA_FET_OVER_HEAT_ERR_LSB)),
 
-	Frame generate_frame() const;
+	uint16_t ADSensorErr;
+	uint8_t powerSysErr; 
+	uint8_t motorSysErr;
+	uint8_t FETOverHeatErr;
 
+	/*
+	* Apply these masks after shifting frame to LSB
+	* MTBA Can packets don't follow bytes, so alot of masking is necessary 
+	*/
+	static const uint16_t MASK_MTB_AD_SENS_ERR						= 0xFFFF;
+	static const uint16_t MASK_MTBA_POWER_SYS_ERR					= 0xFF;
+	static const uint16_t MASK_MTBA_MOTOR_SYS_ERR					= 0xFF;
+	static const uint16_t MASK_MTBA_FET_OVER_HEAT_ERR				= 0x03;
 
-	bool analog_sensor_error;
-	bool motor_current_sensor_u_error;
-	bool motor_current_sensor_w_error;
-	bool fet_thermistor_error;
-	bool rfu1;
-	bool battery_voltage_sensor_error;
-	bool battery_current_sensor_error;
-	bool battery_current_sensor_adjust_error;
-	bool motor_current_sensor_adjust_error;
-	bool accelerator_position_error;
-	bool rfu2;
-	bool controller_voltage_sensor_error;
-	double rfu3;
-	bool power_system_error;
-	bool over_current_error;
-	bool rfu4;
-	bool over_voltage_error;
-	bool rfu5;
-	bool over_current_limit;
-	double rfu6;
-	bool motor_system_error;
-	bool motor_lock;
-	bool hall_sensor_short;
-	bool hall_sensor_open;
-	double rfu7;
-	double over_heat_level;
+	// The position right-most bit (LSB) after masking
+	static const int MTB_AD_SENS_ERR_LSB							= 0;
+	static const int MTBA_POWER_SYS_ERR_LSB							= 16;
+	static const int MTBA_MOTOR_SYS_ERR_LSB							= 24;
+	static const int MTBA_FET_OVER_HEAT_ERR_LSB						= 32;
 };
 
-class MTBA_F2_RRight	: public Layout{
-	MTBA_F2_RRight(bool ase, bool mcsue, bool mcswe, bool fte, bool r1, bool bvse, bool bcse, bool bcsae, bool mcsae, bool ape, bool r2, bool cvse,
-		double r3, bool pse, bool oce, bool r4, bool ove, bool r5, bool ocl, double r6, bool mse, bool ml, bool hss, bool hso, double r7, double ohl) : 
-	analog_sensor_error(ase),
-	motor_current_sensor_u_error(mcsue),
-	motor_current_sensor_w_error(mcswe),
-	fet_thermistor_error(fte),
-	rfu1(r1),
-	battery_voltage_sensor_error(bvse),
-	battery_current_sensor_error(bcse),	
-	battery_current_sensor_adjust_error(bcsae),
-	motor_current_sensor_adjust_error(mcsae),
-	accelerator_position_error(ape),
-	rfu2(r2),
-	controller_voltage_sensor_error(cvse),
-	rfu3(r3),
-	power_system_error(pse),
-	over_current_error(oce),
-	rfu4(r4),
-	over_voltage_error(ove),
-	rfu5(r5),
-	over_current_limit(ocl),
-	rfu6(r6),
-	motor_system_error(mse),
-	motor_lock(ml),
-	hall_sensor_short(hss),
-	hall_sensor_open(hso),
-	rfu7(r7),
-	over_heat_level(ohl)
-		{ id = MTBA_FRAME2_REAR_RIGHT_ID; }
-	MTBA_F2_RRight(const Frame& frame) : 
-	analog_sensor_error(frame.s0),
-	motor_current_sensor_u_error(frame.s1),
-	motor_current_sensor_w_error(frame.s2),
-	fet_thermistor_error(frame.s3),
-	rfu1(frame.s4),
-	battery_voltage_sensor_error(frame.s5),
-	battery_current_sensor_error(frame.s6),	
-	battery_current_sensor_adjust_error(frame.s7),
-	motor_current_sensor_adjust_error(frame.s8),
-	accelerator_position_error(frame.s9),
-	rfu2(frame.s10),
-	controller_voltage_sensor_error(frame.s11),
-	rfu3(frame.s12),
-	power_system_error(frame.s13),
-	over_current_error(frame.s14),
-	rfu4(frame.s15),
-	over_voltage_error(frame.s16),
-	rfu5(frame.s17),
-	over_current_limit(frame.s18),
-	rfu6(frame.s19),
-	motor_system_error(frame.s20),
-	motor_lock(frame.s21),
-	hall_sensor_short(frame.s22),
-	hall_sensor_open(frame.s23),
-	rfu7(frame.s24),
-	over_heat_level(frame.s25)
-		{ id = frame.id; }
+class MTBA_F2_RRight : public Layout{
+	MTBA_F2_RLeft(uint16_t adErr, uint8_t psErr, uint8_t msErr, uint8_t fetOHErr):
+		ADSensorErr(adErr),
+		powerSysErr(psErr),
+		motorSysErr(msErr),
+		FETOverHeatErr(fetOHErr)
+		{ id = MTBA_FRAME1_REAR_RIGHT_ID; }
+	MTBA_F2_RLeft(const Frame& frame) :
+		ADSensorErr(mask(frame.value, MASK_MTBA_AD_SENS_ERR, MTBA_AD_SENS_LSB)),
+		powerSysErr(mask(frame.value, MASK_MTBA_POWER_SYS_ERR, MTBA_POWER_SYS_ERR_LSB)),
+		motorSysErr(mask(frame.value, MASK_MTBA_MOTOR_SYS_ERR, MTBA_MOTOR_SYS_ERR_LSB)),
+		FETOverHeatErr(mask(frame.value, MASK_MTBA_FET_OVER_HEAT_ERR, MTBA_FET_OVER_HEAT_ERR_LSB)),
 
-	Frame generate_frame() const;
+	uint16_t ADSensorErr;
+	uint8_t powerSysErr; 
+	uint8_t motorSysErr;
+	uint8_t FETOverHeatErr;
 
+	/*
+	* Apply these masks after shifting frame to LSB
+	* MTBA Can packets don't follow bytes, so alot of masking is necessary 
+	*/
+	static const uint16_t MASK_MTB_AD_SENS_ERR						= 0xFFFF;
+	static const uint16_t MASK_MTBA_POWER_SYS_ERR					= 0xFF;
+	static const uint16_t MASK_MTBA_MOTOR_SYS_ERR					= 0xFF;
+	static const uint16_t MASK_MTBA_FET_OVER_HEAT_ERR				= 0x03;
 
-	bool analog_sensor_error;
-	bool motor_current_sensor_u_error;
-	bool motor_current_sensor_w_error;
-	bool fet_thermistor_error;
-	bool rfu1;
-	bool battery_voltage_sensor_error;
-	bool battery_current_sensor_error;
-	bool battery_current_sensor_adjust_error;
-	bool motor_current_sensor_adjust_error;
-	bool accelerator_position_error;
-	bool rfu2;
-	bool controller_voltage_sensor_error;
-	double rfu3;
-	bool power_system_error;
-	bool over_current_error;
-	bool rfu4;
-	bool over_voltage_error;
-	bool rfu5;
-	bool over_current_limit;
-	double rfu6;
-	bool motor_system_error;
-	bool motor_lock;
-	bool hall_sensor_short;
-	bool hall_sensor_open;
-	double rfu7;
-	double over_heat_level;
+	// The position right-most bit (LSB) after masking
+	static const int MTB_AD_SENS_ERR_LSB							= 0;
+	static const int MTBA_POWER_SYS_ERR_LSB							= 16;
+	static const int MTBA_MOTOR_SYS_ERR_LSB							= 24;
+	static const int MTBA_FET_OVER_HEAT_ERR_LSB						= 32;
 };
 
 /*

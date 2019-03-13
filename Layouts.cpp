@@ -73,11 +73,6 @@ Frame BMS_VoltageCurrent::generate_frame() const {
 	return f;
 }
 
-Frame BMS19_VCSOC::generate_frame() const {
-	Frame f;
-	
-}
-
 Frame BMS_Status::generate_frame() const {
 	Frame f;
 	f.s0 = voltage_rising;
@@ -324,14 +319,14 @@ Frame MTBA_F0_RRight::generate_frame() const {
 	Frame f;
 	
 	// applying mask in reverse
-	frame.value =  makePrtlFrame(battery_voltage, MASK_MTBA_BATT_VOLT, MTBA_BATT_VOLT_LSB ); 
-	frame.value |= makePrtlFrame(battery_current, MASK_MTBA_BATT_CURR, MTBA_BATT_CURR_LSB); 
-	frame.value |= makePrtlFrame(battery_current_direction, MASK_MTBA_BATT_CURR_DIREC, MTBA_BATT_CURR_DIREC_LSB);
-	frame.value |= makePrtlFrame(motor_current_peak_avg, MASK_MTBA_MOTOR_CURR, MTBA_MOTOR_CURR_LSB); 
-	frame.value |= makePrtlFrame(fet_temperature,MASK_MTBA_FET_TEMP, MTBA_FET_TEMP_LSB); 
-	frame.value |= makePrtlFrame(motor_rotating_speed, MASK_MTBA_MOTOR_SPEED, MTBA_MOTOR_SPEED_LSB); 
-	frame.value |= makePrtlFrame(pwm_duty, MASK_MTBA_PWM_DUTY, MTBA_PWM_DUTY_LSB); 
-	frame.value |= makePrtlFrame(lead_angle, MASK_MTBA_LEAD_ANGLE, MTBA_LEAD_ANGLE_LSB);
+	f.value =  makePrtlFrame(battery_voltage, MASK_MTBA_BATT_VOLT, MTBA_BATT_VOLT_LSB ); 
+	f.value |= makePrtlFrame(battery_current, MASK_MTBA_BATT_CURR, MTBA_BATT_CURR_LSB); 
+	f.value |= makePrtlFrame(battery_current_direction, MASK_MTBA_BATT_CURR_DIREC, MTBA_BATT_CURR_DIREC_LSB);
+	f.value |= makePrtlFrame(motor_current_peak_avg, MASK_MTBA_MOTOR_CURR, MTBA_MOTOR_CURR_LSB); 
+	f.value |= makePrtlFrame(fet_temperature,MASK_MTBA_FET_TEMP, MTBA_FET_TEMP_LSB); 
+	f.value |= makePrtlFrame(motor_rotating_speed, MASK_MTBA_MOTOR_SPEED, MTBA_MOTOR_SPEED_LSB); 
+	f.value |= makePrtlFrame(pwm_duty, MASK_MTBA_PWM_DUTY, MTBA_PWM_DUTY_LSB); 
+	f.value |= makePrtlFrame(lead_angle, MASK_MTBA_LEAD_ANGLE, MTBA_LEAD_ANGLE_LSB);
 	set_header(f);
 	return f;
 }
@@ -339,28 +334,28 @@ Frame MTBA_F0_RLeft::generate_frame() const {
 	Frame f;
 	
 	// applying mask in reverse
-	frame.value =  makePrtlFrame(battery_voltage, MASK_MTBA_BATT_VOLT, MTBA_BATT_VOLT_LSB ); 
-	frame.value |= makePrtlFrame(battery_current, MASK_MTBA_BATT_CURR, MTBA_BATT_CURR_LSB); 
-	frame.value |= makePrtlFrame(battery_current_direction, MASK_MTBA_BATT_CURR_DIREC, MTBA_BATT_CURR_DIREC_LSB);
-	frame.value |= makePrtlFrame(motor_current_peak_avg, MASK_MTBA_MOTOR_CURR, MTBA_MOTOR_CURR_LSB); 
-	frame.value |= makePrtlFrame(fet_temperature,MASK_MTBA_FET_TEMP, MTBA_FET_TEMP_LSB); 
-	frame.value |= makePrtlFrame(motor_rotating_speed, MASK_MTBA_MOTOR_SPEED, MTBA_MOTOR_SPEED_LSB); 
-	frame.value |= makePrtlFrame(pwm_duty, MASK_MTBA_PWM_DUTY, MTBA_PWM_DUTY_LSB); 
-	frame.value |= makePrtlFrame(lead_angle, MASK_MTBA_LEAD_ANGLE, MTBA_LEAD_ANGLE_LSB);
+	f.value =  makePrtlFrame(battery_voltage, MASK_MTBA_BATT_VOLT, MTBA_BATT_VOLT_LSB ); 
+	f.value |= makePrtlFrame(battery_current, MASK_MTBA_BATT_CURR, MTBA_BATT_CURR_LSB); 
+	f.value |= makePrtlFrame(battery_current_direction, MASK_MTBA_BATT_CURR_DIREC, MTBA_BATT_CURR_DIREC_LSB);
+	f.value |= makePrtlFrame(motor_current_peak_avg, MASK_MTBA_MOTOR_CURR, MTBA_MOTOR_CURR_LSB); 
+	f.value |= makePrtlFrame(fet_temperature,MASK_MTBA_FET_TEMP, MTBA_FET_TEMP_LSB); 
+	f.value |= makePrtlFrame(motor_rotating_speed, MASK_MTBA_MOTOR_SPEED, MTBA_MOTOR_SPEED_LSB); 
+	f.value |= makePrtlFrame(pwm_duty, MASK_MTBA_PWM_DUTY, MTBA_PWM_DUTY_LSB); 
+	f.value |= makePrtlFrame(lead_angle, MASK_MTBA_LEAD_ANGLE, MTBA_LEAD_ANGLE_LSB);
 	set_header(f);
 	return f;
 }
 Frame MTBA_F1_RRight::generate_frame() const {
 	Frame f;
 
-	frame.value =  makePtrlFrame(power_mode, MASK_MTBA_POWER_MODE, MTBA_POWER_MODE_LSB); 
-	frame.value |= makePtrlFrame(motor_control_mode, MASK_MTBA_MODE_CONTROL_MODE, MTBA_MODE_CONTROL_MODE_LSB); 
-	frame.value |= makePtrlFrame(accelerator_position, MASK_MTBA_ACCELERATOR_POSITION, MTBA_ACCELERATOR_POSITION_LSB); 
-	frame.value |= makePtrlFrame(regeneration_vr_position, MASK_MTBA_REGENERATION_VR_POSITION, MTBA_REGENERATION_VR_POSITION); 
-	frame.value |= makePtrlFrame(digit_sw_position, MASK_MTBA_DIGITAL_SW_POSITION, MTBA_DIGITAL_SW_POSITION_LSB); 
-	frame.value |= makePtrlFrame(output_target_value, MASK_MTBA_OUTPUT_TARGET_VALUE, MTBA_OUTPUT_TARGET_VALUE_LSB); 
-	frame.value |= makePtrlFrame(drive_action_status, MASK_MTBA_DRIVE_ACTION_STATUS, MTBA_DRIVE_ACTION_STATUS_LSB); 
-	frame.value |= makePtrlFrame(regeneration_status, MASK_MTBA_REGENERATION_STATUS, MTBA_REGENERATION_STATUS_LSB);
+	f.value =  makePrtlFrame(power_mode, MASK_MTBA_POWER_MODE, MTBA_POWER_MODE_LSB); 
+	f.value |= makePrtlFrame(motor_control_mode, MASK_MTBA_MODE_CONTROL_MODE, MTBA_MODE_CONTROL_MODE_LSB); 
+	f.value |= makePrtlFrame(accelerator_position, MASK_MTBA_ACCELERATOR_POSITION, MTBA_ACCELERATOR_POSITION_LSB); 
+	f.value |= makePrtlFrame(regeneration_vr_position, MASK_MTBA_REGENERATION_VR_POSITION, MTBA_REGENERATION_VR_POSITION_LSB); 
+	f.value |= makePrtlFrame(digit_sw_position, MASK_MTBA_DIGITAL_SW_POSITION, MTBA_DIGITAL_SW_POSITION_LSB); 
+	f.value |= makePrtlFrame(output_target_value, MASK_MTBA_OUTPUT_TARGET_VALUE, MTBA_OUTPUT_TARGET_VALUE_LSB); 
+	f.value |= makePrtlFrame(drive_action_status, MASK_MTBA_DRIVE_ACTION_STATUS, MTBA_DRIVE_ACTION_STATUS_LSB); 
+	f.value |= makePrtlFrame(regeneration_status, MASK_MTBA_REGENERATION_STATUS, MTBA_REGENERATION_STATUS_LSB);
 
 	set_header(f);
 	return f;
@@ -368,35 +363,34 @@ Frame MTBA_F1_RRight::generate_frame() const {
 Frame MTBA_F1_RLeft::generate_frame() const {
 	Frame f;
 
-	frame.value =  makePtrlFrame(power_mode, MASK_MTBA_POWER_MODE, MTBA_POWER_MODE_LSB); 
-	frame.value |= makePtrlFrame(motor_control_mode, MASK_MTBA_MODE_CONTROL_MODE, MTBA_MODE_CONTROL_MODE_LSB); 
-	frame.value |= makePtrlFrame(accelerator_position, MASK_MTBA_ACCELERATOR_POSITION, MTBA_ACCELERATOR_POSITION_LSB); 
-	frame.value |= makePtrlFrame(regeneration_vr_position, MASK_MTBA_REGENERATION_VR_POSITION, MTBA_REGENERATION_VR_POSITION); 
-	frame.value |= makePtrlFrame(digit_sw_position, MASK_MTBA_DIGITAL_SW_POSITION, MTBA_DIGITAL_SW_POSITION_LSB); 
-	frame.value |= makePtrlFrame(output_target_value, MASK_MTBA_OUTPUT_TARGET_VALUE, MTBA_OUTPUT_TARGET_VALUE_LSB); 
-	frame.value |= makePtrlFrame(drive_action_status, MASK_MTBA_DRIVE_ACTION_STATUS, MTBA_DRIVE_ACTION_STATUS_LSB); 
-	frame.value |= makePtrlFrame(regeneration_status, MASK_MTBA_REGENERATION_STATUS, MTBA_REGENERATION_STATUS_LSB);
-
+	f.value =  makePrtlFrame(power_mode, MASK_MTBA_POWER_MODE, MTBA_POWER_MODE_LSB); 
+	f.value |= makePrtlFrame(motor_control_mode, MASK_MTBA_MODE_CONTROL_MODE, MTBA_MODE_CONTROL_MODE_LSB); 
+	f.value |= makePrtlFrame(accelerator_position, MASK_MTBA_ACCELERATOR_POSITION, MTBA_ACCELERATOR_POSITION_LSB); 
+	f.value |= makePrtlFrame(regeneration_vr_position, MASK_MTBA_REGENERATION_VR_POSITION, MTBA_REGENERATION_VR_POSITION_LSB); 
+	f.value |= makePrtlFrame(digit_sw_position, MASK_MTBA_DIGITAL_SW_POSITION, MTBA_DIGITAL_SW_POSITION_LSB); 
+	f.value |= makePrtlFrame(output_target_value, MASK_MTBA_OUTPUT_TARGET_VALUE, MTBA_OUTPUT_TARGET_VALUE_LSB); 
+	f.value |= makePrtlFrame(drive_action_status, MASK_MTBA_DRIVE_ACTION_STATUS, MTBA_DRIVE_ACTION_STATUS_LSB); 
+	f.value |= makePrtlFrame(regeneration_status, MASK_MTBA_REGENERATION_STATUS, MTBA_REGENERATION_STATUS_LSB);
 	set_header(f);
 	return f;
 }
 Frame MTBA_F2_RLeft::generate_frame() const {
 	Frame f;
-	
-	frame.value  = makePrtlFrame(ADSensorErr, MASK_MTBA_AD_SENS_ERR, MTBA_AD_SENS_LSB);
-	frame.value |= makePrtlFrame(powerSysErr, MASK_MTBA_POWER_SYS_ERR, MTBA_POWER_SYS_ERR_LSB);
-	frame.value |= makePrtlFrame(motorSysErr, MASK_MTBA_MOTOR_SYS_ERR, MTBA_MOTOR_SYS_ERR_LSB);
-	frame.value |= makePrtlFrame(FETOverHeatErr, MASK_MTBA_FET_OVER_HEAT_ERR, MTBA_FET_OVER_HEAT_ERR_LSB);
+
+	f.value  = makePrtlFrame(ADSensorErr, MASK_MTBA_AD_SENS_ERR, MTBA_AD_SENS_ERR_LSB);
+	f.value |= makePrtlFrame(powerSysErr, MASK_MTBA_POWER_SYS_ERR, MTBA_POWER_SYS_ERR_LSB);
+	f.value |= makePrtlFrame(motorSysErr, MASK_MTBA_MOTOR_SYS_ERR, MTBA_MOTOR_SYS_ERR_LSB);
+	f.value |= makePrtlFrame(FETOverHeatErr, MASK_MTBA_FET_OVER_HEAT_ERR, MTBA_FET_OVER_HEAT_ERR_LSB);
 	set_header(f);
 	return f;
 }
 Frame MTBA_F2_RRight::generate_frame() const {
 	Frame f;
 	
-	frame.value  = makePrtlFrame(ADSensorErr, MASK_MTBA_AD_SENS_ERR, MTBA_AD_SENS_LSB);
-	frame.value |= makePrtlFrame(powerSysErr, MASK_MTBA_POWER_SYS_ERR, MTBA_POWER_SYS_ERR_LSB);
-	frame.value |= makePrtlFrame(motorSysErr, MASK_MTBA_MOTOR_SYS_ERR, MTBA_MOTOR_SYS_ERR_LSB);
-	frame.value |= makePrtlFrame(FETOverHeatErr, MASK_MTBA_FET_OVER_HEAT_ERR, MTBA_FET_OVER_HEAT_ERR_LSB);
+	f.value  = makePrtlFrame(ADSensorErr, MASK_MTBA_AD_SENS_ERR, MTBA_AD_SENS_ERR_LSB);
+	f.value |= makePrtlFrame(powerSysErr, MASK_MTBA_POWER_SYS_ERR, MTBA_POWER_SYS_ERR_LSB);
+	f.value |= makePrtlFrame(motorSysErr, MASK_MTBA_MOTOR_SYS_ERR, MTBA_MOTOR_SYS_ERR_LSB);
+	f.value |= makePrtlFrame(FETOverHeatErr, MASK_MTBA_FET_OVER_HEAT_ERR, MTBA_FET_OVER_HEAT_ERR_LSB);
 	set_header(f);
 	return f;
 }

@@ -28,7 +28,7 @@
 // BMS19 TX
 #define BMS19_VCSOC_ID			0x6B0
 #define BMS19_MinMaxTemp_ID		0x6B1
-#define BMS_BCL_HT_LT_ID		0x6B2
+#define BMS19_BATT_STAT_ID		0x36
 
 // motor controller TX
 /**
@@ -92,9 +92,9 @@
 #define mask(f, mask, lsb) ( (f >> lsb ) & mask)
 
 /* Macro for setting member value within frame, reverse of mask process
-*	f		CAN Frame
-*	mask	Mask to specify length of packet
-*	lsb 	The rightmost bit of the value within the frame
+*	[f		CAN Frame]
+*	[mask	Mask to specify length of packet]
+*	[lsb 	The rightmost bit of the value within the frame]
 */
 #define makePrtlFrame(f, mask, lsb) ( ((f & mask) << lsb))
 
@@ -370,7 +370,7 @@ public:
 	uint16_t motor_rotating_speed;
 	uint16_t pwm_duty;
 	uint8_t lead_angle;
-
+private :
 	/*
 	* Apply these masks after shifting frame to LSB
 	* MTBA Can packets don't follow bytes, so alot of masking is necessary 
@@ -428,7 +428,7 @@ public:
 	uint16_t motor_rotating_speed;
 	uint16_t pwm_duty;
 	uint8_t lead_angle;
-
+private :
 	/*
 	* Apply these masks after shifting frame to LSB
 	* MTBA Can packets don't follow bytes, so alot of masking is necessary 
@@ -454,7 +454,7 @@ public:
 	
 };
 class MTBA_F1_RRight : public Layout{
-public:
+public :
 	MTBA_F1_RRight(bool pm, bool mcm, uint16_t ap, uint16_t rvp, uint16_t dsp, uint16_t otv, uint16_t das, bool rs) :
 		power_mode(pm), 
 		motor_control_mode(mcm), 
@@ -486,7 +486,7 @@ public:
 	uint16_t output_target_value;		// 10 bits
 	uint8_t drive_action_status;		// 2 bits
 	bool regeneration_status;			// 1 bit
-
+private :
 	/*
 	* Apply these masks after shifting frame to LSB
 	* MTBA Can packets don't follow bytes, so alot of masking is necessary 
@@ -511,7 +511,7 @@ public:
 	static const int MTBA_REGENERATION_STATUS_LSB						= 38;
 };
 class MTBA_F1_RLeft : public Layout{
-public:
+public :
 	MTBA_F1_RLeft(bool pm, bool mcm, uint16_t ap, uint16_t rvp, uint16_t dsp, uint16_t otv, uint16_t das, bool rs) :
 		power_mode(pm), 
 		motor_control_mode(mcm), 
@@ -543,7 +543,7 @@ public:
 	uint16_t output_target_value;		// 10 bits
 	uint8_t drive_action_status;		// 2 bits
 	bool regeneration_status;			// 1 bit
-
+private:
 	/*
 	* Apply these masks after shifting frame to LSB
 	* MTBA Can packets don't follow bytes, so alot of masking is necessary 
@@ -569,6 +569,7 @@ public:
 };
 
 class MTBA_F2_RLeft : public Layout{
+public :
 	MTBA_F2_RLeft(uint16_t adErr, uint8_t psErr, uint8_t msErr, uint8_t fetOHErr):
 		ADSensorErr(adErr),
 		powerSysErr(psErr),
@@ -588,7 +589,7 @@ class MTBA_F2_RLeft : public Layout{
 	uint8_t powerSysErr; 
 	uint8_t motorSysErr;
 	uint8_t FETOverHeatErr;
-
+private :
 	/*
 	* Apply these masks after shifting frame to LSB
 	* MTBA Can packets don't follow bytes, so alot of masking is necessary 
@@ -606,6 +607,7 @@ class MTBA_F2_RLeft : public Layout{
 };
 
 class MTBA_F2_RRight : public Layout{
+public:
 	MTBA_F2_RRight(uint16_t adErr, uint8_t psErr, uint8_t msErr, uint8_t fetOHErr):
 		ADSensorErr(adErr),
 		powerSysErr(psErr),
@@ -626,6 +628,7 @@ class MTBA_F2_RRight : public Layout{
 	uint8_t motorSysErr;
 	uint8_t FETOverHeatErr;
 
+private :
 	/*
 	* Apply these masks after shifting frame to LSB
 	* MTBA Can packets don't follow bytes, so alot of masking is necessary 
@@ -1137,18 +1140,24 @@ public:
 * BMS battery status packet
 *	Cycles through each battery cell with the same CAN ID
 */
-class BMS_Batt_Status : public Layout {
-public:
-	BMS_Batt_Status(uint8_t _ci, uint16_t _instv, uint16_t _intR, bool _sh, uint16_t _ocv) :
+class BMS19_Batt_Stat : public Layout {
+public :
+	BMS19_Batt_Stat(uint8_t _ci, uint16_t _instv, uint16_t _intR, bool _sh, uint16_t _ocv) :
 		cellID(_ci),
 		instVolt(_instv),
 		intR(_intR),
 		shunt(_sh),
 		ocVolt(_ocv)
-		{ id = BMS_BATTERY_STATUS_ID;}
-	BMS_Batt_Status(const Frame& frame) 
+		{ id = BMS19_BATT_STAT_ID;}
+	BMS19_Batt_Stat(const Frame& frame) :
+		cellID(mask(frame.value, MASK_CELL_ID, CELL_ID_LSB)),
+		instVolt(mask(frame.value, MASK_INST_VOLT, INST_VOLT_LSB)),
+		intR(mask(frame.value, MASK_INT_RESIS, INT_RESIS_LSB)),
+		shunt(mask(frame.value, MASK_SHUNT, SHUNT_LSB)),
+		ocVolt(mask(frame.value, MASK_OC_VOLT, OC_VOLT_LSB))
 		{id = frame.id;}
 
+	Frame generate_frame() const;
 
 	uint8_t cellID;
 	uint16_t instVolt;
@@ -1156,7 +1165,18 @@ public:
 	bool shunt;
 	uint16_t ocVolt;
 
+private :
+	static const uint16_t MASK_CELL_ID			= 0xFF;
+	static const uint16_t MASK_INST_VOLT 		= 0xFFFF;
+	static const uint16_t MASK_INT_RESIS 		= 0x7FFF;
+	static const uint16_t MASK_SHUNT 			= 0x01;
+	static const uint16_t MASK_OC_VOLT			= 0xFFFF;
 
-}
+	static const int CELL_ID_LSB 		= 0;
+	static const int INST_VOLT_LSB 		= 8;
+	static const int INT_RESIS_LSB 		= 25;
+	static const int SHUNT_LSB 			= 24;
+	static const int OC_VOLT_LSB 		= 40;
+};
 
 #endif

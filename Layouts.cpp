@@ -414,3 +414,16 @@ Frame BMS19_MinMaxTemp::generate_frame() const {
 	set_header(f);
 	return f;
 }
+
+Frame BMS19_Batt_Stat::generate_frame() const {
+	Frame f;
+
+	f.value =  makePrtlFrame(cellID, MASK_CELL_ID, CELL_ID_LSB);
+	f.value |= makePrtlFrame(instVolt, MASK_INST_VOLT, INST_VOLT_LSB);
+	f.value |= makePrtlFrame(intR, MASK_INT_RESIS, INT_RESIS_LSB);
+	f.value |= makePrtlFrame(shunt, MASK_SHUNT, SHUNT_LSB);
+	f.value |= makePrtlFrame(ocVolt, MASK_OC_VOLT, OC_VOLT_LSB);
+
+	set_header(f);
+	return f;
+}

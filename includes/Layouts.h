@@ -30,6 +30,9 @@
 #define BMS19_MinMaxTemp_ID		0x6B1
 #define BMS19_BATT_STAT_ID		0x36
 
+// Writing to BMS19 for overheat
+#define BMS19_BATT_OVERHEAT 	0x6B2
+
 // motor controller TX
 /**
 #define MC_BASEADDRESS		0x400
@@ -1060,6 +1063,20 @@ public:
 	
 	Frame generate_frame() const;
 };
+
+class DC_Temp_Overheat : public Layout {
+public:
+	DC_Temp_Overheat(bool _overTempLimit) 
+		overTempLimit(_overTempLimit)
+		{id = BMS19_BATT_OVERHEAT;}
+	DC_Temp_Overheat(const Frame& frame) 
+		overTempLimit((bool) frame.data[7])
+		{id = frame.id}
+		
+	bool overTempLimit;
+
+	Frame generate_frame() const;
+}
 
 /* 
  * Steering wheel data packet, sent to the driver controls.

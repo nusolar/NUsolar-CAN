@@ -285,6 +285,12 @@ Frame DC_Temp_3::generate_frame() const {
     return f;
 }
 
+Frame DC_Temp_Overheat::generate_frame() const {
+	Frame f;
+	f.data[7] = overTempLimit;
+	set_header(f);
+	return f;
+}
 Frame SW_Data::generate_frame() const {
     Frame f;
     f.data[0] = byte0;

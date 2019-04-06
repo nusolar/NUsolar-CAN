@@ -14,17 +14,6 @@
  * Constant definitions for CAN packet IDs.
  */
 
-// BMS TX
-#define BMS_BASEADDRESS 	0x600
-#define BMS_HEARTBEAT_ID	BMS_BASEADDRESS
-#define BMS_SOC_ID	        0x6F4
-#define BMS_BAL_SOC_ID		0x6F5
-#define BMS_PRECHARGE_ID	0x6F7
-#define BMS_VOLT_CURR_ID	0x6B0
-#define BMS_STATUS_ID		0x6FB
-#define BMS_FAN_STATUS_ID	0x6FC
-#define BMS_STATUS_EXT_ID	0x6FD
-
 // BMS19 TX
 #define BMS19_VCSOC_ID			0x6B0
 #define BMS19_MinMaxTemp_ID		0x6B1
@@ -33,26 +22,16 @@
 // Writing to BMS19 for overheat
 #define BMS19_BATT_OVERHEAT 	0x6B2
 
-// motor controller TX
-/**
-#define MC_BASEADDRESS		0x400
-#define MC_HEARTBEAT_ID		MC_BASEADDRESS
-#define MC_STATUS_ID 		0x401
-#define MC_BUS_STATUS_ID	0x402
-#define MC_VELOCITY_ID		0x403
-#define MC_PHASE_ID			0x404
-#define MC_FANSPEED_ID		0x40A
-#define MC_ODOAMP_ID		0x40E**/
-
 // mitsuba motor controller
-#define MTBA_REQUEST_COMMAND_REAR_LEFT_ID  0x08F89540
-#define MTBA_REQUEST_COMMAND_REAR_RIGHT_ID	 0x08F91540
-#define MTBA_FRAME0_REAR_LEFT_ID  0x08850225
-#define MTBA_FRAME0_REAR_RIGHT_ID  0x08850245
-#define MTBA_FRAME1_REAR_LEFT_ID  0x08950225
-#define MTBA_FRAME1_REAR_RIGHT_ID  0x08950245
-#define MTBA_FRAME2_REAR_LEFT_ID  0x08A50225
-#define MTBA_FRAME2_REAR_RIGHT_ID  0x08A50245
+#define MTBA_BASEADDRESS 						0x08000000
+#define MTBA_REQUEST_COMMAND_REAR_LEFT_ID  		0x08F89540
+#define MTBA_REQUEST_COMMAND_REAR_RIGHT_ID	 	0x08F91540
+#define MTBA_FRAME0_REAR_LEFT_ID  				0x08850225
+#define MTBA_FRAME0_REAR_RIGHT_ID 				0x08850245
+#define MTBA_FRAME1_REAR_LEFT_ID  				0x08950225
+#define MTBA_FRAME1_REAR_RIGHT_ID 				0x08950245
+#define MTBA_FRAME2_REAR_LEFT_ID  				0x08A50225
+#define MTBA_FRAME2_REAR_RIGHT_ID 				0x08A50245
 
 // driver controls TX
 #define DC_BASEADDRESS		0x500
@@ -123,89 +102,6 @@ protected:
 	 * Fill out the header info for a frame.
 	 */
 	 inline void set_header(Frame& f, byte size = 8) const;
-};
-
-
-/*
- * BMS heartbeaat packet.
- */
-class BMS_Heartbeat : public Layout {
-public:
-	BMS_Heartbeat(uint32_t d_id, uint32_t s_no) : device_id(d_id), serial_no(s_no) { id = BMS_HEARTBEAT_ID; }
-	BMS_Heartbeat(const Frame& frame) : device_id(frame.low), serial_no(frame.high) { id = frame.id; }
-
-	Frame generate_frame() const;
-
-	uint32_t device_id;
-	uint32_t serial_no;
-};
-
-/*
- * BMS state of charging packet.
- */
-class BMS_SOC : public Layout {
-public:
-	BMS_SOC(float pow_cons, float per_SOC) : power_consumed(pow_cons), percent_SOC(per_SOC) { id = BMS_SOC_ID; }
-	BMS_SOC(const Frame& frame) : power_consumed(frame.low_f), percent_SOC(frame.high_f) { id = frame.id; }
-
-	Frame generate_frame() const;
-
-	float power_consumed;
-	float percent_SOC;
-};
-
-/*
- * BMS state of charging during balancing packet.
- */
-class BMS_BalanceSOC : public Layout {
-public:
-	BMS_BalanceSOC(float pow_supp, float SOC_mis) : 
-		power_supplied(pow_supp), SOC_mismatch(SOC_mis) 
-		{ id = BMS_BAL_SOC_ID; }
-	BMS_BalanceSOC(const Frame& frame) : power_supplied(frame.low_f), SOC_mismatch(frame.high_f) { id = frame.id; }
-
-	Frame generate_frame() const;
-
-	float power_supplied;
-	float SOC_mismatch;
-};
-
-/*
- * BMS precharge status packet.
- */
-class BMS_PrechargeStatus : public Layout {
-public:
-	BMS_PrechargeStatus(uint8_t d_status, uint64_t pc_status, uint8_t t_elapsed, uint8_t pc_timer) :
-		driver_status(d_status), precharge_status(pc_status), timer_elapsed(t_elapsed), precharge_timer(pc_timer)
-		{ id = BMS_PRECHARGE_ID; }
-	BMS_PrechargeStatus(const Frame& frame) {
-	id = frame.id;
-	driver_status = frame.data[0];
-	timer_elapsed = frame.data[6];
-	precharge_timer = frame.data[7];
-	precharge_status = 0x0000 | (frame.data[1] << 16) | (frame.data[2] << 12) | (frame.data[3] << 8) | (frame.data[4] << 4) | frame.data[5];
-}
-
-	Frame generate_frame() const;
-
-	uint8_t driver_status;
-	uint64_t precharge_status;
-	uint8_t timer_elapsed;
-	uint8_t precharge_timer;
-};
-
-/*
- * BMS voltage and current packet.
- */
-class BMS_VoltageCurrent : public Layout {
-public:
-	BMS_VoltageCurrent(uint32_t v, int32_t c) : voltage(v), current(c) { id = BMS_VOLT_CURR_ID; }
-	BMS_VoltageCurrent(const Frame& frame) : voltage(frame.low), current(frame.high_s) { id = frame.id; }
-
-	Frame generate_frame() const;
-
-	uint32_t voltage;
-	int32_t current;
 };
 
 /*
@@ -647,107 +543,6 @@ private :
 	static const int MTBA_MOTOR_SYS_ERR_LSB							= 24;
 	static const int MTBA_FET_OVER_HEAT_ERR_LSB						= 32;
 };
-
-/*
- * Motor controller heartbeat packet.
- */
-/**
-class MC_Heartbeat : public Layout {
-public:
-	MC_Heartbeat(uint32_t t_id, uint32_t s_no) : trituim_id(t_id), serial_no(s_no) { id = MC_HEARTBEAT_ID; }
-	MC_Heartbeat(const Frame& frame) : trituim_id(frame.low), serial_no(frame.high) { id = frame.id; }
-
-	Frame generate_frame() const;
-
-	uint32_t trituim_id; // is actually a char[8]
-	uint32_t serial_no;
-};**/
-
-/*
- * Motor controller status packet.
- */
-/**
-class MC_Status : public Layout {
-public:
-	MC_Status(uint16_t act_m, uint16_t err_f, uint16_t lim_f) : 
-		active_motor(act_m), err_flags(err_f), limit_flags(lim_f)
-		{ id = MC_STATUS_ID; }
-	MC_Status(const Frame& frame) : active_motor(frame.s3), err_flags(frame.s2), limit_flags(frame.s1)
-		{ id = frame.id; }
-
-	Frame generate_frame() const;
-
-	uint16_t active_motor;
-	uint16_t err_flags;
-	uint16_t limit_flags;
-};
-**/
-/*
- * Motor controller bus status packet.
- */
-/**
-class MC_BusStatus : public Layout {
-public:
-	MC_BusStatus(float bc, float bv) : bus_current(bc), bus_voltage(bv) { id = MC_BUS_STATUS_ID; }
-	MC_BusStatus(const Frame& frame) : bus_current(frame.high_f), bus_voltage(frame.low_f) { id = frame.id; }
-
-	Frame generate_frame() const;
-
-	float bus_current;
-	float bus_voltage;
-};**/
-
-/*
- * Motor controller velocity packet.
- */
-/**
-class MC_Velocity : public Layout {
-public:
-	MC_Velocity(float car_v, float motor_v) : car_velocity(car_v), motor_velocity(motor_v) { id = MC_VELOCITY_ID; }
-	MC_Velocity(const Frame& frame) : car_velocity(frame.high_f), motor_velocity(frame.low_f) { id = frame.id; }
-
-	Frame generate_frame() const;
-
-	float car_velocity;
-	float motor_velocity;
-};**/
-
-/*
- * Motor controller motor phase current packet.
- */
-/**
-class MC_PhaseCurrent : public Layout {
-public:
-	MC_PhaseCurrent(float a, float b) : phase_a(a), phase_b(b) { id = MC_PHASE_ID; }
-	MC_PhaseCurrent(const Frame& frame) : phase_a(frame.high_f), phase_b(frame.low_f) { id = frame.id; }
-
-	Frame generate_frame() const;
-
-	float phase_a;
-	float phase_b;
-};
-
-class MC_FanSpeed : public Layout {
-public:
-	MC_FanSpeed(float rpm, float v) : speed(rpm), drive(v) {id = MC_FANSPEED_ID; }
-	MC_FanSpeed(const Frame& frame) : speed(frame.high_f), drive(frame.low_f) { id = frame.id; }
-
-	Frame generate_frame() const;
-
-	float speed;
-	float drive;
-};
-
-class MC_OdoAmp : public Layout {
-public:
-	MC_OdoAmp(float Ah, float odom) : bus_amphours(Ah), odometer(odom) {id = MC_ODOAMP_ID; }
-	MC_OdoAmp(const Frame& frame) : bus_amphours(frame.high_f), odometer(frame.low_f) { id = frame.id; }
-
-	Frame generate_frame() const;
-
-	float bus_amphours;
-	float odometer;
-};**/
 
 /*
  * Driver controls heartbeat packet.

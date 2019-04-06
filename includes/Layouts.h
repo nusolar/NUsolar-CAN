@@ -784,20 +784,6 @@ public:
 	Frame generate_frame() const;
 };
 
-class DC_Temp_Overheat : public Layout {
-public:
-	DC_Temp_Overheat(bool _overTempLimit) : 
-		overTempLimit(_overTempLimit)
-		{id = BMS19_BATT_OVERHEAT;}
-	DC_Temp_Overheat(const Frame& frame) :
-		overTempLimit((bool) frame.data[7])
-		{id = frame.id;}
-		
-	bool overTempLimit;
-
-	Frame generate_frame() const;
-};
-
 /* 
  * Steering wheel data packet, sent to the driver controls.
  */
@@ -914,6 +900,27 @@ private :
 	static const int INT_RESIS_LSB 		= 25;
 	static const int SHUNT_LSB 			= 24;
 	static const int OC_VOLT_LSB 		= 40;
+};
+
+class BMS19_Overheat_Precharge : public Layout {
+public:
+	BMS19_Overheat_Precharge(bool _overTempLimit, bool _precharged) : 
+		overTempLimit(_overTempLimit),
+		precharged(_precharged)
+		{id = BMS19_BATT_OVERHEAT;}
+	BMS19_Overheat_Precharge(const Frame& frame) :
+		overTempLimit((bool) (frame.value >> OVERTEMPLIMIT_LSB)),
+		precharged((bool) (frame.value >> PRECHARGED_LSB))
+		{id = frame.id;}
+		
+	bool overTempLimit;
+	bool precharged;
+
+	Frame generate_frame() const;
+
+private:
+	static const int OVERTEMPLIMIT_LSB = 63;
+	static const int PRECHARGED_LSB = 55;
 };
 
 #endif

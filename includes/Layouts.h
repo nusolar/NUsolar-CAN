@@ -137,81 +137,6 @@ class BMS19_MinMaxTemp : public Layout {
 		uint8_t maxTemp;
 };
 
-/*
- * BMS status packet.
- */
-class BMS_Status : public Layout {
-public:
-	BMS_Status(uint16_t v_rising, uint16_t v_falling, uint8_t flg, uint8_t cmus, uint16_t firmware) :
-		voltage_rising(v_rising), voltage_falling(v_falling), flags(flg), no_cmus(cmus), firmware_build(firmware)
-		{ id = BMS_STATUS_ID; }
-	BMS_Status(const Frame& frame) : voltage_rising(frame.s0), voltage_falling(frame.s1), 
-		flags(frame.data[4]), no_cmus(frame.data[5]), firmware_build(frame.s3)
-		{ id = frame.id; }
-
-	Frame generate_frame() const;
-
-	uint16_t voltage_rising;
-	uint16_t voltage_falling;
-	uint8_t flags;
-	uint8_t no_cmus;
-	uint16_t firmware_build;
-
-};
-
-/*
- * BMS Extended Status Packet.
- */
-class BMS_Status_Ext : public Layout {
-public:
-	BMS_Status_Ext(uint32_t _flags, uint8_t _hardware_version, uint8_t _model) :
-		flags(_flags), hardware_version(_hardware_version), model(_model)
-		{ id = BMS_STATUS_EXT_ID; }
-	BMS_Status_Ext(const Frame& frame) : flags(frame.low), hardware_version(frame.data[4]), 
-		model(frame.data[5])
-		{ id = frame.id; }
-
-	Frame generate_frame() const;
-
-	uint32_t flags;
-	uint8_t  hardware_version;
-	uint8_t  model;
-
-	static const uint32_t F_OVERVOLTAGE 		= 0x00000001; // Cell Overvoltage Flag
-	static const uint32_t F_UNDERVOLTAGE 	    = 0x00000002; // Cell Undervoltage Flag
-												//0x00000004; // Cell Overtemp Flag (not implemented)
-	static const uint32_t F_UNTRUSTED			= 0x00000008; // Untrusted Measurement Flag (channel mismatch)
-	static const uint32_t F_CMULOST			    = 0x00000010; // Lost CMU Comm Fag
-	static const uint32_t F_DRVCTRLSLOST	    = 0x00000020; // Lost Driver Controls Comm Flag
-	static const uint32_t F_SETUPMODE		    = 0x00000040; // BMU in Setup Mode Flag
-	static const uint32_t F_CMUCANPOWERSTATUS   = 0x00000080; // Power Status of CMU CAN bus
-	static const uint32_t F_ISOLATIONFAIL       = 0x00000100; // Isolation Failure Flag
-												//0x00000200; // SOC Measurement Not Valid Flag (not used)
-	static const uint32_t F_12VLOW			    = 0x00000400; // Low 12V Supply on CAN bus Flag
-	static const uint32_t F_CONTACTOR		    = 0x00000800; // Contactor Error Flag
-	static const uint32_t F_EXTRACELL		    = 0x00001000; // Extra Cell Detected by CMU Flag
-};
-
-/*
- * BMS fan status packet.
- */
-class BMS_FanStatus : public Layout {
-public:
-	BMS_FanStatus(uint16_t f0_speed, uint16_t f1_speed, uint16_t fan_c, uint16_t cmu_c) :
-		fan0_speed(f0_speed), fan1_speed(f1_speed), fan_consumption(fan_c), cmu_consumption(cmu_c)
-		{ id = BMS_FAN_STATUS_ID; }
-	BMS_FanStatus(const Frame& frame) : fan0_speed(frame.s0), fan1_speed(frame.s1), 
-		fan_consumption(frame.s2), cmu_consumption(frame.s3)
-		{ id = frame.id; }
-
-	Frame generate_frame() const;
-
-	uint16_t fan0_speed;
-	uint16_t fan1_speed;
-	uint16_t fan_consumption;
-	uint16_t cmu_consumption;
-};
-
 //MITSUBA
 class MTBA_ReqCommRLeft: public Layout {
 public:
@@ -861,17 +786,17 @@ public:
 
 class DC_Temp_Overheat : public Layout {
 public:
-	DC_Temp_Overheat(bool _overTempLimit) 
+	DC_Temp_Overheat(bool _overTempLimit) : 
 		overTempLimit(_overTempLimit)
 		{id = BMS19_BATT_OVERHEAT;}
-	DC_Temp_Overheat(const Frame& frame) 
+	DC_Temp_Overheat(const Frame& frame) :
 		overTempLimit((bool) frame.data[7])
-		{id = frame.id}
+		{id = frame.id;}
 		
 	bool overTempLimit;
 
 	Frame generate_frame() const;
-}
+};
 
 /* 
  * Steering wheel data packet, sent to the driver controls.

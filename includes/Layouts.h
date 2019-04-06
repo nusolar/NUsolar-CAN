@@ -15,12 +15,11 @@
  */
 
 // BMS19 TX
-#define BMS19_VCSOC_ID			0x6B0
-#define BMS19_MinMaxTemp_ID		0x6B1
-#define BMS19_BATT_STAT_ID		0x36
-
-// Writing to BMS19 for overheat
-#define BMS19_BATT_OVERHEAT 	0x6B2
+#define BMS19_VCSOC_ID					0x6B0
+#define BMS19_MinMaxTemp_ID				0x6B1
+#define BMS19_BATT_STAT_ID				0x36
+#define BMS19_OVERHEAT_PRECHARGE_ID 	0x6B2
+#define BMS19_STROBE_TRIP_ID			0x6B3
 
 // mitsuba motor controller
 #define MTBA_BASEADDRESS 						0x08000000
@@ -907,7 +906,7 @@ public:
 	BMS19_Overheat_Precharge(bool _overTempLimit, bool _precharged) : 
 		overTempLimit(_overTempLimit),
 		precharged(_precharged)
-		{id = BMS19_BATT_OVERHEAT;}
+		{id = BMS19_OVERHEAT_PRECHARGE_ID;}
 	BMS19_Overheat_Precharge(const Frame& frame) :
 		overTempLimit((bool) (frame.value >> OVERTEMPLIMIT_LSB)),
 		precharged((bool) (frame.value >> PRECHARGED_LSB))
@@ -922,5 +921,22 @@ private:
 	static const int OVERTEMPLIMIT_LSB = 63;
 	static const int PRECHARGED_LSB = 55;
 };
+
+class BMS19_Strobe_Trip : public Layout {
+public :
+	BMS19_Strobe_Trip(bool _strobeTrip) :
+		strobeTrip(_strobeTrip)
+		{id = BMS19_STROBE_TRIP_ID;}
+	BMS19_Strobe_Trip(const Frame& frame) :
+		strobeTrip((bool) (frame.value >> STROBE_TRIP_LSB))
+		{id = frame.id;}
+	
+	bool strobeTrip;
+
+	Frame generate_frame() const;
+private :
+	static const int STROBE_TRIP_LSB = 63;
+};
+
 
 #endif

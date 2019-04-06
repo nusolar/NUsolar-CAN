@@ -159,12 +159,6 @@ Frame DC_Temp_3::generate_frame() const {
     return f;
 }
 
-Frame DC_Temp_Overheat::generate_frame() const {
-	Frame f;
-	f.data[7] = (overTempLimit << 7);
-	set_header(f);
-	return f;
-}
 Frame SW_Data::generate_frame() const {
     Frame f;
     f.data[0] = byte0;
@@ -313,6 +307,15 @@ Frame BMS19_Overheat_Precharge::generate_frame() const {
 
 	f.value = overTempLimit << OVERTEMPLIMIT_LSB;
 	f.value = precharged << PRECHARGED_LSB;
+
+	set_header(f);
+	return f;
+}
+
+Frame BMS19_Strobe_Trip::generate_frame() const {
+	Frame f;
+
+	f.value = strobeTrip << STROBE_TRIP_LSB;
 
 	set_header(f);
 	return f;

@@ -306,7 +306,7 @@ Frame BMS19_Overheat_Precharge::generate_frame() const {
 	Frame f;
 
 	f.value = overTempLimit << OVERTEMPLIMIT_LSB;
-	f.value = precharged << PRECHARGED_LSB;
+	f.value = precharge << PRECHARGE_LSB;
 
 	set_header(f);
 	return f;

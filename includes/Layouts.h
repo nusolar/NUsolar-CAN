@@ -903,23 +903,23 @@ private :
 
 class BMS19_Overheat_Precharge : public Layout {
 public:
-	BMS19_Overheat_Precharge(bool _overTempLimit, bool _precharged) : 
+	BMS19_Overheat_Precharge(bool _overTempLimit, bool _precharge) : 
 		overTempLimit(_overTempLimit),
-		precharged(_precharged)
+		precharge(_precharge)
 		{id = BMS19_OVERHEAT_PRECHARGE_ID;}
 	BMS19_Overheat_Precharge(const Frame& frame) :
 		overTempLimit((bool) (frame.value >> OVERTEMPLIMIT_LSB)),
-		precharged((bool) (frame.value >> PRECHARGED_LSB))
+		precharge((bool) (frame.value >> PRECHARGE_LSB))
 		{id = frame.id;}
 		
 	bool overTempLimit;
-	bool precharged;
+	bool precharge;
 
 	Frame generate_frame() const;
 
 private:
 	static const int OVERTEMPLIMIT_LSB = 63;
-	static const int PRECHARGED_LSB = 55;
+	static const int PRECHARGE_LSB = 55;
 };
 
 class BMS19_Strobe_Trip : public Layout {

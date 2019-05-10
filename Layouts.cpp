@@ -305,8 +305,8 @@ Frame BMS19_Batt_Stat::generate_frame() const {
 Frame BMS19_Overheat_Precharge::generate_frame() const {
 	Frame f;
 
-	f.value = overTempLimit << OVERTEMPLIMIT_LSB;
-	f.value = precharge << PRECHARGE_LSB;
+	f.value = ((uint64_t) overTempLimit) << OVERTEMPLIMIT_LSB;
+	f.value |= ((uint64_t) precharge) << PRECHARGE_LSB;
 
 	set_header(f);
 	return f;
@@ -315,7 +315,7 @@ Frame BMS19_Overheat_Precharge::generate_frame() const {
 Frame BMS19_Strobe_Trip::generate_frame() const {
 	Frame f;
 
-	f.value = strobeTrip << STROBE_TRIP_LSB;
+	f.value = ((uint64_t)  strobeTrip) << STROBE_TRIP_LSB;
 
 	set_header(f);
 	return f;

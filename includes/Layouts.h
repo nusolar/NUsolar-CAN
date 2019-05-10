@@ -70,14 +70,14 @@
 *	mask	Mask to specify length of packet
 *	lsb 	The rightmost bit of the value within the frame
 */
-#define mask(f, mask, lsb) ( (f >> lsb ) & mask)
+#define mask(f, mask, lsb) ((((uint64_t) f) >> lsb ) & mask)
 
 /* Macro for setting member value within frame, reverse of mask process
 *	[f		CAN Frame]
 *	[mask	Mask to specify length of packet]
 *	[lsb 	The rightmost bit of the value within the frame]
 */
-#define makePrtlFrame(f, mask, lsb) ( ((f & mask) << lsb))
+#define makePrtlFrame(f, mask, lsb) ((((uint64_t) f) & mask) << lsb)
 
 // Function
 /*

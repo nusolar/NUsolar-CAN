@@ -28,8 +28,9 @@ void loop() {
   if (millis() - previous_send_time > 500) // Check and see whether the timer has expired
   {
     // This command sends data over any available TX port.
-    CanControl.Send(SW_Data(0b01101100),TXBANY);
-    
+    bool trysend = CanControl.Send(SW_Data(0b01101100),TXBANY);
+    Serial.println(trysend);
+
     // You can print out the error counters. You can also read registers on the board by using the controller.Read() command.
     CanControl.FetchErrors(); //Call this first to get the error data from the MCP2515
     Serial.print("TEC/REC ");

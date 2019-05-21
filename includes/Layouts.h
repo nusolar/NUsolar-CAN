@@ -626,10 +626,10 @@ public:
 
 class DC_Temp_0 : public Layout {
 public:
-	DC_Temp_0(uint8_t maxT, uint8_t minT, uint8_t T1, uint8_t T2, uint8_t T3, uint8_t T4, uint8_t T5, uint8_t T6) { 
+	DC_Temp_0(uint8_t maxT, uint8_t avgT, uint8_t T1, uint8_t T2, uint8_t T3, uint8_t T4, uint8_t T5, uint8_t T6) { 
 
 		max_temp = maxT;
-		min_temp = minT;
+		avg_temp = avgT;
 		temp[1] = T1;
 		temp[2] = T2;
 		temp[3] = T3;
@@ -640,10 +640,10 @@ public:
 		id = DC_TEMP_0_ID; 
 	}
 
-	DC_Temp_0(uint8_t maxT, uint8_t minT, uint8_t *_temps) { 
+	DC_Temp_0(uint8_t maxT, uint8_t avgT, uint8_t *_temps) { 
 
 		max_temp = maxT;
-		min_temp = minT;
+		avg_temp = avgT;
 		memcpy(temp+1,_temps, 6);
 
 		id = DC_TEMP_0_ID; 
@@ -651,7 +651,7 @@ public:
 
 	DC_Temp_0(const Frame& frame) { 
 		max_temp = frame.data[0];
-		min_temp = frame.data[1];
+		avg_temp = frame.data[1];
 		temp[1]  = frame.data[2];
 		temp[2]  = frame.data[3];
 		temp[3]  = frame.data[4];
@@ -660,7 +660,7 @@ public:
 		temp[6]  = frame.data[7];
 	}
 
-	uint8_t max_temp, min_temp;
+	uint8_t max_temp, avg_temp;
 	uint8_t temp[7];
 	
 	Frame generate_frame() const;

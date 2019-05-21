@@ -105,7 +105,7 @@ Frame DC_Status::generate_frame() const {
 Frame DC_Temp_0::generate_frame() const {
     Frame f;
     f.data[0] = max_temp;
-    f.data[1] = min_temp;
+    f.data[1] = avg_temp;
     f.data[2] = temp[1];
     f.data[3] = temp[2];
     f.data[4] = temp[3];

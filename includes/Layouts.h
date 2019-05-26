@@ -8,6 +8,7 @@
 
 #include <stdint.h>
 #include "MCP2515_defs.h"
+#include "MCP2515.h"
 
 /*
  * Packet_IDs.h
@@ -918,8 +919,8 @@ public:
 	Frame generate_frame() const;
 
 private:
-	static const int OVERTEMPLIMIT_LSB = 63;
-	static const int PRECHARGE_LSB = 55;
+	static const int OVERTEMPLIMIT_LSB = 0;
+	static const int PRECHARGE_LSB = 16;//55;
 };
 
 class BMS19_Strobe_Trip : public Layout {

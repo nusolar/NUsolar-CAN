@@ -50,7 +50,6 @@ typedef struct
           uint16_t s1;
           uint16_t s2;
           uint16_t s3;
-		      uint16_t s4; 
         };
         // 2 bytes (signed)
         struct {

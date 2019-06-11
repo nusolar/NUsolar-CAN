@@ -28,6 +28,7 @@
 #define MPPT_ANS_BASEADDRESS 0x770
 #define MPPT_LEFT_OFFSET 3
 #define MPPT_RIGHT_OFFSET 2
+#define MPPT_SUB_OFFSET 1
 
 // mitsuba motor controller
 #define MTBA_BASEADDRESS 0x08000000
@@ -87,6 +88,9 @@
 */
 #define makePrtlFrame(f, mask, lsb) ((((uint64_t)f) & (uint64_t)mask) << (unsigned int)lsb)
 
+// Macro for converting between 2 byte big Endian to little Endian and vice versa
+#define LBE(f) (((f & 0xff) <<  8u ) | ((f & 0xff00) >> 8u))
+
 // Function
 /*
  * Abstract base packet.
@@ -115,23 +119,28 @@ protected:
 
 /*
  * BMS Voltage, Current, and SOC packet (2019 BMS)
+ * Note that 2 byte values on the BMS uses Big Endian by default, so conversion necessary
  */
 class BMS19_VCSOC : public Layout
 {
 public:
-	BMS19_VCSOC(uint8_t v, uint8_t i, uint8_t soc) : voltage(v), current(i), packSOC(soc)
+	BMS19_VCSOC(uint16_t v, uint16_t i, uint8_t soc) : voltage(v), 
+													   current(i), 
+													   packSOC(soc)
 	{
 		id = BMS19_VCSOC_ID;
 	}
-	BMS19_VCSOC(const Frame &frame) : voltage(frame.data[2]), current(frame.data[0]), packSOC(frame.data[4])
+	BMS19_VCSOC(const Frame &frame) : voltage(LBE(frame.s0)),
+									  current(LBE(frame.s1)),
+									  packSOC(frame.data[4])
 	{
 		id = frame.id;
 	}
 
 	Frame generate_frame() const;
 
-	uint8_t voltage;
-	uint8_t current;
+	uint16_t voltage;
+	uint16_t current;
 	uint8_t packSOC;
 };
 

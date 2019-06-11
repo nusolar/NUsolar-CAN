@@ -193,6 +193,7 @@ Frame TEL_Status::generate_frame() const
 Frame MTBA_ReqCommRLeft::generate_frame() const
 {
 	Frame f;
+	f.value = 0ull;
 	f.ide = 1; //Extended CANID
 	f.data[0] = frame0_request;
 	set_header(f);
@@ -201,6 +202,7 @@ Frame MTBA_ReqCommRLeft::generate_frame() const
 Frame MTBA_ReqCommRRight::generate_frame() const
 {
 	Frame f;
+	f.value = 0ull;
 	f.ide = 1; //Extended CANID
 	f.data[0] = frame0_request;
 	set_header(f);
@@ -298,8 +300,9 @@ Frame BMS19_VCSOC::generate_frame() const
 {
 	Frame f;
 
-	f.data[0] = current;
-	f.data[2] = voltage;
+	// Current and voltage should be stored in little Endian form, default
+	f.s0 = LBE(current);
+	f.s1 = LBE(voltage);
 	f.data[4] = packSOC;
 	set_header(f);
 	return f;
@@ -377,12 +380,12 @@ Frame MPPT_Status::generate_frame() const
 
 	f.data[0] = tAmb;
 	f.value |= makePrtlFrame(battVoltFlag, flagLength, battVoltFlagLSB);
-	f.value != makePrtlFrame(overTempFlag, flagLength, overTempFlagLSB);
-	f.value != makePrtlFrame(noChargeFlag, flagLength, noChargeFlagLSB);
-	f.value != makePrtlFrame(undervoltFlag, flagLength, undervoltFlagLSB);
-	f.value != makePrtlFrame(uIn, uiLength, uInLSB);
-	f.value != makePrtlFrame(iIn, uiLength, iInLSB);
-	f.value != makePrtlFrame(uOut, uiLength, uOutLSB);
+	f.value |= makePrtlFrame(overTempFlag, flagLength, overTempFlagLSB);
+	f.value |= makePrtlFrame(noChargeFlag, flagLength, noChargeFlagLSB);
+	f.value |= makePrtlFrame(undervoltFlag, flagLength, undervoltFlagLSB);
+	f.value |= makePrtlFrame(uIn, uiLength, uInLSB);
+	f.value |= makePrtlFrame(iIn, uiLength, iInLSB);
+	f.value |= makePrtlFrame(uOut, uiLength, uOutLSB);
 
 	set_header(f);
 	return f;

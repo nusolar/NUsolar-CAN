@@ -130,8 +130,8 @@ public:
 	{
 		id = BMS19_VCSOC_ID;
 	}
-	BMS19_VCSOC(const Frame &frame) : voltage(LBE(frame.s0)),
-									  current(LBE(frame.s1)),
+	BMS19_VCSOC(const Frame &frame) : voltage(LBE(frame.s1)),
+									  current(LBE(frame.s0)),
 									  packSOC(frame.data[4])
 	{
 		id = frame.id;

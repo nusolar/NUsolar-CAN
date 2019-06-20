@@ -26,6 +26,8 @@ struct CANFilterOpt {
 	uint32_t RXF3; // filter 3 (RXB1)
 	uint32_t RXF4; // filter 4 (RXB1)
 	uint32_t RXF5; // filter 5 (RXB1)
+	bool eidM0 = 0;	   // EID flag for mask 1 and associated buffers, false unless specified
+	bool eidM1 = 0;	   // EID flag for mask 2 and associated buffers
 
 	CANFilterOpt() : RXM0(0), RXM1(0) {} // Initialize to no masking
 
@@ -34,6 +36,15 @@ struct CANFilterOpt {
 	  RXM0 = m0;
 	  RXF0 = f0;
 	  RXF1 = f1;
+	  return *(this); //Allow chaining
+	}
+
+	CANFilterOpt& setRB0(uint32_t m0, uint32_t f0, uint32_t f1, bool eid)
+	{
+	  RXM0 = m0;
+	  RXF0 = f0;
+	  RXF1 = f1;
+	  eidM0 = eid;
 	  return *(this); //Allow chaining
 	}
 	
@@ -46,6 +57,18 @@ struct CANFilterOpt {
 	  RXF5 = f5;
 	  return *(this); //Allow chaining
 	}
+
+	CANFilterOpt& setRB1(uint32_t m1, uint32_t f2, uint32_t f3, uint32_t f4, uint32_t f5, bool eid)
+	{
+	  RXM1 = m1;
+	  RXF2 = f2;
+	  RXF3 = f3;
+	  RXF4 = f4;
+	  RXF5 = f5;
+	  eidM0 = eid;
+	  return *(this); //Allow chaining
+	}
+	
 };
 
 
@@ -54,13 +77,13 @@ struct CANFilterOpt {
  * Some of these only work if FetchErrors() is called periodically.
  * See error data variables for details.
  */
- 	#define CANERR_RX0FULL_OCCURED	0x0001 // RX0 buffer received valid message but RX0IF was set (this is cleared automatically, but the flag persists in errors until cleared by the user)
+  #define CANERR_RX0FULL_OCCURED	0x0001 // RX0 buffer received valid message but RX0IF was set (this is cleared automatically, but the flag persists in errors until cleared by the user)
   #define CANERR_RX1FULL_OCCURED	0x0002 // RX1 buffer received valid message but RX1IF was set (this is cleared automatically, but the flag persists in errors until cleared by the user)
   #define CANERR_EMPTY_INTERRUPT	0x0004 // Interrupt buffer came in empty (probably means SPI is not working, if it is constantly set).
-  #define CANERR_SETUP_BAUDFAIL   0x0100 // Failed to set baud rate properly during setup (can mean that SPI is wired incorrectly)
-  #define CANERR_SETUP_MODEFAIL   0x0200 // Failed to switch modes (can mean that SPI is wired incorrectly)
-  #define CANERR_RXBUFFER_FULL    0x0400 // Local buffer is full
-  #define CANERR_MESSAGE_ERROR	  0x1000 // Message transmission error 
+  #define CANERR_SETUP_BAUDFAIL   	0x0100 // Failed to set baud rate properly during setup (can mean that SPI is wired incorrectly)
+  #define CANERR_SETUP_MODEFAIL   	0x0200 // Failed to switch modes (can mean that SPI is wired incorrectly)
+  #define CANERR_RXBUFFER_FULL    	0x0400 // Local buffer is full
+  #define CANERR_MESSAGE_ERROR	  	0x1000 // Message transmission error 
   #define CANERR_BUSOFF_MODE	  	0x2000 // MCP2515 has entered Bus Off mode
   #define CANERR_HIGH_ERROR_COUNT	0x4000 // Triggered when TEC or REC exceeds 96
 
@@ -180,7 +203,9 @@ private:
 	 * If first is true, sets the mask/filter for the first buffer;
 	 * otherwise sets the second.
 	 */
-	void write_rx_filter(uint8_t address, uint32_t);
+	void write_rx_filter(uint8_t address, uint16_t data); // SID
+	void write_rx_filter(uint8_t address, uint32_t data, bool eid); // EID
+	void write_rx_mask(uint8_t address, uint32_t data, bool eid);
 	
 	inline void init_controller();
 

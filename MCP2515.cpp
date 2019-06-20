@@ -293,14 +293,14 @@ bool MCP2515::LoadBuffer(byte buffer, Frame message, bool verify) {
 
   if(message.ide) {
     byte1 = byte((message.id<<3)>>24); // 8 MSBits of SID
-      byte2 = byte((message.id<<11)>>24) & B11100000; // 3 LSBits of SID
-      byte2 = byte2 | byte((message.id<<14)>>30); // 2 MSBits of EID
-      byte2 = byte2 | B00001000; // EXIDE
+    byte2 = byte((message.id<<11)>>24) & B11100000; // 3 LSBits of SID
+    byte2 = byte2 | byte((message.id<<14)>>30); // 2 MSBits of EID
+    byte2 = byte2 | B00001000; // EXIDE
     byte3 = byte((message.id<<16)>>24); // EID Bits 15-8
     byte4 = byte((message.id<<24)>>24); // EID Bits 7-0
   } else {
     byte1 = byte((message.id<<21)>>24); // 8 MSBits of SID
-      byte2 = byte((message.id<<29)>>24) & B11100000; // 3 LSBits of SID
+    byte2 = byte((message.id<<29)>>24) & B11100000; // 3 LSBits of SID
     byte3 = 0; // TXBnEID8
     byte4 = 0; // TXBnEID0
   }

@@ -73,14 +73,15 @@ inline void CAN_IO::init_controller() //private helper function
 	controller.Write(CANINTE, this->my_interrupts);
 
 	// config RX masks/filters
-	write_rx_filter(RXM0SIDH, this->filters.RXM0);
-	write_rx_filter(RXM1SIDH, this->filters.RXM1);
-	write_rx_filter(RXF1SIDH, this->filters.RXF1);
-	write_rx_filter(RXF2SIDH, this->filters.RXF2);
-	write_rx_filter(RXF3SIDH, this->filters.RXF3);
-	write_rx_filter(RXF4SIDH, this->filters.RXF4);
-	write_rx_filter(RXF5SIDH, this->filters.RXF5);
-	write_rx_filter(RXF0SIDH, this->filters.RXF0);
+	write_rx_filter(RXM0SIDH, this->filters.RXM0, this->filters.eidM0);
+	write_rx_filter(RXF1SIDH, this->filters.RXF1, this->filters.eidM0);
+	write_rx_filter(RXF2SIDH, this->filters.RXF2, this->filters.eidM0);
+
+	write_rx_filter(RXM1SIDH, this->filters.RXM1, this->filters.eidM1);
+	write_rx_filter(RXF3SIDH, this->filters.RXF3, this->filters.eidM1);
+	write_rx_filter(RXF4SIDH, this->filters.RXF4, this->filters.eidM1);
+	write_rx_filter(RXF5SIDH, this->filters.RXF5, this->filters.eidM1);
+	write_rx_filter(RXF0SIDH, this->filters.RXF0, this->filters.eidM1);
 
 	// return controller to normal mode
 	if (!controller.Mode(MODE_NORMAL))
@@ -343,19 +344,59 @@ bool CAN_IO::Send(const Frame &frame, uint8_t buffer)
 	tx_open &= ~buffer;
 	return true;
 }
-
+// RX filters for Standard IDs (SID)
 // Define two macros for the following function, to improve readability.
-//#define first_byte(value) uint8_t((value >> 3) & 0x00FF) //11111111
-//#define second_byte(value) uint8_t((value << 5) & 0x00E0) //11100000
-// added two additional macros to increase readability
-#define first_byte(value) uint8_t((value >> 21) & 0x00FF)  //gets (leftmost) 8 bits
-#define second_byte(value) uint8_t((value >> 13) & 0x00FF) //another 8
-#define third_byte(value) uint8_t((value >> 5) & 0x00FF)
-#define fourth_byte(value) uint8_t((value << 24) & 0x00F8) //last 5
-
-void CAN_IO::write_rx_filter(uint8_t address, uint32_t data)
+void CAN_IO::write_rx_filter(uint8_t address, uint16_t data)
 {
-	uint8_t bytes[4] = {first_byte(data), second_byte(data), third_byte(data), fourth_byte(data)};
+	// FOR LEGACY, GENERATES SID
+	write_rx_filter(address, data, false); 
+}
+
+#define B1_S(value) uint8_t((value >> 3) & 0x00FF) //11111111
+#define B2_S(value) uint8_t((value << 5) & 0x00E0) //11100000
+
+#define B1_E(value) uint8_t((value >> (29 - 8)) & 0x00FF)
+// For extended case (EID), need to set EID flag
+#define B2_E(value) uint8_t((value >> (29 - 16) & B11100000) | B00001000 | (value >> (29-13)) & B111) 
+#define B3_E(value) uint8_t((value >> (29 - 21)) & 0x00FF)
+#define B4_E(value) uint8_t(value & 0x00FF) 
+void CAN_IO::write_rx_filter(uint8_t address, uint32_t data, bool eid)
+{
+	uint8_t bytes[4] = {}; // initialize to all 0s
+	if (eid) // Extended ID
+	{
+		bytes[0] = B1_E(data);
+		bytes[1] = B2_E(data);
+		bytes[2] = B3_E(data);
+		bytes[3] = B4_E(data);	
+	}
+	else
+	{
+		bytes[0] = B1_S(data);
+		bytes[1] = B2_S(data);
+	}
+	controller.Write(address, bytes, 4);
+}
+
+// For writing mask of EIDs
+void CAN_IO::write_rx_mask(uint8_t address, uint32_t data, bool eid)
+{
+	uint8_t bytes[4] = {}; // initialize to all 0s
+	if (eid)
+	{
+		bytes[0] = B1_E(data);
+		bytes[1] = B2_E(data);
+		bytes[2] = B3_E(data);
+		bytes[3] = B4_E(data);
+
+		// Maks do not have EID flag
+		bytes[1] = uint8_t(bytes[1] & ~B00001000);
+	}
+	else // Same procedure as RX Filter
+	{
+		bytes[0] = B1_S(data);
+		bytes[1] = B2_S(data);
+	}
 	controller.Write(address, bytes, 4);
 }
 

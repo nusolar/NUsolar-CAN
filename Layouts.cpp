@@ -30,6 +30,68 @@ inline void Layout::set_header(Frame &f, byte size) const
 	f.srr = 0;
 }
 
+
+Frame TRI88_Drive::generate_frame() const
+{
+  Frame f;
+  f.low_f = velocity
+  f.high_f = current;
+  set_header(f);
+  return f;
+}
+
+
+Frame TRI88_Power::generate_frame() const
+{
+  Frame f;
+  f.low_f = bus_current;
+  set_header(f);
+  return f;
+}
+
+Frame TRI88_Reset::generate_frame() const
+{
+  Frame f;
+  set_header(f)
+  return f;
+}
+
+Frame TRI88_Status::generate_frame() const
+{
+  Frame f;
+  f.data[1] = limit_flags;
+  f.data[3] = error_flags;
+  set_header(f)
+  return f;
+}
+
+Frame TRI88_Bus_Measure::generate_frame() const
+{
+  Frame f;
+  f.low_f = bus_current_drawn;
+  f.high_f = bus_voltage;
+  set_header(f)
+  return f;
+}
+
+Frame TRI88_Velocity_Measure::generate_frame() const
+{
+  Frame f;
+  f.low_f = motor_velocity;
+  f.high_f = vehicle_velocity;
+  set_header(f)
+  return f;
+}
+
+Frame TRI88_Temp_Measure::generate_frame() const
+{
+  Frame f;
+  f.low_f = motor_temp;
+  f.high_f = heat_sink_temp;
+  set_header(f)
+  return f;
+}
+
 Frame DC_Heartbeat::generate_frame() const
 {
 	Frame f;
@@ -369,7 +431,7 @@ Frame MPPT_Request::generate_frame() const
 	Frame f;
 
 	f.value = (uint64_t) 0;
-	
+
 	set_header(f);
 	return f;
 }

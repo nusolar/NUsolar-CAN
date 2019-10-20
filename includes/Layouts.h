@@ -74,7 +74,7 @@
 #define MASK_Sxxx 0x0007FF
 #define MASK_EID 0x07FFFF
 
-/* Macro for easy masking: shifts the frame to the LSB and applies mask 
+/* Macro for easy masking: shifts the frame to the LSB and applies mask
 *	f		CAN Frame
 *	mask	Mask to specify length of packet
 *	lsb 	The rightmost bit of the value within the frame
@@ -118,14 +118,91 @@ protected:
 };
 
 /*
+ * Wavescuplter 22 Motor Driver TRI88 (2019)
+ */
+class TRI88_Drive : public Layout
+{
+  public:
+    Motor_Drive(float v, float c) : velocity(v), current(c) {id = MOTOR_DRIVE_ID;}
+    Motor_Drive(const Frame &frame) : velocity(frame.low_f), current(frame.high_f) { id = frame.id; }
+    Frame generate_frame() const;
+
+  	float velocity;
+  	float current;
+};
+
+class TRI88_Power : public Layout
+{
+  public:
+    Motor_Power(float bc) : bus_current(bc) {id = Motor_Power_ID;}
+    Motor_Power(const Frame &frame) : bus_current(frame.high_f) { id = frame.id; }
+    Frame generate_frame() const;
+
+    float bus_current;
+};
+
+class TRI88_Reset : public Layout
+{
+public:
+	TRI88_Reset() {id = TRI88_RESET_ID;}
+	TRI88_Reset(const Frame &frame) { id = frame.id; }
+
+	Frame generate_frame() const;
+};
+
+class TRI88_Status : public Layout
+{
+public:
+  TRI88_Status(uint8_t lf, uint8_t ef, uint8_t am, uint8_t tec, uint8_t rec): limit_flags(lf), error_flags(ef) {id = TRI88_STATUS_ID;}
+  TRI88_Reset(const Frame &frame) : limit_flags(f.data[1]), error_flags(f.data[3]) { id = frame.id; }
+  Frame generate_frame() const;
+
+  uint8_t limit_flags, error_flags;
+};
+
+class TRI88_Bus_Measure : public Layout
+{
+public:
+  TRI88_Bus_Measure(float bc, float bv) : bus_current_drawn(bc), bus_voltage(bv) {id = TRI88_BUS_MEASURE_ID;}
+  TRI88_Bus_Measure(const Frame &frame) : bus_current(frame.high_f), bus_voltage(frame.low_f) {id = frame.id;}
+  Frame generate_frame() const;
+
+  float bus_current_drawn;
+  float bus_voltage;
+};
+
+class TRI88_Velocity_Measure : public Layout
+{
+  public:
+    TRI88_Velocity_Measure(float vv, float mv): vehicle_velocity(vv), motor_velocity(mv) {id = TRI88_VELOCITY_MEASURE_ID;}
+    TRI88_Velocity_Measure(const Frame &frame): vehicle_velocity(frame.high_f), motor_velocity(frame.low_f) {id = frame.id;}
+    Frame generate_frame() const;
+
+    float vehicle_velocity;
+    float motor_velocity;
+};
+
+class TRI88_Temp_Measure : public Layout
+{
+  public:
+    TRI88_Temp_Measure(float hst, float mt): heat_sink_temp(hst), motor_temp(mt) {id = TRI88_TEMP_MEASURE_ID;}
+    TRI88_Velocity_Measure(const Frame &frame): heat_sink_temp(frame.high_f), motor_temp(frame.low_f) {id = frame.id;}
+    Frame generate_frame() const;
+
+    float heat_sink_temp;
+    float motor_temp;
+};
+
+
+/*
  * BMS Voltage, Current, and SOC packet (2019 BMS)
  * Note that 2 byte values on the BMS uses Big Endian by default, so conversion necessary
  */
 class BMS19_VCSOC : public Layout
 {
 public:
-	BMS19_VCSOC(uint16_t v, uint16_t i, uint8_t soc) : voltage(v), 
-													   current(i), 
+	BMS19_VCSOC(uint16_t v, uint16_t i, uint8_t soc) : voltage(v),
+													   current(i),
 													   packSOC(soc)
 	{
 		id = BMS19_VCSOC_ID;
@@ -143,6 +220,9 @@ public:
 	uint16_t current;
 	uint8_t packSOC;
 };
+
+
+
 
 /*
 * Battery Array Max and Min Temperature (2019 BMS)
@@ -236,7 +316,7 @@ public:
 private:
 	/*
 	* Apply these masks after shifting frame to LSB
-	* MTBA Can packets don't follow bytes, so alot of masking is necessary 
+	* MTBA Can packets don't follow bytes, so alot of masking is necessary
 	*/
 	static const uint16_t MASK_MTBA_BATT_VOLT = 0x3FF;
 	static const uint16_t MASK_MTBA_BATT_CURR = 0x1FF;
@@ -297,7 +377,7 @@ public:
 private:
 	/*
 	* Apply these masks after shifting frame to LSB
-	* MTBA Can packets don't follow bytes, so alot of masking is necessary 
+	* MTBA Can packets don't follow bytes, so alot of masking is necessary
 	*/
 	static const uint16_t MASK_MTBA_BATT_VOLT = 0x3FF;
 	static const uint16_t MASK_MTBA_BATT_CURR = 0x1FF;
@@ -357,7 +437,7 @@ public:
 private:
 	/*
 	* Apply these masks after shifting frame to LSB
-	* MTBA Can packets don't follow bytes, so alot of masking is necessary 
+	* MTBA Can packets don't follow bytes, so alot of masking is necessary
 	*/
 	static const uint16_t MASK_MTBA_POWER_MODE = 0x01;
 	static const uint16_t MASK_MTBA_MODE_CONTROL_MODE = 0x01;
@@ -417,7 +497,7 @@ public:
 private:
 	/*
 	* Apply these masks after shifting frame to LSB
-	* MTBA Can packets don't follow bytes, so alot of masking is necessary 
+	* MTBA Can packets don't follow bytes, so alot of masking is necessary
 	*/
 	static const uint16_t MASK_MTBA_POWER_MODE = 0x01;
 	static const uint16_t MASK_MTBA_MODE_CONTROL_MODE = 0x01;
@@ -467,7 +547,7 @@ public:
 private:
 	/*
 	* Apply these masks after shifting frame to LSB
-	* MTBA Can packets don't follow bytes, so alot of masking is necessary 
+	* MTBA Can packets don't follow bytes, so alot of masking is necessary
 	*/
 	static const uint16_t MASK_MTBA_AD_SENS_ERR = 0xFFFF;
 	static const uint16_t MASK_MTBA_POWER_SYS_ERR = 0xFF;
@@ -509,7 +589,7 @@ public:
 private:
 	/*
 	* Apply these masks after shifting frame to LSB
-	* MTBA Can packets don't follow bytes, so alot of masking is necessary 
+	* MTBA Can packets don't follow bytes, so alot of masking is necessary
 	*/
 	static const uint16_t MASK_MTBA_AD_SENS_ERR = 0xFFFF;
 	static const uint16_t MASK_MTBA_POWER_SYS_ERR = 0xFF;
@@ -683,7 +763,7 @@ public:
 	Frame generate_frame() const;
 };
 
-/* Temperature Sensor Data Packets 
+/* Temperature Sensor Data Packets
    Packet 1: Min, Max, and Modules 1 - 6
    Packet 2: Modules 7 - 14
    Packet 3: Modules 15 - 22
@@ -864,7 +944,7 @@ public:
 	Frame generate_frame() const;
 };
 
-/* 
+/*
  * Steering wheel data packet, sent to the driver controls.
  */
 class SW_Data : public Layout
@@ -1056,7 +1136,7 @@ class MPPT_Status : public Layout
 {
 public:
 	MPPT_Status(uint32_t baseAddress, bool _battVoltFlag, bool _overTempFlag, bool _noChargeFlag, bool _undervoltFlag,
-				uint16_t _uIn, uint16_t _iIn, uint16_t _uOut, uint8_t _tAmb) : 
+				uint16_t _uIn, uint16_t _iIn, uint16_t _uOut, uint8_t _tAmb) :
 																			   battVoltFlag(_battVoltFlag),
 																			   overTempFlag(_overTempFlag),
 																			   noChargeFlag(_noChargeFlag),
@@ -1066,7 +1146,7 @@ public:
 																			   uOut(_uOut),
 																			   tAmb(_tAmb)
 	{
-		id = (MPPT_ANS_BASEADDRESS | baseAddress); // Applies base address 
+		id = (MPPT_ANS_BASEADDRESS | baseAddress); // Applies base address
 	}
 
 	MPPT_Status(const Frame &frame) : battVoltFlag(mask(frame.value, flagLength, battVoltFlagLSB)),

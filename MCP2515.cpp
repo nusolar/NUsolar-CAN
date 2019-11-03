@@ -131,30 +131,30 @@ bool MCP2515::_init(int CAN_Bus_Speed, byte Freq, byte SJW, bool autoBaud) {
 
   if (Serial)
   {
-    Serial.println("----Bus Speed Config Settings----");
-    Serial.print("BRP: ");
+    Serial.println(F("----Bus Speed Config Settings----"));
+    Serial.print(F("BRP: "));
     Serial.println(BRP);
-    Serial.print("TQ: ");
+    Serial.print(F("TQ: "));
     Serial.println(TQ);
-    Serial.print("BT: ");
+    Serial.print(F("BT: "));
     Serial.println(BT);
   }
 
   // Programming requirements
   if(PRSEG + PHSEG1 < PHSEG2) 
   {
-    if (Serial) Serial.println("PRSEG + PHSEG1 >= PHSEG2. Increase Freq or decrease Bus Speed.");
+    if (Serial) Serial.println(F("PRSEG + PHSEG1 >= PHSEG2. Increase Freq or decrease Bus Speed."));
     return false;
   }
   if(PHSEG2 <= SJW) 
   {
-    if (Serial) Serial.println("PHSEG2 > SJW. Decrease SJW to allow for higher resolution synchronization.");
+    if (Serial) Serial.println(F("PHSEG2 > SJW. Decrease SJW to allow for higher resolution synchronization."));
     return false;
   }
 
   if (Serial)
   {
-      Serial.println("---------");
+      Serial.println(F("---------"));
   }
   
   byte BTLMODE = 1;

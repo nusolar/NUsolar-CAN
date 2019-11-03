@@ -58,7 +58,7 @@ inline void CAN_IO::init_controller() //private helper function
 	{ // error
 		this->errors |= CANERR_SETUP_BAUDFAIL;
 		if (Serial)
-			Serial.println("Baud ERROR");
+			Serial.println(F("Baud ERROR"));
 	}
 
 	// return controller to config mode
@@ -66,7 +66,7 @@ inline void CAN_IO::init_controller() //private helper function
 	{ // error
 		this->errors |= CANERR_SETUP_MODEFAIL;
 		if (Serial)
-			Serial.println("Mode ERROR");
+			Serial.println(F("Mode ERROR"));
 	}
 
 	// disable interrupts we don't care about
@@ -258,7 +258,7 @@ bool CAN_IO::SendVerified(const Layout &layout, uint8_t buffer)
 
 	if (!controller.LoadBuffer(buffer, layout.generate_frame(), true))
 	{
-		Serial.println("LOAD FAILED");
+		Serial.println(F("LOAD FAILED"));
 		return false;
 	}
 	else
@@ -286,7 +286,7 @@ bool CAN_IO::SendVerified(const Frame &frame, uint8_t buffer)
 
 	if (!controller.LoadBuffer(buffer, frame, true))
 	{
-		Serial.println("LOAD FAILED");
+		Serial.println(F("LOAD FAILED"));
 		return false;
 	}
 	else

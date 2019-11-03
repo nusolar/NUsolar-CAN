@@ -20,7 +20,7 @@
 #define TRI88_DC_BASE_ADDRESS
 #define TRI88_DRIVE_ID TRI88_DC_BASE_ADDRESS + 0x01
 #define TRI88_POWER_ID TRI88_DC_BASE_ADDRESS + 0x02
-#define TRI88_RESET_ID TRI88_DC_BASE_ADDRESSS + 0x03
+#define TRI88_RESET_ID TRI88_DC_BASE_ADDRESS + 0x03
 #define TRI88_STATUS_ID TRI88_MC_BASE_ADDRESS + 0x01
 #define TRI88_BUS_MEASURE_ID TRI88_MC_BASE_ADDRESS + 0x02
 #define TRI88_VELOCITY_MEASURE_ID TRI88_MC_BASE_ADDRESS + 0x03
@@ -134,28 +134,28 @@ protected:
 class TRI88_Drive : public Layout
 {
   public:
-    Motor_Drive(float v, float c) : velocity(v), current(c) {id = MOTOR_DRIVE_ID;}
-    Motor_Drive(const Frame &frame) : velocity(frame.low_f), current(frame.high_f) { id = frame.id; }
+    TRI88_Drive(float v, float c) : velocity(v), current(c) {id = TRI88_DRIVE_ID;}
+    TRI88_Drive(const Frame &frame) : velocity(frame.low_f), current(frame.high_f) { id = frame.id; }
     Frame generate_frame() const;
 
-  	float velocity;
-  	float current;
+  	uint32_t velocity;
+  	uint32_t current;
 };
 
 class TRI88_Power : public Layout
 {
   public:
-    Motor_Power(float bc) : bus_current(bc) {id = Motor_Power_ID;}
-    Motor_Power(const Frame &frame) : bus_current(frame.high_f) { id = frame.id; }
+    TRI88_Power(float bc) : bus_current(bc) {id = TRI88_POWER_ID;}
+    TRI88_Power(const Frame &frame) : bus_current(frame.high_f) { id = frame.id; }
     Frame generate_frame() const;
 
-    float bus_current;
+    uint32_t bus_current;
 };
 
 class TRI88_Reset : public Layout
 {
 public:
-	TRI88_Reset() {id = TRI88_RESET_ID;}
+	TRI88_Reset(void) {id = TRI88_RESET_ID;}
 	TRI88_Reset(const Frame &frame) { id = frame.id; }
 
 	Frame generate_frame() const;
@@ -165,7 +165,7 @@ class TRI88_Status : public Layout
 {
 public:
   TRI88_Status(uint8_t lf, uint8_t ef, uint8_t am, uint8_t tec, uint8_t rec): limit_flags(lf), error_flags(ef) {id = TRI88_STATUS_ID;}
-  TRI88_Reset(const Frame &frame) : limit_flags(f.data[1]), error_flags(f.data[3]) { id = frame.id; }
+  TRI88_Status(const Frame &frame) : limit_flags(frame.data[1]), error_flags(frame.data[3]) { id = frame.id; }
   Frame generate_frame() const;
 
   uint8_t limit_flags, error_flags;
@@ -175,11 +175,11 @@ class TRI88_Bus_Measure : public Layout
 {
 public:
   TRI88_Bus_Measure(float bc, float bv) : bus_current_drawn(bc), bus_voltage(bv) {id = TRI88_BUS_MEASURE_ID;}
-  TRI88_Bus_Measure(const Frame &frame) : bus_current(frame.high_f), bus_voltage(frame.low_f) {id = frame.id;}
+  TRI88_Bus_Measure(const Frame &frame) : bus_current_drawn(frame.high_f), bus_voltage(frame.low_f) {id = frame.id;}
   Frame generate_frame() const;
 
-  float bus_current_drawn;
-  float bus_voltage;
+  uint32_t bus_current_drawn;
+  uint32_t bus_voltage;
 };
 
 class TRI88_Velocity_Measure : public Layout
@@ -189,19 +189,19 @@ class TRI88_Velocity_Measure : public Layout
     TRI88_Velocity_Measure(const Frame &frame): vehicle_velocity(frame.high_f), motor_velocity(frame.low_f) {id = frame.id;}
     Frame generate_frame() const;
 
-    float vehicle_velocity;
-    float motor_velocity;
+    uint32_t vehicle_velocity;
+    uint32_t motor_velocity;
 };
 
 class TRI88_Temp_Measure : public Layout
 {
   public:
     TRI88_Temp_Measure(float hst, float mt): heat_sink_temp(hst), motor_temp(mt) {id = TRI88_TEMP_MEASURE_ID;}
-    TRI88_Velocity_Measure(const Frame &frame): heat_sink_temp(frame.high_f), motor_temp(frame.low_f) {id = frame.id;}
+    TRI88_Temp_Measure(const Frame &frame): heat_sink_temp(frame.high_f), motor_temp(frame.low_f) {id = frame.id;}
     Frame generate_frame() const;
 
-    float heat_sink_temp;
-    float motor_temp;
+    uint32_t heat_sink_temp;
+    uint32_t motor_temp;
 };
 
 

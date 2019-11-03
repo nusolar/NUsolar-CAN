@@ -349,7 +349,7 @@ bool CAN_IO::Send(const Frame &frame, uint8_t buffer)
 void CAN_IO::write_rx_filter(uint8_t address, uint16_t data)
 {
 	// FOR LEGACY, GENERATES SID
-	write_rx_filter(address, data, false); 
+	write_rx_filter(address, data, false);
 }
 
 #define B1_S(value) uint8_t((value >> 3) & 0x00FF) //11111111
@@ -357,9 +357,9 @@ void CAN_IO::write_rx_filter(uint8_t address, uint16_t data)
 
 #define B1_E(value) uint8_t((value >> (29 - 8)) & 0x00FF)
 // For extended case (EID), need to set EID flag
-#define B2_E(value) uint8_t((value >> (29 - 16) & B11100000) | B00001000 | (value >> (29-13)) & B111) 
+#define B2_E(value) uint8_t((value >> (29 - 16) & B11100000) | B00001000 | (value >> (29-13)) & B111)
 #define B3_E(value) uint8_t((value >> (29 - 21)) & 0x00FF)
-#define B4_E(value) uint8_t(value & 0x00FF) 
+#define B4_E(value) uint8_t(value & 0x00FF)
 void CAN_IO::write_rx_filter(uint8_t address, uint32_t data, bool eid)
 {
 	uint8_t bytes[4] = {}; // initialize to all 0s
@@ -368,7 +368,7 @@ void CAN_IO::write_rx_filter(uint8_t address, uint32_t data, bool eid)
 		bytes[0] = B1_E(data);
 		bytes[1] = B2_E(data);
 		bytes[2] = B3_E(data);
-		bytes[3] = B4_E(data);	
+		bytes[3] = B4_E(data);
 	}
 	else
 	{

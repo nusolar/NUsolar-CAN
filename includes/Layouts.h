@@ -65,16 +65,6 @@
 #define DC_TEMP_2_ID 0x5F2 // Module 15 - 22 Temp
 #define DC_TEMP_3_ID 0x5F3 // Module 23 - 26 Temp
 
-// steering wheel TX (700 - 7F0)
-#define SW_BASEADDRESS 0x700
-#define SW_HEARTBEAT_ID SW_BASEADDRESS
-#define SW_DATA_ID 0x701
-
-// telemetry TX
-#define TEL_BASEADDRESS 0x300
-#define TEL_HEARTBEAT_ID TEL_BASEADDRESS
-#define TEL_STATUS_ID 0x301
-
 /*
  * Mask ID that specifically work with our SIDs
  * (packet ID's for f0-f5 can be found in Layouts.h)
@@ -955,87 +945,6 @@ public:
 	Frame generate_frame() const;
 };
 
-/*
- * Steering wheel data packet, sent to the driver controls.
- */
-class SW_Data : public Layout
-{
-public:
-	byte byte0;
-	byte byte1;
-	bool headlights, hazards, lts, rts, horn, cruiseon, cruiseoff;
-	byte gear;
-
-	SW_Data(byte data0, byte data1) : byte0(data0), byte1(data1)
-	{
-		id = SW_DATA_ID;
-		populate_fields();
-	}
-
-	SW_Data(byte _gear, bool _headlights, bool _hazards, bool _horn, bool _lts, bool _rts,
-			bool _cruiseon, bool _cruiseoff)
-	{
-		id = SW_DATA_ID;
-
-		byte0 = 0;
-		byte0 |= _gear;
-		byte0 |= _headlights << 2;
-		byte0 |= _hazards << 3;
-		byte0 |= _horn << 5;
-		byte0 |= _lts << 6;
-		byte0 |= _rts << 7;
-
-		byte1 = 0;
-		byte1 |= _cruiseon;
-		byte1 |= _cruiseoff << 1;
-
-		populate_fields();
-	}
-
-	SW_Data(const Frame &frame) : byte0(frame.data[0]), byte1(frame.data[1])
-	{
-		id = frame.id;
-		populate_fields();
-	}
-
-	Frame generate_frame() const;
-
-private:
-	void populate_fields()
-	{
-		gear = (byte0)&3u; // 0 = off, 1 = fwd, 2 = rev, 4 = undefined
-		headlights = (byte0 >> 2) & 1u;
-		hazards = (byte0 >> 3) & 1u;
-		horn = (byte0 >> 5) & 1u;
-		lts = (byte0 >> 6) & 1u;
-		rts = (byte0 >> 7) & 1u;
-
-		cruiseon = (byte1)&1u;
-		cruiseoff = (byte1 >> 1) & 1u;
-	}
-};
-
-/*
- * Telemetry Heartbeat packet
- */
-class TEL_Status : public Layout
-{
-public:
-	TEL_Status(bool sql_conn, bool com_conn) : sql_connected(sql_conn), com_connected(com_conn) { id = TEL_STATUS_ID; }
-
-	TEL_Status(const Frame &frame)
-	{
-		id = frame.id;
-
-		sql_connected = (bool)(frame.data[0] & 0x01);
-		com_connected = (bool)(frame.data[0] & 0x02);
-	}
-
-	Frame generate_frame() const;
-
-	bool sql_connected;
-	bool com_connected;
-};
 
 /*
 * BMS battery status packet

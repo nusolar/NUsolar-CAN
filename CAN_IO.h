@@ -148,9 +148,9 @@ public:
 	/*
 	 * Sends messages to the CAN bus via the controller.
 	 */
-	bool Send(const Layout& layout, uint8_t buffer);
+	//bool Send(const Layout& layout, uint8_t buffer);
 	bool Send(const Frame& frame, uint8_t buffer);
-	bool SendVerified(const Layout& layout, uint8_t buffer);
+	//bool SendVerified(const Layout& layout, uint8_t buffer);
 	bool SendVerified(const Frame& frame, uint8_t buffer);
 	
 	/*
@@ -171,7 +171,7 @@ public:
 
         
     MCP2515 controller; // The MCP2515 object
-   	RX_Queue<16> RXbuffer; //A queue for holding incoming messages
+   	RX_Queue<8> RXbuffer; //A queue for holding incoming messages
 
     // Status data
     volatile uint8_t  canstat_register;
@@ -190,7 +190,7 @@ public:
 	CANFilterOpt filters;
 	
 private:
-  byte    INT_pin;
+  	byte    INT_pin;
 	int 	  bus_speed;
 	byte	  bus_freq;
 	volatile byte 		tx_open;	// Tracks which TX buffers are open.

@@ -92,86 +92,6 @@ Frame TRI88_Temp_Measure::generate_frame() const
   return f;
 }
 
-Frame DC_Heartbeat::generate_frame() const
-{
-	Frame f;
-	f.low = dc_id;
-	f.high = serial_no;
-	set_header(f);
-	return f;
-}
-
-Frame DC_Drive::generate_frame() const
-{
-	Frame f;
-	f.low_f = velocity;
-	f.high_f = current;
-	set_header(f);
-	return f;
-}
-
-Frame DC_Power::generate_frame() const
-{
-	Frame f;
-	f.low_f = 0;
-	f.high_f = bus_current;
-	set_header(f);
-	return f;
-}
-
-Frame DC_Reset::generate_frame() const
-{
-	Frame f;
-	f.low = 0;
-	f.high = 0;
-	set_header(f);
-	return f;
-}
-
-Frame DC_Info::generate_frame() const
-{
-	Frame f;
-
-	// bytes 0, 1 (ingition swith, fuel door)
-	f.s0 = 0;				// clear bytes 1 and 2 (set any unused bits to 0, since this is a flag field)
-	f.s0 |= ignition_state; // these are in the right place already.
-	f.s0 |= fuel_door << 8; // this is currently what turns on the BMS, until we figure out how to get the ignition bits to work.
-
-	// byte 2
-	f.data[2] = (uint8_t)(accel_ratio * 100); // convert to integer 0-100 so only one byte required
-
-	// byte 3
-	f.data[3] = (uint8_t)(regen_ratio * 100);
-
-	// bytes 4, 5
-	f.s2 = can_error_flags;
-
-	// byte 6
-	f.data[6] = dc_error_flags;
-
-	// byte 7 (status flags)
-	f.data[7] = 0;
-	f.data[7] |= gear;
-	f.data[7] |= brake_engaged << 4;
-	f.data[7] |= was_reset << 5;
-	f.data[7] |= tripped << 6;
-
-	set_header(f);
-	return f;
-}
-
-Frame DC_Status::generate_frame() const
-{
-	Frame f;
-
-	// bytes 0 - 3
-	f.low = flags;
-	f.high = 0;
-
-	set_header(f);
-	return f;
-}
-
 Frame DC_Temp_0::generate_frame() const
 {
 	Frame f;
@@ -229,25 +149,6 @@ Frame DC_Temp_3::generate_frame() const
 	f.data[6] = temp[7];
 	f.data[7] = temp[8];
 	f.s1 = 0;
-	set_header(f);
-	return f;
-}
-
-Frame SW_Data::generate_frame() const
-{
-	Frame f;
-	f.data[0] = byte0;
-	f.data[1] = byte1;
-	set_header(f);
-	return f;
-}
-
-Frame TEL_Status::generate_frame() const
-{
-	Frame f;
-	f.data[0] = 0;
-	f.data[0] |= sql_connected;
-	f.data[0] |= com_connected << 1;
 	set_header(f);
 	return f;
 }

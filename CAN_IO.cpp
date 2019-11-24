@@ -243,7 +243,7 @@ void CAN_IO::FetchStatus()
 	this->canstat_register = controller.Read(CANSTAT);
 }
 
-/*
+
 bool CAN_IO::SendVerified(const Layout &layout, uint8_t buffer)
 {
 	// The TXBANY buffer can be specified to allow the program to choose which buffer to send from.
@@ -270,7 +270,7 @@ bool CAN_IO::SendVerified(const Layout &layout, uint8_t buffer)
 	//For best performance, enable all TXnIE flags.
 	tx_open &= ~buffer;
 	return true;
-} */
+} 
 
 bool CAN_IO::SendVerified(const Frame &frame, uint8_t buffer)
 {
@@ -300,7 +300,7 @@ bool CAN_IO::SendVerified(const Frame &frame, uint8_t buffer)
 	return true;
 }
 
-/*
+
 bool CAN_IO::Send(const Layout &layout, uint8_t buffer)
 {
 	// The TXBANY buffer can be specified to allow the program to choose which buffer to send from.
@@ -322,7 +322,7 @@ bool CAN_IO::Send(const Layout &layout, uint8_t buffer)
 	//For best performance, enable all TXnIE flags.
 	tx_open &= ~buffer;
 	return true;
-} */
+} 
 
 bool CAN_IO::Send(const Frame &frame, uint8_t buffer)
 {

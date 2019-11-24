@@ -148,9 +148,9 @@ public:
 	/*
 	 * Sends messages to the CAN bus via the controller.
 	 */
-	//bool Send(const Layout& layout, uint8_t buffer);
+	bool Send(const Layout& layout, uint8_t buffer);
 	bool Send(const Frame& frame, uint8_t buffer);
-	//bool SendVerified(const Layout& layout, uint8_t buffer);
+	bool SendVerified(const Layout& layout, uint8_t buffer);
 	bool SendVerified(const Frame& frame, uint8_t buffer);
 	
 	/*
